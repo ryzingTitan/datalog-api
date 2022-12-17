@@ -1,0 +1,115 @@
+openapi: 3.0.0
+info: 
+  description: Swagger spec for the example API project
+  version: 1.0.0
+  title: example-api
+servers:
+  - url: https://<dev_location>/api
+    description: Development Kubernetes cluster
+  - url: https://<prod_location>/api
+    description: Production Kubernetes cluster
+  - url: http://localhost:8080/api
+    description: Local testing
+paths:
+  /users:
+    get:
+      parameters:
+        - name: firstName
+          in: query
+          description: The first name to be used in the search query
+          required: true
+          schema:
+            type: string
+            example: John
+      tags:
+        - Users
+      description: Retrieve all users with the given first name
+      responses:
+        200:
+          description: The list of users with the given first name
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        400:
+          description: Bad Request - Ensure the query parameter has been included in the request
+        500:
+          description: Internal Server Error
+
+  /users/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: The user id to be used in the search query
+        required: true
+        schema:
+          type: integer
+    get:
+      tags:
+        - Users
+      description: Retrieve user information for the given user id
+      responses:
+        200:
+          description: The user information for the given user id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        404:
+          description: Not Found - A user with the given id does not exist
+        500:
+          description: Internal Server Error
+
+  /timezone/{area}/{location}:
+    parameters:
+      - name: area
+        in: path
+        description: The area that will be used when retrieving the current time
+        required: true
+        schema:
+          type: string
+      - name: location
+        in: path
+        description: The location that will be used when retrieving the current time
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - Current Date and Time
+      description: Retrieve the current date and time for the given area and location
+      responses:
+        200:
+          description: The current date and time for the given area and location
+          content:
+            application/json:
+              schema:
+                type: string
+                format: date-time
+                example: '2022-10-14T13:00:06Z'
+        500:
+          description: Internal Server Error
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The user id
+          example: 1
+        firstName:
+          type: string
+          description: The first name of the user
+          example: John
+        lastName:
+          type: string
+          description: The last name of the user
+          example: Doe
+        fullName:
+          type: string
+          description: The full name of the user
+          example: John Doe
