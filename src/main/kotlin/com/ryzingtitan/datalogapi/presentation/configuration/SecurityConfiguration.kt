@@ -17,7 +17,7 @@ class SecurityConfiguration {
             .and()
             .csrf().disable()
             .authorizeExchange()
-            .pathMatchers(HttpMethod.GET, "/api/users/**")
+            .pathMatchers(HttpMethod.GET, "/api/datalogs/sessions/**")
             .permitAll()
             .pathMatchers(HttpMethod.GET, "/actuator/health")
             .permitAll()

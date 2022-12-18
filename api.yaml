@@ -1,115 +1,90 @@
 openapi: 3.0.0
 info: 
-  description: Swagger spec for the example API project
+  description: Swagger spec for the Datalog API project
   version: 1.0.0
-  title: example-api
+  title: datalog-api
 servers:
-  - url: https://<dev_location>/api
-    description: Development Kubernetes cluster
-  - url: https://<prod_location>/api
-    description: Production Kubernetes cluster
   - url: http://localhost:8080/api
-    description: Local testing
+    description: Local deployment
 paths:
-  /users:
+  /datalogs/sessions/{sessionId}:
     get:
       parameters:
-        - name: firstName
-          in: query
-          description: The first name to be used in the search query
+        - name: sessionId
+          in: path
+          description: The session id to be used in the search query
           required: true
           schema:
             type: string
-            example: John
+            format: uuid
+            example: 515ef9d0-2059-4a11-b5c3-7c8dae93b57d
       tags:
-        - Users
-      description: Retrieve all users with the given first name
+        - Sessions
+      description: Retrieve all sessions with the given session id
       responses:
         200:
-          description: The list of users with the given first name
+          description: The list of datalog records with the given session id
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/User'
+                  $ref: '#/components/schemas/DatalogRecord'
         400:
           description: Bad Request - Ensure the query parameter has been included in the request
         500:
           description: Internal Server Error
 
-  /users/{id}:
-    parameters:
-      - name: id
-        in: path
-        description: The user id to be used in the search query
-        required: true
-        schema:
-          type: integer
+  /datlogs/sessions/metadata:
     get:
       tags:
-        - Users
-      description: Retrieve user information for the given user id
+        - Sessions
+      description: Retrieve metadata for all sessions
       responses:
         200:
-          description: The user information for the given user id
+          description: The metadata for every session
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-        404:
-          description: Not Found - A user with the given id does not exist
-        500:
-          description: Internal Server Error
-
-  /timezone/{area}/{location}:
-    parameters:
-      - name: area
-        in: path
-        description: The area that will be used when retrieving the current time
-        required: true
-        schema:
-          type: string
-      - name: location
-        in: path
-        description: The location that will be used when retrieving the current time
-        required: true
-        schema:
-          type: string
-    get:
-      tags:
-        - Current Date and Time
-      description: Retrieve the current date and time for the given area and location
-      responses:
-        200:
-          description: The current date and time for the given area and location
-          content:
-            application/json:
-              schema:
-                type: string
-                format: date-time
-                example: '2022-10-14T13:00:06Z'
+                $ref: '#/components/schemas/SessionMetadata'
         500:
           description: Internal Server Error
 
 components:
   schemas:
-    User:
+    DatalogRecord:
       type: object
       properties:
-        id:
-          type: integer
-          description: The user id
-          example: 1
-        firstName:
+        sessionId:
           type: string
-          description: The first name of the user
-          example: John
-        lastName:
+          format: uuid
+          description: The session id of the datalog record
+          example: 515ef9d0-2059-4a11-b5c3-7c8dae93b57d
+        timestamp:
           type: string
-          description: The last name of the user
-          example: Doe
-        fullName:
+          format: date-time
+          description: The timestamp of the datalog record
+          example: 2022-09-18T18:15:47.968Z
+        intakeAirTemperature:
+          type: number
+          format: double
+          description: The intake air temperature
+          example: 135.6
+    SessionMetadata:
+      type: object
+      properties:
+        sessionId:
           type: string
-          description: The full name of the user
-          example: John Doe
+          format: uuid
+          description: The session id
+          example: 515ef9d0-2059-4a11-b5c3-7c8dae93b57d
+        startTime:
+          type: string
+          format: date-time
+          description: The start time of the session
+          example: 2022-09-18T18:15:47.968Z
+        endTime:
+          type: string
+          format: date-time
+          description: The end time of the session
+          example: 2022-09-18T18:18:47.968Z

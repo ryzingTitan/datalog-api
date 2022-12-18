@@ -4,7 +4,7 @@ import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
 import com.ryzingtitan.datalogapi.cucumber.dtos.LogMessage
-import com.ryzingtitan.datalogapi.presentation.controllers.DatalogController
+import com.ryzingtitan.datalogapi.presentation.controllers.SessionController
 import io.cucumber.datatable.DataTable
 import io.cucumber.java.After
 import io.cucumber.java.Before
@@ -24,7 +24,7 @@ class LoggingStepDefs {
 
     @Before
     fun setup() {
-        userControllerLogger = LoggerFactory.getLogger(DatalogController::class.java) as Logger
+        userControllerLogger = LoggerFactory.getLogger(SessionController::class.java) as Logger
         userControllerLogger.addAppender(appender)
 
         appender.start()

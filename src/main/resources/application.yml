@@ -20,31 +20,27 @@ spring:
   config:
     activate:
       on-profile: production
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017
+      database: dataLogging
 
 ---
 spring:
   config:
     activate:
-      on-profile: test
-  liquibase:
-    url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1
-    user: sa
-    password: sa
-  r2dbc:
-    url: r2dbc:h2:mem:///db?options=DB_CLOSE_DELAY=-1
-    username: sa
-    password: sa
+      on-profile: cucumber
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017
+      database: cucumberTest
 
 ---
 spring:
   config:
     activate:
       on-profile: local
-  liquibase:
-    url: jdbc://postgresql://localhost:5432/example_api
-    user: test
-    password: test
-  r2dbc:
-    url: r2dbc:postgresql://localhost:5432/example_api
-    username: test
-    password: test
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017
+      database: dataLogging

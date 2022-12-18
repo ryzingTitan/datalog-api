@@ -31,18 +31,13 @@ repositories {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
-    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
-    implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
+    implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.0")
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions:1.2.0")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
-    implementation("org.liquibase:liquibase-core:4.17.2")
-    implementation("net.logstash.logback:logstash-logback-encoder:7.2")
-    runtimeOnly("io.r2dbc:r2dbc-postgresql:0.8.13.RELEASE")
-    runtimeOnly("org.postgresql:postgresql:42.5.0")
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -54,8 +49,6 @@ dependencies {
     testImplementation("io.cucumber:cucumber-spring:7.9.0")
     testImplementation("io.projectreactor:reactor-test:3.5.0")
     testImplementation("com.github.tomakehurst:wiremock-jre8:2.35.0")
-    testRuntimeOnly("io.r2dbc:r2dbc-h2")
-    testRuntimeOnly("com.h2database:h2")
 }
 
 tasks.withType<KotlinCompile> {

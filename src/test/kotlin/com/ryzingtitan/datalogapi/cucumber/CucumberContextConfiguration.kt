@@ -6,9 +6,9 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 
 @CucumberContextConfiguration
-@ActiveProfiles("test")
+@ActiveProfiles("cucumber")
 @SpringBootTest(
-    classes = [com.ryzingtitan.datalogapi.DatalogApiApplication::class],
+    classes = [DatalogApiApplication::class],
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 class CucumberContextConfiguration
