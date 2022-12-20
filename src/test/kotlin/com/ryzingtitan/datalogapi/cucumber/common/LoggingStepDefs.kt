@@ -1,6 +1,7 @@
 package com.ryzingtitan.datalogapi.cucumber.common
 
 import ch.qos.logback.classic.Logger
+import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
 import com.ryzingtitan.datalogapi.cucumber.dtos.LogMessage
@@ -27,6 +28,7 @@ class LoggingStepDefs {
         userControllerLogger = LoggerFactory.getLogger(SessionController::class.java) as Logger
         userControllerLogger.addAppender(appender)
 
+        appender.context = LoggerContext()
         appender.start()
     }
 
