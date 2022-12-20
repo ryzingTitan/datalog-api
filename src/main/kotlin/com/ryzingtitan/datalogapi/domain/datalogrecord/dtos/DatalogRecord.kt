@@ -1,4 +1,4 @@
-package com.ryzingtitan.datalogapi.domain.dtos
+package com.ryzingtitan.datalogapi.domain.datalogrecord.dtos
 
 import lombok.Generated
 import java.time.Instant

@@ -5,7 +5,8 @@ import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
-import com.ryzingtitan.datalogapi.domain.dtos.DatalogRecord
+import com.ryzingtitan.datalogapi.domain.datalogrecord.dtos.DatalogRecord
+import com.ryzingtitan.datalogapi.domain.sessionmetadata.dtos.SessionMetadata
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -43,9 +44,31 @@ class SessionControllerTests : CommonControllerTests() {
         }
     }
 
+    @Nested
+    inner class GetSessionMetadata {
+        @Test
+        fun `returns 'OK' status with session metadata for all session`() {
+            whenever(mockSessionMetadataService.getAllSessionMetadata())
+                .thenReturn(flowOf(firstSessionMetadata, secondSessionMetadata))
+
+            webTestClient.get()
+                .uri("/api/datalogs/sessions/metadata")
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus()
+                .isOk
+                .expectBodyList(SessionMetadata::class.java)
+                .contains(firstSessionMetadata, secondSessionMetadata)
+
+            assertEquals(1, appender.list.size)
+            assertEquals(Level.INFO, appender.list[0].level)
+            assertEquals("Retrieving metadata for all sessions", appender.list[0].message)
+        }
+    }
+
     @BeforeEach
     fun setup() {
-        reset(mockDatalogRecordService)
+        reset(mockDatalogRecordService, mockSessionMetadataService)
 
         logger = LoggerFactory.getLogger(SessionController::class.java) as Logger
         appender = ListAppender()
@@ -69,5 +92,17 @@ class SessionControllerTests : CommonControllerTests() {
         sessionId = sessionId,
         timestamp = Instant.now(),
         intakeAirTemperature = 135.8
+    )
+
+    private val firstSessionMetadata = SessionMetadata(
+        sessionId = UUID.randomUUID(),
+        startTime = Instant.now(),
+        endTime = Instant.now()
+    )
+
+    private val secondSessionMetadata = SessionMetadata(
+        sessionId = UUID.randomUUID(),
+        startTime = Instant.now(),
+        endTime = Instant.now()
     )
 }

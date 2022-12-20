@@ -9,4 +9,5 @@ import java.util.UUID
 @Repository
 interface DatalogRecordRepository : CoroutineCrudRepository<DatalogRecordEntity, Int> {
     fun findAllBySessionId(sessionId: UUID): Flow<DatalogRecordEntity>
+//    fun se(): Flow<UUID>
 }

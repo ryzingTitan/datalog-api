@@ -1,7 +1,7 @@
-package com.ryzingtitan.datalogapi.domain.services
+package com.ryzingtitan.datalogapi.domain.datalogrecord.services
 
 import com.ryzingtitan.datalogapi.data.datalogrecord.repositories.DatalogRecordRepository
-import com.ryzingtitan.datalogapi.domain.dtos.DatalogRecord
+import com.ryzingtitan.datalogapi.domain.datalogrecord.dtos.DatalogRecord
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.springframework.stereotype.Service
