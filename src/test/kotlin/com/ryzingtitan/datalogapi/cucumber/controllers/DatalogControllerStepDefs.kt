@@ -56,7 +56,7 @@ class DatalogControllerStepDefs {
     }
 
     private suspend fun handleMultipleDatalogRecordsResponse(clientResponse: ClientResponse) {
-        responseStatus = clientResponse.statusCode()
+        responseStatus = clientResponse.statusCode() as HttpStatus
 
         if (clientResponse.statusCode() == HttpStatus.OK) {
             val datalogRecordList = clientResponse.awaitEntityList<DatalogRecord>().body
