@@ -10,5 +10,5 @@ import org.springframework.boot.runApplication
 class DatalogApiApplication
 
 fun main(args: Array<String>) {
-    runApplication<DatalogApiApplication>(arrayOf(args).toString())
+    runApplication<DatalogApiApplication>(arrayOf(args).contentDeepToString())
 }
