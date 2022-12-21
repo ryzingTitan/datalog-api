@@ -11,6 +11,7 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
     id("io.gitlab.arturbosch.detekt") version "1.22.0"
     id("com.github.ben-manes.versions") version "0.44.0"
+    id("org.sonarqube") version "3.5.0.2730"
     jacoco
 }
 
@@ -48,7 +49,6 @@ dependencies {
     testImplementation("io.cucumber:cucumber-junit-platform-engine:7.10.1")
     testImplementation("io.cucumber:cucumber-spring:7.10.1")
     testImplementation("io.projectreactor:reactor-test:3.5.1")
-    testImplementation("com.github.tomakehurst:wiremock-jre8:2.35.0")
 }
 
 tasks.withType<KotlinCompile> {
@@ -112,7 +112,7 @@ jacoco {
 
 tasks.jacocoTestReport {
     reports {
-        xml.required.set(false)
+        xml.required.set(true)
         csv.required.set(false)
         html.outputLocation.set(file("${rootProject.rootDir}/${rootProject.name}/jacocoHtmlReport"))
     }
@@ -156,4 +156,12 @@ fun String.isNonStable(): Boolean {
     val regex = "^[0-9,.v-]+(-r)?$".toRegex()
     val isStable = stableKeyword || regex.matches(this)
     return isStable.not()
+}
+
+sonarqube {
+    properties {
+        property("sonar.projectKey", "ryzingTitan_datalog-api")
+        property("sonar.organization", "ryzingtitan")
+        property("sonar.host.url", "https://sonarcloud.io")
+    }
 }
