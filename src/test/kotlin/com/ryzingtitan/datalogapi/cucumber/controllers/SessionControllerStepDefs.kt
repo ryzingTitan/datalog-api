@@ -27,7 +27,7 @@ class SessionControllerStepDefs {
 
         runBlocking {
             webClient.get()
-                .uri("/sessions/$sessionId")
+                .uri("/$sessionId/datalogs")
                 .accept(MediaType.APPLICATION_JSON)
                 .awaitExchange { clientResponse ->
                     handleMultipleDatalogRecordsResponse(clientResponse)
@@ -39,7 +39,7 @@ class SessionControllerStepDefs {
     fun whenTheMetadataForTheSessionsIsRetrieved() {
         runBlocking {
             webClient.get()
-                .uri("/sessions/metadata")
+                .uri("/metadata")
                 .accept(MediaType.APPLICATION_JSON)
                 .awaitExchange { clientResponse ->
                     handleMultipleSessionMetadataRecordsResponse(clientResponse)
@@ -67,7 +67,7 @@ class SessionControllerStepDefs {
 
     @Before
     fun setup() {
-        webClient = WebClient.create("http://localhost:$port/api/datalogs")
+        webClient = WebClient.create("http://localhost:$port/api/sessions")
     }
 
     @DataTableType

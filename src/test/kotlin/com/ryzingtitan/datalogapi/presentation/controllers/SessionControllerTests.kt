@@ -23,14 +23,14 @@ import java.util.*
 @ExperimentalCoroutinesApi
 class SessionControllerTests : CommonControllerTests() {
     @Nested
-    inner class GetSessionById {
+    inner class GetDatalogsBySessionId {
         @Test
         fun `returns 'OK' status with session data that matches the request parameter`() {
             whenever(mockDatalogRecordService.getAllBySessionId(sessionId))
                 .thenReturn(flowOf(firstDatalogRecord, secondDatalogRecord))
 
             webTestClient.get()
-                .uri("/api/datalogs/sessions/$sessionId")
+                .uri("/api/sessions/$sessionId/datalogs")
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()
                 .expectStatus()
@@ -52,7 +52,7 @@ class SessionControllerTests : CommonControllerTests() {
                 .thenReturn(flowOf(firstSessionMetadata, secondSessionMetadata))
 
             webTestClient.get()
-                .uri("/api/datalogs/sessions/metadata")
+                .uri("/api/sessions/metadata")
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()
                 .expectStatus()

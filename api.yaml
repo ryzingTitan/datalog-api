@@ -7,7 +7,7 @@ servers:
   - url: http://localhost:8080/api
     description: Local deployment
 paths:
-  /datalogs/sessions/{sessionId}:
+  /sessions/{sessionId}/datalogs:
     get:
       parameters:
         - name: sessionId
@@ -35,7 +35,7 @@ paths:
         500:
           description: Internal Server Error
 
-  /datlogs/sessions/metadata:
+  /sessions/metadata:
     get:
       tags:
         - Sessions
