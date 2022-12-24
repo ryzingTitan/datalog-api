@@ -11,7 +11,7 @@ import java.util.UUID
 class DatalogRecordService(private val datalogRecordRepository: DatalogRecordRepository) {
     fun getAllBySessionId(sessionId: UUID): Flow<DatalogRecord> {
         return datalogRecordRepository
-            .findAllBySessionId(sessionId)
+            .findAllBySessionIdOrderByTimestampAsc(sessionId)
             .map { datalogRecordEntity ->
                 DatalogRecord(
                     datalogRecordEntity.sessionId,

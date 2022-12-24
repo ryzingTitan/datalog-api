@@ -27,7 +27,7 @@ class SessionMetadataService(private val datalogRecordRepository: DatalogRecordR
     private fun getSessionMetadata(sessionId: UUID): SessionMetadata {
         val datalogRecordEntities = mutableListOf<DatalogRecordEntity>()
         runBlocking {
-            datalogRecordEntities.addAll(datalogRecordRepository.findAllBySessionId(sessionId).toList())
+            datalogRecordEntities.addAll(datalogRecordRepository.findAllBySessionIdOrderByTimestampAsc(sessionId).toList())
         }
 
         return SessionMetadata(

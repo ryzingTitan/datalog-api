@@ -51,7 +51,7 @@ class SessionControllerStepDefs {
     fun thenTheFollowingDatalogRecordsAreReturned(table: DataTable) {
         val expectedDatalogRecords = table.tableConverter.toList<DatalogRecord>(table, DatalogRecord::class.java)
 
-        assertEquals(expectedDatalogRecords.sortedBy { it.timestamp }, returnedDatalogRecords.sortedBy { it.timestamp })
+        assertEquals(expectedDatalogRecords, returnedDatalogRecords)
     }
 
     @Then("the following session metadata is returned:")

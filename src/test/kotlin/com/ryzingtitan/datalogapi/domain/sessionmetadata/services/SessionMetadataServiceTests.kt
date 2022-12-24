@@ -54,9 +54,9 @@ class SessionMetadataServiceTests {
     fun setup() {
         sessionMetadataService = SessionMetadataService(mockDatalogRecordRepository)
 
-        whenever(mockDatalogRecordRepository.findAllBySessionId(firstSessionId))
+        whenever(mockDatalogRecordRepository.findAllBySessionIdOrderByTimestampAsc(firstSessionId))
             .thenReturn(flowOf(firstDatalogRecordEntity))
-        whenever(mockDatalogRecordRepository.findAllBySessionId(secondSessionId))
+        whenever(mockDatalogRecordRepository.findAllBySessionIdOrderByTimestampAsc(secondSessionId))
             .thenReturn(flowOf(secondDatalogRecordEntity, thirdDatalogRecordEntity))
     }
 

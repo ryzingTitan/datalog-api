@@ -23,7 +23,7 @@ class DatalogRecordServiceTests {
     inner class GetAllBySessionId {
         @Test
         fun `returns all datalog records with the session id that is provided`() = runTest {
-            whenever(mockDatalogRecordRepository.findAllBySessionId(sessionId))
+            whenever(mockDatalogRecordRepository.findAllBySessionIdOrderByTimestampAsc(sessionId))
                 .thenReturn(flowOf(firstDatalogRecordEntity, secondDatalogRecordEntity))
 
             val datalogRecords = datalogRecordService.getAllBySessionId(sessionId)
