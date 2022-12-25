@@ -40,7 +40,8 @@ class DatalogRecordRepositoryStepDefs(
             timestamp = Instant.parse(tableRow["timestamp"]),
             intakeAirTemperature = tableRow["intakeAirTemperature"].toString().toIntOrNull(),
             boostPressure = tableRow["boostPressure"].toString().toFloatOrNull(),
-            coolantTemperature = tableRow["coolantTemperature"].toString().toIntOrNull()
+            coolantTemperature = tableRow["coolantTemperature"].toString().toIntOrNull(),
+            engineRpm = tableRow["engineRpm"].toString().toIntOrNull()
         )
     }
 }

@@ -85,7 +85,8 @@ class SessionControllerTests : CommonControllerTests() {
         timestamp = Instant.now(),
         intakeAirTemperature = 130,
         boostPressure = 15.6f,
-        coolantTemperature = 150
+        coolantTemperature = 150,
+        engineRpm = 5000
     )
 
     private val secondDatalogRecord = DatalogRecord(
@@ -93,7 +94,8 @@ class SessionControllerTests : CommonControllerTests() {
         timestamp = Instant.now(),
         intakeAirTemperature = 135,
         boostPressure = 15.0f,
-        coolantTemperature = 165
+        coolantTemperature = 165,
+        engineRpm = 5500
     )
 
     private val firstSessionMetadata = SessionMetadata(
