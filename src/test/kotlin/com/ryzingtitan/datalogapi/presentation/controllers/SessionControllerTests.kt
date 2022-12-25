@@ -87,7 +87,8 @@ class SessionControllerTests : CommonControllerTests() {
         boostPressure = 15.6f,
         coolantTemperature = 150,
         engineRpm = 5000,
-        speed = 85
+        speed = 85,
+        throttlePosition = 75.6f
     )
 
     private val secondDatalogRecord = DatalogRecord(
@@ -97,7 +98,8 @@ class SessionControllerTests : CommonControllerTests() {
         boostPressure = 15.0f,
         coolantTemperature = 165,
         engineRpm = 5500,
-        speed = 80
+        speed = 80,
+        throttlePosition = 75.0f
     )
 
     private val firstSessionMetadata = SessionMetadata(
