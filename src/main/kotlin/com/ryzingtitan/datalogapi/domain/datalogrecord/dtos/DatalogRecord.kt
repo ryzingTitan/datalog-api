@@ -8,5 +8,6 @@ import java.util.UUID
 data class DatalogRecord(
     val sessionId: UUID,
     val timestamp: Instant,
-    val intakeAirTemperature: Double?
+    val intakeAirTemperature: Int?,
+    val boostPressure: Float?
 )

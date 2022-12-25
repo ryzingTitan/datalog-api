@@ -66,10 +66,15 @@ components:
           description: The timestamp of the datalog record
           example: 2022-09-18T18:15:47.968Z
         intakeAirTemperature:
-          type: number
-          format: double
+          type: integer
+          format: int32
           description: The intake air temperature
-          example: 135.6
+          example: 135
+        boostPressure:
+          type: number
+          format: float
+          description: The boost pressure
+          example: 15.6
     SessionMetadata:
       type: object
       properties:
