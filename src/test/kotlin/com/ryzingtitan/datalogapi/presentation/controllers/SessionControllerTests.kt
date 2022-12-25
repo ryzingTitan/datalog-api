@@ -83,13 +83,15 @@ class SessionControllerTests : CommonControllerTests() {
     private val firstDatalogRecord = DatalogRecord(
         sessionId = sessionId,
         timestamp = Instant.now(),
-        intakeAirTemperature = 130.0
+        intakeAirTemperature = 130,
+        boostPressure = 15.6f
     )
 
     private val secondDatalogRecord = DatalogRecord(
         sessionId = sessionId,
         timestamp = Instant.now(),
-        intakeAirTemperature = 135.8
+        intakeAirTemperature = 135,
+        boostPressure = 15.0f
     )
 
     private val firstSessionMetadata = SessionMetadata(

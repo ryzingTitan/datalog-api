@@ -47,24 +47,28 @@ class DatalogRecordServiceTests {
     private val firstDatalogRecordEntity = DatalogRecordEntity(
         sessionId = sessionId,
         timestamp = timestamp,
-        intakeAirTemperature = 135.6
+        intakeAirTemperature = 135,
+        boostPressure = 15.6f
     )
 
     private val secondDatalogRecordEntity = DatalogRecordEntity(
         sessionId = sessionId,
         timestamp = timestamp,
-        intakeAirTemperature = null
+        intakeAirTemperature = null,
+        boostPressure = null
     )
 
     private val firstExpectedDatalogRecord = DatalogRecord(
         sessionId = sessionId,
         timestamp = timestamp,
-        intakeAirTemperature = 135.6
+        intakeAirTemperature = 135,
+        boostPressure = 15.6f
     )
 
     private val secondExpectedDatalogRecord = DatalogRecord(
         sessionId = sessionId,
         timestamp = timestamp,
-        intakeAirTemperature = null
+        intakeAirTemperature = null,
+        boostPressure = null
     )
 }
