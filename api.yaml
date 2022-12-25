@@ -85,6 +85,11 @@ components:
           format: int32
           description: The engine RPM
           example: 5000
+        speed:
+          type: integer
+          format: int32
+          description: The speed of the vehicle
+          example: 85
     SessionMetadata:
       type: object
       properties:

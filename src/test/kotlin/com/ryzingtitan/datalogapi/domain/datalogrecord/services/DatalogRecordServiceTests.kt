@@ -50,7 +50,8 @@ class DatalogRecordServiceTests {
         intakeAirTemperature = 135,
         boostPressure = 15.6f,
         coolantTemperature = 150,
-        engineRpm = 5000
+        engineRpm = 5000,
+        speed = 85
     )
 
     private val secondDatalogRecordEntity = DatalogRecordEntity(
@@ -59,7 +60,8 @@ class DatalogRecordServiceTests {
         intakeAirTemperature = null,
         boostPressure = null,
         coolantTemperature = null,
-        engineRpm = null
+        engineRpm = null,
+        speed = null
     )
 
     private val firstExpectedDatalogRecord = DatalogRecord(
@@ -68,7 +70,8 @@ class DatalogRecordServiceTests {
         intakeAirTemperature = 135,
         boostPressure = 15.6f,
         coolantTemperature = 150,
-        engineRpm = 5000
+        engineRpm = 5000,
+        speed = 85
     )
 
     private val secondExpectedDatalogRecord = DatalogRecord(
@@ -77,6 +80,7 @@ class DatalogRecordServiceTests {
         intakeAirTemperature = null,
         boostPressure = null,
         coolantTemperature = null,
-        engineRpm = null
+        engineRpm = null,
+        speed = null
     )
 }
