@@ -78,7 +78,8 @@ class SessionControllerStepDefs {
             intakeAirTemperature = tableRow["intakeAirTemperature"].toString().toIntOrNull(),
             boostPressure = tableRow["boostPressure"].toString().toFloatOrNull(),
             coolantTemperature = tableRow["coolantTemperature"].toString().toIntOrNull(),
-            engineRpm = tableRow["engineRpm"].toString().toIntOrNull()
+            engineRpm = tableRow["engineRpm"].toString().toIntOrNull(),
+            speed = tableRow["speed"].toString().toIntOrNull()
         )
     }
 
