@@ -80,6 +80,11 @@ components:
           format: int32
           description: The coolant temperature
           example: 150
+        engineRpm:
+          type: integer
+          format: int32
+          description: The engine RPM
+          example: 5000
     SessionMetadata:
       type: object
       properties:
