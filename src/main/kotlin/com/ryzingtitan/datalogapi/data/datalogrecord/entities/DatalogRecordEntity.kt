@@ -15,5 +15,6 @@ data class DatalogRecordEntity(
     @Indexed val sessionId: UUID,
     @Indexed(direction = IndexDirection.ASCENDING) val timestamp: Instant,
     val intakeAirTemperature: Int?,
-    val boostPressure: Float?
+    val boostPressure: Float?,
+    val coolantTemperature: Int?
 )
