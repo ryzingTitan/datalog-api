@@ -1,0 +1,46 @@
+spring:
+  profiles:
+    active: production
+  application:
+    name: datalog-api
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  server:
+    port: 8081
+
+---
+spring:
+  config:
+    activate:
+      on-profile: production
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017
+      database: dataLogging
+
+---
+spring:
+  config:
+    activate:
+      on-profile: cucumber
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017
+      database: cucumberTest
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017
+      database: dataLogging

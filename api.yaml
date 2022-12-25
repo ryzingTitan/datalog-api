@@ -1,0 +1,90 @@
+openapi: 3.0.0
+info: 
+  description: Swagger spec for the Datalog API project
+  version: 1.0.0
+  title: datalog-api
+servers:
+  - url: http://localhost:8080/api
+    description: Local deployment
+paths:
+  /sessions/{sessionId}/datalogs:
+    get:
+      parameters:
+        - name: sessionId
+          in: path
+          description: The session id to be used in the search query
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 515ef9d0-2059-4a11-b5c3-7c8dae93b57d
+      tags:
+        - Sessions
+      description: Retrieve all sessions with the given session id sorted by timestamp ascending
+      responses:
+        200:
+          description: The list of datalog records with the given session id sorted by timestamp ascending
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DatalogRecord'
+        400:
+          description: Bad Request - Ensure the query parameter has been included in the request
+        500:
+          description: Internal Server Error
+
+  /sessions/metadata:
+    get:
+      tags:
+        - Sessions
+      description: Retrieve metadata for all sessions
+      responses:
+        200:
+          description: The metadata for every session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionMetadata'
+        500:
+          description: Internal Server Error
+
+components:
+  schemas:
+    DatalogRecord:
+      type: object
+      properties:
+        sessionId:
+          type: string
+          format: uuid
+          description: The session id of the datalog record
+          example: 515ef9d0-2059-4a11-b5c3-7c8dae93b57d
+        timestamp:
+          type: string
+          format: date-time
+          description: The timestamp of the datalog record
+          example: 2022-09-18T18:15:47.968Z
+        intakeAirTemperature:
+          type: number
+          format: double
+          description: The intake air temperature
+          example: 135.6
+    SessionMetadata:
+      type: object
+      properties:
+        sessionId:
+          type: string
+          format: uuid
+          description: The session id
+          example: 515ef9d0-2059-4a11-b5c3-7c8dae93b57d
+        startTime:
+          type: string
+          format: date-time
+          description: The start time of the session
+          example: 2022-09-18T18:15:47.968Z
+        endTime:
+          type: string
+          format: date-time
+          description: The end time of the session
+          example: 2022-09-18T18:18:47.968Z
