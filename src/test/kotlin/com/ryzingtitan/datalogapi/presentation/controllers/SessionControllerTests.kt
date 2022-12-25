@@ -7,7 +7,6 @@ import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
 import com.ryzingtitan.datalogapi.domain.datalogrecord.dtos.DatalogRecord
 import com.ryzingtitan.datalogapi.domain.sessionmetadata.dtos.SessionMetadata
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -20,7 +19,6 @@ import org.springframework.http.MediaType
 import java.time.Instant
 import java.util.*
 
-@ExperimentalCoroutinesApi
 class SessionControllerTests : CommonControllerTests() {
     @Nested
     inner class GetDatalogsBySessionId {

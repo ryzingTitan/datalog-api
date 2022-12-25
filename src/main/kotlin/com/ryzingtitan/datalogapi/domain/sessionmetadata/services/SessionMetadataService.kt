@@ -1,39 +1,23 @@
 package com.ryzingtitan.datalogapi.domain.sessionmetadata.services
 
-import com.ryzingtitan.datalogapi.data.datalogrecord.entities.DatalogRecordEntity
-import com.ryzingtitan.datalogapi.data.datalogrecord.repositories.DatalogRecordRepository
+import com.ryzingtitan.datalogapi.data.datalogrecord.sessionmetadata.repositories.SessionMetadataRepository
 import com.ryzingtitan.datalogapi.domain.sessionmetadata.dtos.SessionMetadata
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.flow.map
 import org.springframework.stereotype.Service
-import java.util.*
 
 @Service
-class SessionMetadataService(private val datalogRecordRepository: DatalogRecordRepository) {
+class SessionMetadataService(
+    private val sessionMetadataRepository: SessionMetadataRepository
+) {
     fun getAllSessionMetadata(): Flow<SessionMetadata> {
-        val datalogRecordEntities = mutableListOf<DatalogRecordEntity>()
-        runBlocking {
-            datalogRecordEntities.addAll(datalogRecordRepository.findAll().toList())
-        }
-        return datalogRecordEntities.distinctBy { it.sessionId }
-            .map { datalogRecordEntity ->
-                getSessionMetadata(datalogRecordEntity.sessionId)
+        return sessionMetadataRepository.getAllSessionMetadata()
+            .map { sessionMetadataEntity ->
+                SessionMetadata(
+                    sessionId = sessionMetadataEntity.sessionId,
+                    startTime = sessionMetadataEntity.startTime,
+                    endTime = sessionMetadataEntity.endTime
+                )
             }
-            .asFlow()
-    }
-
-    private fun getSessionMetadata(sessionId: UUID): SessionMetadata {
-        val datalogRecordEntities = mutableListOf<DatalogRecordEntity>()
-        runBlocking {
-            datalogRecordEntities.addAll(datalogRecordRepository.findAllBySessionIdOrderByTimestampAsc(sessionId).toList())
-        }
-
-        return SessionMetadata(
-            sessionId,
-            datalogRecordEntities.minOf { it.timestamp },
-            datalogRecordEntities.maxOf { it.timestamp }
-        )
     }
 }
