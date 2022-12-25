@@ -18,5 +18,6 @@ data class DatalogRecordEntity(
     val boostPressure: Float?,
     val coolantTemperature: Int?,
     val engineRpm: Int?,
-    val speed: Int?
+    val speed: Int?,
+    val throttlePosition: Float?
 )

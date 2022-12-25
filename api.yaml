@@ -68,17 +68,17 @@ components:
         intakeAirTemperature:
           type: integer
           format: int32
-          description: The intake air temperature
+          description: The intake air temperature in degrees Fahrenheit
           example: 135
         boostPressure:
           type: number
           format: float
-          description: The boost pressure
+          description: The boost pressure in PSI
           example: 15.6
         coolantTemperature:
           type: integer
           format: int32
-          description: The coolant temperature
+          description: The coolant temperature in degrees Fahrenheit
           example: 150
         engineRpm:
           type: integer
@@ -88,7 +88,7 @@ components:
         speed:
           type: integer
           format: int32
-          description: The speed of the vehicle
+          description: The speed of the vehicle in MPH
           example: 85
     SessionMetadata:
       type: object
