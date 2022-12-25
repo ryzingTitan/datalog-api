@@ -39,7 +39,8 @@ class DatalogRecordRepositoryStepDefs(
             sessionId = UUID.fromString(tableRow["sessionId"]),
             timestamp = Instant.parse(tableRow["timestamp"]),
             intakeAirTemperature = tableRow["intakeAirTemperature"].toString().toIntOrNull(),
-            boostPressure = tableRow["boostPressure"].toString().toFloatOrNull()
+            boostPressure = tableRow["boostPressure"].toString().toFloatOrNull(),
+            coolantTemperature = tableRow["coolantTemperature"].toString().toIntOrNull()
         )
     }
 }

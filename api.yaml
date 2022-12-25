@@ -75,6 +75,11 @@ components:
           format: float
           description: The boost pressure
           example: 15.6
+        coolantTemperature:
+          type: integer
+          format: int32
+          description: The coolant temperature
+          example: 150
     SessionMetadata:
       type: object
       properties:
