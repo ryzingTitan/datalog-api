@@ -5,7 +5,8 @@ import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
 import com.ryzingtitan.datalogapi.cucumber.dtos.LogMessage
-import com.ryzingtitan.datalogapi.presentation.controllers.SessionController
+import com.ryzingtitan.datalogapi.presentation.controllers.DatalogController
+import com.ryzingtitan.datalogapi.presentation.controllers.SessionMetadataController
 import io.cucumber.datatable.DataTable
 import io.cucumber.java.After
 import io.cucumber.java.Before
@@ -25,8 +26,11 @@ class LoggingStepDefs {
 
     @Before
     fun setup() {
-        userControllerLogger = LoggerFactory.getLogger(SessionController::class.java) as Logger
-        userControllerLogger.addAppender(appender)
+        datalogControllerLogger = LoggerFactory.getLogger(SessionMetadataController::class.java) as Logger
+        datalogControllerLogger.addAppender(appender)
+
+        datalogControllerLogger = LoggerFactory.getLogger(DatalogController::class.java) as Logger
+        datalogControllerLogger.addAppender(appender)
 
         appender.context = LoggerContext()
         appender.start()
@@ -50,7 +54,7 @@ class LoggingStepDefs {
         appender.stop()
     }
 
-    private lateinit var userControllerLogger: Logger
+    private lateinit var datalogControllerLogger: Logger
 
     private val appender: ListAppender<ILoggingEvent> = ListAppender()
 }
