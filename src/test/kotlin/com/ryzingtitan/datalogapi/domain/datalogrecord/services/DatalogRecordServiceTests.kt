@@ -15,6 +15,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.reset
 import org.mockito.kotlin.whenever
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 import java.util.*
 
 @ExperimentalCoroutinesApi
@@ -23,7 +24,7 @@ class DatalogRecordServiceTests {
     inner class GetAllBySessionId {
         @Test
         fun `returns all datalog records with the session id that is provided`() = runTest {
-            whenever(mockDatalogRecordRepository.findAllBySessionIdOrderByTimestampAsc(sessionId))
+            whenever(mockDatalogRecordRepository.findAllBySessionIdOrderByEpochMillisecondsAsc(sessionId))
                 .thenReturn(flowOf(firstDatalogRecordEntity, secondDatalogRecordEntity))
 
             val datalogRecords = datalogRecordService.getAllBySessionId(sessionId)
@@ -46,7 +47,7 @@ class DatalogRecordServiceTests {
 
     private val firstDatalogRecordEntity = DatalogRecordEntity(
         sessionId = sessionId,
-        timestamp = timestamp,
+        epochMilliseconds = timestamp.toEpochMilli(),
         longitude = -86.14162,
         latitude = 42.406800000000004,
         altitude = 188.4f,
@@ -60,7 +61,7 @@ class DatalogRecordServiceTests {
 
     private val secondDatalogRecordEntity = DatalogRecordEntity(
         sessionId = sessionId,
-        timestamp = timestamp,
+        epochMilliseconds = timestamp.toEpochMilli(),
         longitude = 86.14162,
         latitude = -42.406800000000004,
         altitude = 188.0f,
@@ -74,7 +75,7 @@ class DatalogRecordServiceTests {
 
     private val firstExpectedDatalogRecord = DatalogRecord(
         sessionId = sessionId,
-        timestamp = timestamp,
+        timestamp = timestamp.truncatedTo(ChronoUnit.MILLIS),
         longitude = -86.14162,
         latitude = 42.406800000000004,
         altitude = 188.4f,
@@ -88,7 +89,7 @@ class DatalogRecordServiceTests {
 
     private val secondExpectedDatalogRecord = DatalogRecord(
         sessionId = sessionId,
-        timestamp = timestamp,
+        timestamp = timestamp.truncatedTo(ChronoUnit.MILLIS),
         longitude = 86.14162,
         latitude = -42.406800000000004,
         altitude = 188.0f,

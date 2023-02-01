@@ -7,7 +7,6 @@ import io.cucumber.java.Before
 import io.cucumber.java.DataTableType
 import io.cucumber.java.en.Given
 import kotlinx.coroutines.runBlocking
-import java.time.Instant
 import java.util.UUID
 
 class DatalogRecordRepositoryStepDefs(
@@ -37,7 +36,7 @@ class DatalogRecordRepositoryStepDefs(
     fun mapDatalogRecordEntity(tableRow: Map<String, String>): DatalogRecordEntity {
         return DatalogRecordEntity(
             sessionId = UUID.fromString(tableRow["sessionId"]),
-            timestamp = Instant.parse(tableRow["timestamp"]),
+            epochMilliseconds = tableRow["epochMilliseconds"].toString().toLong(),
             longitude = tableRow["longitude"].toString().toDouble(),
             latitude = tableRow["latitude"].toString().toDouble(),
             altitude = tableRow["altitude"].toString().toFloat(),
