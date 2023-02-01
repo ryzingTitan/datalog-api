@@ -19,7 +19,7 @@ interface SessionMetadataRepository : CoroutineCrudRepository<DatalogRecordEntit
                   'endTime': { '${'$'}max': '${'$'}timestamp'}
                 }
             }
-          """
+          """,
     )
     fun getAllSessionMetadata(): Flow<SessionMetadataEntity>
 }

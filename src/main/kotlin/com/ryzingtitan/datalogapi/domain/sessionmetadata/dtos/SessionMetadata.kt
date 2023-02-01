@@ -8,5 +8,5 @@ import java.util.UUID
 data class SessionMetadata(
     val sessionId: UUID,
     val startTime: Instant,
-    val endTime: Instant
+    val endTime: Instant,
 )

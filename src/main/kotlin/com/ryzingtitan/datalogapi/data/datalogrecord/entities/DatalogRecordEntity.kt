@@ -14,10 +14,13 @@ data class DatalogRecordEntity(
     @Id val recordId: UUID = UUID.randomUUID(),
     @Indexed val sessionId: UUID,
     @Indexed(direction = IndexDirection.ASCENDING) val timestamp: Instant,
+    val longitude: Double,
+    val latitude: Double,
+    val altitude: Float,
     val intakeAirTemperature: Int?,
     val boostPressure: Float?,
     val coolantTemperature: Int?,
     val engineRpm: Int?,
     val speed: Int?,
-    val throttlePosition: Float?
+    val throttlePosition: Float?,
 )

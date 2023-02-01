@@ -65,6 +65,21 @@ components:
           format: date-time
           description: The timestamp of the datalog record
           example: 2022-09-18T18:15:47.968Z
+        longitude:
+          type: number
+          format: double
+          description: The longitude location where the data was recorded
+          example: -86.14170333333335
+        latitude:
+          type: number
+          format: double
+          description: The latitude location where the data was recorded
+          example: 42.406800000000004
+        altitude:
+          type: number
+          format: float
+          description: The altitude where the data was recorded in meters
+          example: 188.6
         intakeAirTemperature:
           type: integer
           format: int32
@@ -90,6 +105,11 @@ components:
           format: int32
           description: The speed of the vehicle in MPH
           example: 85
+        throttlePosition:
+          type: number
+          format: float
+          description: The current percentage of the throttle position
+          example: 75.6
     SessionMetadata:
       type: object
       properties:

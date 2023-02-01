@@ -16,12 +16,15 @@ class DatalogRecordService(private val datalogRecordRepository: DatalogRecordRep
                 DatalogRecord(
                     datalogRecordEntity.sessionId,
                     datalogRecordEntity.timestamp,
+                    datalogRecordEntity.longitude,
+                    datalogRecordEntity.latitude,
+                    datalogRecordEntity.altitude,
                     datalogRecordEntity.intakeAirTemperature,
                     datalogRecordEntity.boostPressure,
                     datalogRecordEntity.coolantTemperature,
                     datalogRecordEntity.engineRpm,
                     datalogRecordEntity.speed,
-                    datalogRecordEntity.throttlePosition
+                    datalogRecordEntity.throttlePosition,
                 )
             }
     }

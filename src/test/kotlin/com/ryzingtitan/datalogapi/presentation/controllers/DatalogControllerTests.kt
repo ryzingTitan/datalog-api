@@ -60,22 +60,28 @@ class DatalogControllerTests : CommonControllerTests() {
     private val firstDatalogRecord = DatalogRecord(
         sessionId = sessionId,
         timestamp = Instant.now(),
+        longitude = -86.14162,
+        latitude = 42.406800000000004,
+        altitude = 188.4f,
         intakeAirTemperature = 130,
         boostPressure = 15.6f,
         coolantTemperature = 150,
         engineRpm = 5000,
         speed = 85,
-        throttlePosition = 75.6f
+        throttlePosition = 75.6f,
     )
 
     private val secondDatalogRecord = DatalogRecord(
         sessionId = sessionId,
         timestamp = Instant.now(),
+        longitude = 86.14162,
+        latitude = -42.406800000000004,
+        altitude = 188.0f,
         intakeAirTemperature = 135,
         boostPressure = 15.0f,
         coolantTemperature = 165,
         engineRpm = 5500,
         speed = 80,
-        throttlePosition = 75.0f
+        throttlePosition = 75.0f,
     )
 }
