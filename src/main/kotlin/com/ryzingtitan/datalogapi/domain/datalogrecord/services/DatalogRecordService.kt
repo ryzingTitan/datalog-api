@@ -21,7 +21,7 @@ class DatalogRecordService(private val datalogRecordRepository: DatalogRecordRep
                     datalogRecordEntity.coolantTemperature,
                     datalogRecordEntity.engineRpm,
                     datalogRecordEntity.speed,
-                    datalogRecordEntity.throttlePosition
+                    datalogRecordEntity.throttlePosition,
                 )
             }
     }

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class SessionMetadataService(
-    private val sessionMetadataRepository: SessionMetadataRepository
+    private val sessionMetadataRepository: SessionMetadataRepository,
 ) {
     fun getAllSessionMetadata(): Flow<SessionMetadata> {
         return sessionMetadataRepository.getAllSessionMetadata()
@@ -16,7 +16,7 @@ class SessionMetadataService(
                 SessionMetadata(
                     sessionId = sessionMetadataEntity.sessionId,
                     startTime = sessionMetadataEntity.startTime,
-                    endTime = sessionMetadataEntity.endTime
+                    endTime = sessionMetadataEntity.endTime,
                 )
             }
     }

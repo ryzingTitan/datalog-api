@@ -16,6 +16,7 @@ import java.util.UUID
 @RequestMapping(path = ["/api/sessions/"])
 class DatalogController(private val datalogRecordService: DatalogRecordService) {
     private val logger = LoggerFactory.getLogger(DatalogController::class.java)
+
     @GetMapping("/{sessionId}/datalogs")
     fun getDatalogsBySessionId(@PathVariable(name = "sessionId") sessionId: UUID): Flow<DatalogRecord> {
         logger.info("Retrieving datalog records for session id: $sessionId")

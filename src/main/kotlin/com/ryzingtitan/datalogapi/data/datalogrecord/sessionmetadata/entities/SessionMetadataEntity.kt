@@ -6,5 +6,5 @@ import java.util.*
 data class SessionMetadataEntity(
     val sessionId: UUID,
     val startTime: Instant,
-    val endTime: Instant
+    val endTime: Instant,
 )

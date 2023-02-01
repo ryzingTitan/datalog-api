@@ -20,7 +20,7 @@ class LoggingStepDefs {
     fun mapLogMessage(tableRow: Map<String, String>): LogMessage {
         return LogMessage(
             level = tableRow["level"].toString(),
-            message = tableRow["message"].toString()
+            message = tableRow["message"].toString(),
         )
     }
 

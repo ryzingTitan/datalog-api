@@ -39,7 +39,7 @@ class SessionMetadataControllerStepDefs {
 
         assertEquals(
             expectedSessionMetadataRecords.sortedBy { it.startTime },
-            returnedSessionMetadataRecords.sortedBy { it.startTime }
+            returnedSessionMetadataRecords.sortedBy { it.startTime },
         )
     }
 
@@ -53,7 +53,7 @@ class SessionMetadataControllerStepDefs {
         return SessionMetadata(
             sessionId = UUID.fromString(tableRow["sessionId"]),
             startTime = Instant.parse(tableRow["startTime"]),
-            endTime = Instant.parse(tableRow["endTime"])
+            endTime = Instant.parse(tableRow["endTime"]),
         )
     }
 
@@ -63,8 +63,9 @@ class SessionMetadataControllerStepDefs {
         if (clientResponse.statusCode() == HttpStatus.OK) {
             val sessionMetadataList = clientResponse.awaitEntityList<SessionMetadata>().body
 
-            if (sessionMetadataList != null)
+            if (sessionMetadataList != null) {
                 returnedSessionMetadataRecords.addAll(sessionMetadataList)
+            }
         }
     }
 

@@ -48,24 +48,24 @@ class SessionMetadataServiceTests {
     private val firstSessionMetadata = SessionMetadata(
         sessionId = firstSessionId,
         startTime = firstSessionTimestamp,
-        endTime = firstSessionTimestamp
+        endTime = firstSessionTimestamp,
     )
 
     private val firstSessionMetadataEntity = SessionMetadataEntity(
         sessionId = firstSessionId,
         startTime = firstSessionTimestamp,
-        endTime = firstSessionTimestamp
+        endTime = firstSessionTimestamp,
     )
 
     private val secondSessionMetadata = SessionMetadata(
         sessionId = secondSessionId,
         startTime = secondSessionStartTimestamp,
-        endTime = secondSessionEndTimestamp
+        endTime = secondSessionEndTimestamp,
     )
 
     private val secondSessionMetadataEntity = SessionMetadataEntity(
         sessionId = secondSessionId,
         startTime = secondSessionStartTimestamp,
-        endTime = secondSessionEndTimestamp
+        endTime = secondSessionEndTimestamp,
     )
 }

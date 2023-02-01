@@ -11,7 +11,7 @@ import java.time.Instant
 import java.util.UUID
 
 class DatalogRecordRepositoryStepDefs(
-    private val datalogRecordRepository: DatalogRecordRepository
+    private val datalogRecordRepository: DatalogRecordRepository,
 ) {
 
     @Given("the following datalog records exist:")
@@ -43,7 +43,7 @@ class DatalogRecordRepositoryStepDefs(
             coolantTemperature = tableRow["coolantTemperature"].toString().toIntOrNull(),
             engineRpm = tableRow["engineRpm"].toString().toIntOrNull(),
             speed = tableRow["speed"].toString().toIntOrNull(),
-            throttlePosition = tableRow["throttlePosition"].toString().toFloatOrNull()
+            throttlePosition = tableRow["throttlePosition"].toString().toFloatOrNull(),
         )
     }
 }

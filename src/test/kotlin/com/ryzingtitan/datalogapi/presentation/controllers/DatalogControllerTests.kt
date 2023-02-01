@@ -65,7 +65,7 @@ class DatalogControllerTests : CommonControllerTests() {
         coolantTemperature = 150,
         engineRpm = 5000,
         speed = 85,
-        throttlePosition = 75.6f
+        throttlePosition = 75.6f,
     )
 
     private val secondDatalogRecord = DatalogRecord(
@@ -76,6 +76,6 @@ class DatalogControllerTests : CommonControllerTests() {
         coolantTemperature = 165,
         engineRpm = 5500,
         speed = 80,
-        throttlePosition = 75.0f
+        throttlePosition = 75.0f,
     )
 }

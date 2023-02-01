@@ -59,12 +59,12 @@ class SessionMetadataControllerTests : CommonControllerTests() {
     private val firstSessionMetadata = SessionMetadata(
         sessionId = UUID.randomUUID(),
         startTime = Instant.now(),
-        endTime = Instant.now()
+        endTime = Instant.now(),
     )
 
     private val secondSessionMetadata = SessionMetadata(
         sessionId = UUID.randomUUID(),
         startTime = Instant.now(),
-        endTime = Instant.now()
+        endTime = Instant.now(),
     )
 }

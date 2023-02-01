@@ -56,7 +56,7 @@ class DatalogControllerStepDefs {
             coolantTemperature = tableRow["coolantTemperature"].toString().toIntOrNull(),
             engineRpm = tableRow["engineRpm"].toString().toIntOrNull(),
             speed = tableRow["speed"].toString().toIntOrNull(),
-            throttlePosition = tableRow["throttlePosition"].toString().toFloatOrNull()
+            throttlePosition = tableRow["throttlePosition"].toString().toFloatOrNull(),
         )
     }
 
@@ -66,8 +66,9 @@ class DatalogControllerStepDefs {
         if (clientResponse.statusCode() == HttpStatus.OK) {
             val datalogRecordList = clientResponse.awaitEntityList<DatalogRecord>().body
 
-            if (datalogRecordList != null)
+            if (datalogRecordList != null) {
                 returnedDatalogRecords.addAll(datalogRecordList)
+            }
         }
     }
 
