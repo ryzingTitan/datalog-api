@@ -51,6 +51,9 @@ class DatalogControllerStepDefs {
         return DatalogRecord(
             sessionId = UUID.fromString(tableRow["sessionId"]),
             timestamp = Instant.parse(tableRow["timestamp"]),
+            longitude = tableRow["longitude"].toString().toDouble(),
+            latitude = tableRow["latitude"].toString().toDouble(),
+            altitude = tableRow["altitude"].toString().toFloat(),
             intakeAirTemperature = tableRow["intakeAirTemperature"].toString().toIntOrNull(),
             boostPressure = tableRow["boostPressure"].toString().toFloatOrNull(),
             coolantTemperature = tableRow["coolantTemperature"].toString().toIntOrNull(),

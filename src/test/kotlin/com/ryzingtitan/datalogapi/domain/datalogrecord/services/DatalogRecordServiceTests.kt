@@ -47,6 +47,9 @@ class DatalogRecordServiceTests {
     private val firstDatalogRecordEntity = DatalogRecordEntity(
         sessionId = sessionId,
         timestamp = timestamp,
+        longitude = -86.14162,
+        latitude = 42.406800000000004,
+        altitude = 188.4f,
         intakeAirTemperature = 135,
         boostPressure = 15.6f,
         coolantTemperature = 150,
@@ -58,6 +61,9 @@ class DatalogRecordServiceTests {
     private val secondDatalogRecordEntity = DatalogRecordEntity(
         sessionId = sessionId,
         timestamp = timestamp,
+        longitude = 86.14162,
+        latitude = -42.406800000000004,
+        altitude = 188.0f,
         intakeAirTemperature = null,
         boostPressure = null,
         coolantTemperature = null,
@@ -69,6 +75,9 @@ class DatalogRecordServiceTests {
     private val firstExpectedDatalogRecord = DatalogRecord(
         sessionId = sessionId,
         timestamp = timestamp,
+        longitude = -86.14162,
+        latitude = 42.406800000000004,
+        altitude = 188.4f,
         intakeAirTemperature = 135,
         boostPressure = 15.6f,
         coolantTemperature = 150,
@@ -80,6 +89,9 @@ class DatalogRecordServiceTests {
     private val secondExpectedDatalogRecord = DatalogRecord(
         sessionId = sessionId,
         timestamp = timestamp,
+        longitude = 86.14162,
+        latitude = -42.406800000000004,
+        altitude = 188.0f,
         intakeAirTemperature = null,
         boostPressure = null,
         coolantTemperature = null,
