@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 @ExperimentalCoroutinesApi
@@ -47,25 +48,25 @@ class SessionMetadataServiceTests {
 
     private val firstSessionMetadata = SessionMetadata(
         sessionId = firstSessionId,
-        startTime = firstSessionTimestamp,
-        endTime = firstSessionTimestamp,
+        startTime = firstSessionTimestamp.truncatedTo(ChronoUnit.MILLIS),
+        endTime = firstSessionTimestamp.truncatedTo(ChronoUnit.MILLIS),
     )
 
     private val firstSessionMetadataEntity = SessionMetadataEntity(
         sessionId = firstSessionId,
-        startTime = firstSessionTimestamp,
-        endTime = firstSessionTimestamp,
+        startTimeEpochMilliseconds = firstSessionTimestamp.toEpochMilli(),
+        endTimeEpochMilliseconds = firstSessionTimestamp.toEpochMilli(),
     )
 
     private val secondSessionMetadata = SessionMetadata(
         sessionId = secondSessionId,
-        startTime = secondSessionStartTimestamp,
-        endTime = secondSessionEndTimestamp,
+        startTime = secondSessionStartTimestamp.truncatedTo(ChronoUnit.MILLIS),
+        endTime = secondSessionEndTimestamp.truncatedTo(ChronoUnit.MILLIS),
     )
 
     private val secondSessionMetadataEntity = SessionMetadataEntity(
         sessionId = secondSessionId,
-        startTime = secondSessionStartTimestamp,
-        endTime = secondSessionEndTimestamp,
+        startTimeEpochMilliseconds = secondSessionStartTimestamp.toEpochMilli(),
+        endTimeEpochMilliseconds = secondSessionEndTimestamp.toEpochMilli(),
     )
 }

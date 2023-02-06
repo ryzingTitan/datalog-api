@@ -15,8 +15,8 @@ interface SessionMetadataRepository : CoroutineCrudRepository<DatalogRecordEntit
             { '${'$'}group': 
                 { '_id': '${'$'}sessionId', 
                   'sessionId': { '${'$'}first': '${'$'}sessionId' }, 
-                  'startTime': { '${'$'}min': '${'$'}timestamp' }, 
-                  'endTime': { '${'$'}max': '${'$'}timestamp'}
+                  'startTimeEpochMilliseconds': { '${'$'}min': '${'$'}_id' }, 
+                  'endTimeEpochMilliseconds': { '${'$'}max': '${'$'}_id'}
                 }
             }
           """,

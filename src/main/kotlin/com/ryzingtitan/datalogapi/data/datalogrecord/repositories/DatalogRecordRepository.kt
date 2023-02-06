@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository
 import java.util.UUID
 
 @Repository
-interface DatalogRecordRepository : CoroutineCrudRepository<DatalogRecordEntity, Int> {
-    fun findAllBySessionIdOrderByTimestampAsc(sessionId: UUID): Flow<DatalogRecordEntity>
+interface DatalogRecordRepository : CoroutineCrudRepository<DatalogRecordEntity, Long> {
+    fun findAllBySessionIdOrderByEpochMillisecondsAsc(sessionId: UUID): Flow<DatalogRecordEntity>
 }

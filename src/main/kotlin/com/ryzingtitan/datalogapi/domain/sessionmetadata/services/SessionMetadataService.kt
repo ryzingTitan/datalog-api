@@ -5,6 +5,7 @@ import com.ryzingtitan.datalogapi.domain.sessionmetadata.dtos.SessionMetadata
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.springframework.stereotype.Service
+import java.time.Instant
 
 @Service
 class SessionMetadataService(
@@ -15,8 +16,8 @@ class SessionMetadataService(
             .map { sessionMetadataEntity ->
                 SessionMetadata(
                     sessionId = sessionMetadataEntity.sessionId,
-                    startTime = sessionMetadataEntity.startTime,
-                    endTime = sessionMetadataEntity.endTime,
+                    startTime = Instant.ofEpochMilli(sessionMetadataEntity.startTimeEpochMilliseconds),
+                    endTime = Instant.ofEpochMilli(sessionMetadataEntity.endTimeEpochMilliseconds),
                 )
             }
     }

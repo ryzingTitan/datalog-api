@@ -5,17 +5,18 @@ import com.ryzingtitan.datalogapi.domain.datalogrecord.dtos.DatalogRecord
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.springframework.stereotype.Service
+import java.time.Instant
 import java.util.UUID
 
 @Service
 class DatalogRecordService(private val datalogRecordRepository: DatalogRecordRepository) {
     fun getAllBySessionId(sessionId: UUID): Flow<DatalogRecord> {
         return datalogRecordRepository
-            .findAllBySessionIdOrderByTimestampAsc(sessionId)
+            .findAllBySessionIdOrderByEpochMillisecondsAsc(sessionId)
             .map { datalogRecordEntity ->
                 DatalogRecord(
                     datalogRecordEntity.sessionId,
-                    datalogRecordEntity.timestamp,
+                    Instant.ofEpochMilli(datalogRecordEntity.epochMilliseconds),
                     datalogRecordEntity.longitude,
                     datalogRecordEntity.latitude,
                     datalogRecordEntity.altitude,
