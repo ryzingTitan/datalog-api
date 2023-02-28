@@ -4,19 +4,22 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 
 plugins {
-    id("org.springframework.boot") version "3.0.2"
+    id("org.springframework.boot") version "3.0.3"
     id("io.spring.dependency-management") version "1.1.0"
-    kotlin("jvm") version "1.8.0"
-    kotlin("plugin.spring") version "1.8.0"
-    id("org.jlleitschuh.gradle.ktlint") version "11.1.0"
+    kotlin("jvm") version "1.8.10"
+    kotlin("plugin.spring") version "1.8.10"
+    id("org.jlleitschuh.gradle.ktlint") version "11.2.0"
     id("io.gitlab.arturbosch.detekt") version "1.22.0"
-    id("com.github.ben-manes.versions") version "0.45.0"
-    id("org.sonarqube") version "3.5.0.2730"
+    id("com.github.ben-manes.versions") version "0.46.0"
+    id("org.sonarqube") version "4.0.0.2929"
+    id("org.owasp.dependencycheck") version "8.1.1"
+    id("org.cyclonedx.bom") version "1.7.4"
+    id("org.graalvm.buildtools.native") version "0.9.20"
     jacoco
 }
 
 group = "com.ryzingtitan"
-version = "2.0.0"
+version = "2.1.0"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 configurations {
@@ -48,7 +51,7 @@ dependencies {
     testImplementation("io.cucumber:cucumber-java:7.11.1")
     testImplementation("io.cucumber:cucumber-junit-platform-engine:7.11.1")
     testImplementation("io.cucumber:cucumber-spring:7.11.1")
-    testImplementation("io.projectreactor:reactor-test:3.5.2")
+    testImplementation("io.projectreactor:reactor-test:3.5.3")
 }
 
 tasks.withType<KotlinCompile> {
@@ -63,20 +66,18 @@ tasks.withType<Test> {
     finalizedBy(tasks.jacocoTestReport)
 }
 
-tasks.register<Copy>("installGitHooks") {
+tasks.getByName("addKtlintFormatGitPreCommitHook") {
     dependsOn("processResources")
     dependsOn("processTestResources")
     dependsOn("ktlintMainSourceSetCheck")
     dependsOn("ktlintTestSourceSetCheck")
     dependsOn("ktlintKotlinScriptCheck")
-    from(rootProject.rootDir) {
-        include("**/pre-commit")
-    }
-    into(".git/hooks")
+    dependsOn("collectReachabilityMetadata")
+    dependsOn("detekt")
 }
 
 tasks.getByName("compileKotlin") {
-    dependsOn("installGitHooks")
+    dependsOn("addKtlintFormatGitPreCommitHook")
 }
 
 ktlint {
@@ -87,14 +88,6 @@ ktlint {
     reporters {
         reporter(ReporterType.JSON)
     }
-}
-
-detekt {
-    source = objects.fileCollection().from(
-        io.gitlab.arturbosch.detekt.extensions.DetektExtension.DEFAULT_SRC_DIR_KOTLIN,
-        io.gitlab.arturbosch.detekt.extensions.DetektExtension.DEFAULT_TEST_SRC_DIR_KOTLIN,
-    )
-    buildUponDefaultConfig = true
 }
 
 tasks.withType<Detekt>().configureEach {

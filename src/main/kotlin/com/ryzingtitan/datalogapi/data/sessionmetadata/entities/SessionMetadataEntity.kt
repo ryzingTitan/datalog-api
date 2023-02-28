@@ -1,4 +1,4 @@
-package com.ryzingtitan.datalogapi.data.datalogrecord.sessionmetadata.entities
+package com.ryzingtitan.datalogapi.data.sessionmetadata.entities
 
 import java.util.*
 
