@@ -29,6 +29,16 @@ spring:
 spring:
   config:
     activate:
+      on-profile: cloud
+  data:
+    mongodb:
+      uri: ${MONGO_DB_URL}
+      database: dataLogging
+
+---
+spring:
+  config:
+    activate:
       on-profile: cucumber
   data:
     mongodb:
