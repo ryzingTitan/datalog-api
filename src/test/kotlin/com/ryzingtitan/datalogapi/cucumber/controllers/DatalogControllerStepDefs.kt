@@ -60,6 +60,7 @@ class DatalogControllerStepDefs {
             engineRpm = tableRow["engineRpm"].toString().toIntOrNull(),
             speed = tableRow["speed"].toString().toIntOrNull(),
             throttlePosition = tableRow["throttlePosition"].toString().toFloatOrNull(),
+            airFuelRatio = tableRow["airFuelRatio"].toString().toFloatOrNull(),
         )
     }
 
