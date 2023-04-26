@@ -28,7 +28,7 @@ jobs:
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.8.0
         with:
-          mongodb-version: '6.0.3'
+          mongodb-version: '6.0.4'
       - name: Cache SonarCloud packages
         uses: actions/cache@v1
         with:
@@ -41,5 +41,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
-          gradle-version: 8.0.2
+          gradle-version: 8.1.1
           arguments: build sonar
