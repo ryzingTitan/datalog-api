@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
 @RestController
-@CrossOrigin(origins = ["http://localhost:3000"])
+@CrossOrigin(origins = ["http://localhost:3000", "https://datalog-viewer-uonahdb5jq-uc.a.run.app"])
 @RequestMapping(path = ["/api/sessions/"])
 class DatalogController(private val datalogRecordService: DatalogRecordService) {
     private val logger = LoggerFactory.getLogger(DatalogController::class.java)

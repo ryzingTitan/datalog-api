@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info: 
   description: Swagger spec for the Datalog API project
-  version: 1.0.0
+  version: 2.2.0
   title: datalog-api
 servers:
   - url: http://localhost:8080/api
@@ -110,6 +110,11 @@ components:
           format: float
           description: The current percentage of the throttle position
           example: 75.6
+        airFuelRatio:
+          type: number
+          format: float
+          description: The current air fuel ratio
+          example: 14.6
     SessionMetadata:
       type: object
       properties:
