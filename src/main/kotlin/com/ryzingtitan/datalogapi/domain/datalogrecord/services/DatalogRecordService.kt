@@ -4,12 +4,14 @@ import com.ryzingtitan.datalogapi.data.datalogrecord.repositories.DatalogRecordR
 import com.ryzingtitan.datalogapi.domain.datalogrecord.dtos.DatalogRecord
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import java.time.Instant
 import java.util.UUID
 
 @Service
 class DatalogRecordService(private val datalogRecordRepository: DatalogRecordRepository) {
+    @Cacheable(cacheNames = ["datalogs"], key = "#sessionId")
     fun getAllBySessionId(sessionId: UUID): Flow<DatalogRecord> {
         return datalogRecordRepository
             .findAllBySessionIdOrderByEpochMillisecondsAsc(sessionId)
