@@ -20,7 +20,7 @@ plugins {
 }
 
 group = "com.ryzingtitan"
-version = "2.2.0"
+version = "2.3.0"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 configurations {
@@ -38,6 +38,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
     implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-cache")
+    implementation("com.github.ben-manes.caffeine:caffeine:3.1.6")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.0")
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions:1.2.2")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
