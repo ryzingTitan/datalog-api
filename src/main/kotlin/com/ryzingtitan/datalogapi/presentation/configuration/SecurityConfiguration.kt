@@ -12,25 +12,24 @@ import org.springframework.security.web.server.SecurityWebFilterChain
 class SecurityConfiguration {
     @Bean
     fun springSecurityFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain {
+        http
+            .authorizeExchange { exchange ->
+                exchange.pathMatchers(HttpMethod.GET, "/api/sessions/**")
+                    .permitAll()
+                    .pathMatchers(HttpMethod.OPTIONS, "/api/sessions/**")
+                    .permitAll()
+                    .pathMatchers(HttpMethod.GET, "/actuator/health")
+                    .permitAll()
+                    .pathMatchers("/**")
+                    .denyAll()
+            }
+            .cors { it.disable() }
+            .csrf { it.disable() }
+            .httpBasic { it.disable() }
+            .formLogin { it.disable() }
+            .logout { it.disable() }
+
         return http
-            .cors()
-            .and()
-            .csrf().disable()
-            .headers().cache().disable()
-            .and()
-            .authorizeExchange()
-            .pathMatchers(HttpMethod.GET, "/api/sessions/**")
-            .permitAll()
-            .pathMatchers(HttpMethod.OPTIONS, "/api/sessions/**")
-            .permitAll()
-            .pathMatchers(HttpMethod.GET, "/actuator/health")
-            .permitAll()
-            .pathMatchers("/**")
-            .denyAll()
-            .and()
-            .httpBasic().disable()
-            .formLogin().disable()
-            .logout().disable()
             .build()
     }
 }
