@@ -1,6 +1,6 @@
 package com.ryzingtitan.datalogapi.presentation.controllers
 
-import com.ryzingtitan.datalogapi.domain.datalogrecord.services.DatalogRecordService
+import com.ryzingtitan.datalogapi.domain.datalog.services.DatalogService
 import com.ryzingtitan.datalogapi.domain.sessionmetadata.services.SessionMetadataService
 import com.ryzingtitan.datalogapi.presentation.configuration.SecurityConfiguration
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,7 +19,7 @@ abstract class CommonControllerTests {
     protected lateinit var webTestClient: WebTestClient
 
     @MockBean
-    protected lateinit var mockDatalogRecordService: DatalogRecordService
+    protected lateinit var mockDatalogService: DatalogService
 
     @MockBean
     protected lateinit var mockSessionMetadataService: SessionMetadataService

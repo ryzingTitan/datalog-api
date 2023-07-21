@@ -1,6 +1,6 @@
 package com.ryzingtitan.datalogapi.data.sessionmetadata.repositories
 
-import com.ryzingtitan.datalogapi.data.datalogrecord.entities.DatalogRecordEntity
+import com.ryzingtitan.datalogapi.data.datalog.entities.DatalogEntity
 import com.ryzingtitan.datalogapi.data.sessionmetadata.entities.SessionMetadataEntity
 import kotlinx.coroutines.flow.Flow
 import org.springframework.data.mongodb.repository.Aggregation
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository
 import java.util.UUID
 
 @Repository
-interface SessionMetadataRepository : CoroutineCrudRepository<DatalogRecordEntity, UUID> {
+interface SessionMetadataRepository : CoroutineCrudRepository<DatalogEntity, UUID> {
     @Aggregation(
         """
             { '${'$'}group': 
