@@ -6,17 +6,15 @@ import com.ryzingtitan.datalogapi.domain.datalog.dtos.Datalog
 import com.ryzingtitan.datalogapi.domain.datalog.dtos.TrackInfo
 import com.ryzingtitan.datalogapi.domain.datalog.dtos.User
 import io.cucumber.datatable.DataTable
-import io.cucumber.java.Before
 import io.cucumber.java.DataTableType
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 import kotlinx.coroutines.runBlocking
+import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.client.ClientResponse
-import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitEntityList
 import org.springframework.web.reactive.function.client.awaitExchange
 import java.time.Instant
@@ -27,10 +25,14 @@ class DatalogControllerStepDefs {
     fun whenTheDatalogsForSessionWithIdAreRetrieved(sessionIdString: String) {
         val sessionId = UUID.fromString(sessionIdString)
 
+        val token = CommonControllerStepDefs.mockOAuth2Server
+            .issueToken("default", "someclientid", DefaultOAuth2TokenCallback())
+
         runBlocking {
-            webClient.get()
+            CommonControllerStepDefs.webClient.get()
                 .uri("/$sessionId/datalogs")
                 .accept(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer ${token.serialize()}")
                 .awaitExchange { clientResponse ->
                     handleMultipleDatalogResponse(clientResponse)
                 }
@@ -42,11 +44,6 @@ class DatalogControllerStepDefs {
         val expectedDatalogs = table.tableConverter.toList<Datalog>(table, Datalog::class.java)
 
         assertEquals(expectedDatalogs, returnedDatalogs)
-    }
-
-    @Before
-    fun setup() {
-        webClient = WebClient.create("http://localhost:$port/api/sessions")
     }
 
     @DataTableType
@@ -90,11 +87,6 @@ class DatalogControllerStepDefs {
             }
         }
     }
-
-    @LocalServerPort
-    private val port = 0
-
-    private lateinit var webClient: WebClient
 
     private val returnedDatalogs = mutableListOf<Datalog>()
 }

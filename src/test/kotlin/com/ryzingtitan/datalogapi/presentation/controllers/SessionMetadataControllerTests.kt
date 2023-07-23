@@ -15,6 +15,7 @@ import org.mockito.kotlin.reset
 import org.mockito.kotlin.whenever
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
+import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockJwt
 import java.time.Instant
 import java.util.*
 
@@ -27,7 +28,9 @@ class SessionMetadataControllerTests : CommonControllerTests() {
             whenever(mockSessionMetadataService.getAllSessionMetadata())
                 .thenReturn(flowOf(firstSessionMetadata, secondSessionMetadata))
 
-            webTestClient.get()
+            webTestClient
+                .mutateWith(mockJwt())
+                .get()
                 .uri("/api/sessions/metadata")
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()

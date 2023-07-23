@@ -18,6 +18,7 @@ import org.mockito.kotlin.reset
 import org.mockito.kotlin.whenever
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
+import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockJwt
 import java.time.Instant
 import java.util.*
 
@@ -29,7 +30,9 @@ class DatalogControllerTests : CommonControllerTests() {
             whenever(mockDatalogService.getAllBySessionId(sessionId))
                 .thenReturn(flowOf(firstDatalog, secondDatalog))
 
-            webTestClient.get()
+            webTestClient
+                .mutateWith(mockJwt())
+                .get()
                 .uri("/api/sessions/$sessionId/datalogs")
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()

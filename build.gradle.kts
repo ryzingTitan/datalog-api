@@ -39,6 +39,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-cache")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.6")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2")
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions:1.2.2")
@@ -48,6 +49,7 @@ dependencies {
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.security:spring-security-test:")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.2")
     testImplementation("org.junit.platform:junit-platform-suite-api:1.9.3")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.0.0")
@@ -55,6 +57,7 @@ dependencies {
     testImplementation("io.cucumber:cucumber-junit-platform-engine:7.13.0")
     testImplementation("io.cucumber:cucumber-spring:7.13.0")
     testImplementation("io.projectreactor:reactor-test:3.5.8")
+    testImplementation("no.nav.security:mock-oauth2-server:1.0.0")
 }
 
 tasks.withType<KotlinCompile> {
