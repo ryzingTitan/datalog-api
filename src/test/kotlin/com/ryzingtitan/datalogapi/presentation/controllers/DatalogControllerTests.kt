@@ -5,7 +5,10 @@ import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
-import com.ryzingtitan.datalogapi.domain.datalogrecord.dtos.DatalogRecord
+import com.ryzingtitan.datalogapi.domain.datalog.dtos.Data
+import com.ryzingtitan.datalogapi.domain.datalog.dtos.Datalog
+import com.ryzingtitan.datalogapi.domain.datalog.dtos.TrackInfo
+import com.ryzingtitan.datalogapi.domain.datalog.dtos.User
 import kotlinx.coroutines.flow.flowOf
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -23,8 +26,8 @@ class DatalogControllerTests : CommonControllerTests() {
     inner class GetDatalogsBySessionId {
         @Test
         fun `returns 'OK' status with session data that matches the request parameter`() {
-            whenever(mockDatalogRecordService.getAllBySessionId(sessionId))
-                .thenReturn(flowOf(firstDatalogRecord, secondDatalogRecord))
+            whenever(mockDatalogService.getAllBySessionId(sessionId))
+                .thenReturn(flowOf(firstDatalog, secondDatalog))
 
             webTestClient.get()
                 .uri("/api/sessions/$sessionId/datalogs")
@@ -32,8 +35,8 @@ class DatalogControllerTests : CommonControllerTests() {
                 .exchange()
                 .expectStatus()
                 .isOk
-                .expectBodyList(DatalogRecord::class.java)
-                .contains(firstDatalogRecord, secondDatalogRecord)
+                .expectBodyList(Datalog::class.java)
+                .contains(firstDatalog, secondDatalog)
 
             assertEquals(1, appender.list.size)
             assertEquals(Level.INFO, appender.list[0].level)
@@ -43,7 +46,7 @@ class DatalogControllerTests : CommonControllerTests() {
 
     @BeforeEach
     fun setup() {
-        reset(mockDatalogRecordService)
+        reset(mockDatalogService)
 
         logger = LoggerFactory.getLogger(DatalogController::class.java) as Logger
         appender = ListAppender()
@@ -57,33 +60,41 @@ class DatalogControllerTests : CommonControllerTests() {
 
     private val sessionId = UUID.randomUUID()
 
-    private val firstDatalogRecord = DatalogRecord(
+    private val firstDatalog = Datalog(
         sessionId = sessionId,
         timestamp = Instant.now(),
-        longitude = -86.14162,
-        latitude = 42.406800000000004,
-        altitude = 188.4f,
-        intakeAirTemperature = 130,
-        boostPressure = 15.6f,
-        coolantTemperature = 150,
-        engineRpm = 5000,
-        speed = 85,
-        throttlePosition = 75.6f,
-        airFuelRatio = 14.7f,
+        data = Data(
+            longitude = -86.14162,
+            latitude = 42.406800000000004,
+            altitude = 188.4f,
+            intakeAirTemperature = 130,
+            boostPressure = 15.6f,
+            coolantTemperature = 150,
+            engineRpm = 5000,
+            speed = 85,
+            throttlePosition = 75.6f,
+            airFuelRatio = 14.7f,
+        ),
+        trackInfo = TrackInfo("", 0.0, 0.0),
+        user = User("", "", ""),
     )
 
-    private val secondDatalogRecord = DatalogRecord(
+    private val secondDatalog = Datalog(
         sessionId = sessionId,
         timestamp = Instant.now(),
-        longitude = 86.14162,
-        latitude = -42.406800000000004,
-        altitude = 188.0f,
-        intakeAirTemperature = 135,
-        boostPressure = 15.0f,
-        coolantTemperature = 165,
-        engineRpm = 5500,
-        speed = 80,
-        throttlePosition = 75.0f,
-        airFuelRatio = 15.9f,
+        data = Data(
+            longitude = 86.14162,
+            latitude = -42.406800000000004,
+            altitude = 188.0f,
+            intakeAirTemperature = 135,
+            boostPressure = 15.0f,
+            coolantTemperature = 165,
+            engineRpm = 5500,
+            speed = 80,
+            throttlePosition = 75.0f,
+            airFuelRatio = 15.9f,
+        ),
+        trackInfo = TrackInfo("", 0.0, 0.0),
+        user = User("", "", ""),
     )
 }
