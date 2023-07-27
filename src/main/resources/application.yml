@@ -24,6 +24,11 @@ spring:
     mongodb:
       uri: mongodb://host.docker.internal:27017
       database: dataLogging
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://accounts.google.com
 
 ---
 spring:
@@ -34,16 +39,26 @@ spring:
     mongodb:
       uri: ${MONGO_DB_URL}
       database: dataLogging
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://accounts.google.com
 
 ---
 spring:
   config:
     activate:
-      on-profile: cucumber
+      on-profile: test
   data:
     mongodb:
       uri: mongodb://localhost:27017
       database: cucumberTest
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8088/default
 
 ---
 spring:
@@ -54,3 +69,8 @@ spring:
     mongodb:
       uri: mongodb://localhost:27017
       database: dataLogging
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://accounts.google.com

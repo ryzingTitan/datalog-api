@@ -1,19 +1,18 @@
 package com.ryzingtitan.datalogapi.cucumber.controllers
 
+import com.ryzingtitan.datalogapi.cucumber.common.CommonControllerStepDefs
 import com.ryzingtitan.datalogapi.cucumber.common.CommonControllerStepDefs.CommonControllerStepDefsSharedState.responseStatus
 import com.ryzingtitan.datalogapi.domain.sessionmetadata.dtos.SessionMetadata
 import io.cucumber.datatable.DataTable
-import io.cucumber.java.Before
 import io.cucumber.java.DataTableType
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 import kotlinx.coroutines.runBlocking
+import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.client.ClientResponse
-import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitEntityList
 import org.springframework.web.reactive.function.client.awaitExchange
 import java.time.Instant
@@ -22,10 +21,14 @@ import java.util.*
 class SessionMetadataControllerStepDefs {
     @When("the metadata for the sessions is retrieved")
     fun whenTheMetadataForTheSessionsIsRetrieved() {
+        val token = CommonControllerStepDefs.mockOAuth2Server
+            .issueToken("default", "someclientid", DefaultOAuth2TokenCallback())
+
         runBlocking {
-            webClient.get()
+            CommonControllerStepDefs.webClient.get()
                 .uri("/metadata")
                 .accept(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer ${token.serialize()}")
                 .awaitExchange { clientResponse ->
                     handleMultipleSessionMetadataRecordsResponse(clientResponse)
                 }
@@ -41,11 +44,6 @@ class SessionMetadataControllerStepDefs {
             expectedSessionMetadataRecords.sortedBy { it.startTime },
             returnedSessionMetadataRecords.sortedBy { it.startTime },
         )
-    }
-
-    @Before
-    fun setup() {
-        webClient = WebClient.create("http://localhost:$port/api/sessions")
     }
 
     @DataTableType
@@ -68,11 +66,6 @@ class SessionMetadataControllerStepDefs {
             }
         }
     }
-
-    @LocalServerPort
-    private val port = 0
-
-    private lateinit var webClient: WebClient
 
     private val returnedSessionMetadataRecords = mutableListOf<SessionMetadata>()
 }
