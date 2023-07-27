@@ -22,16 +22,16 @@ import java.util.*
 class SessionMetadataControllerTests : CommonControllerTests() {
 
     @Nested
-    inner class GetSessionMetadata {
+    inner class GetSessionMetadataByUser {
         @Test
-        fun `returns 'OK' status with session metadata for all session`() {
-            whenever(mockSessionMetadataService.getAllSessionMetadata())
+        fun `returns 'OK' status with session metadata for all user sessions`() {
+            whenever(mockSessionMetadataService.getAllSessionMetadataByUser("test@test.com"))
                 .thenReturn(flowOf(firstSessionMetadata, secondSessionMetadata))
 
             webTestClient
                 .mutateWith(mockJwt())
                 .get()
-                .uri("/api/sessions/metadata")
+                .uri("/api/sessions/metadata?username=test@test.com")
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()
                 .expectStatus()
@@ -41,7 +41,7 @@ class SessionMetadataControllerTests : CommonControllerTests() {
 
             assertEquals(1, appender.list.size)
             assertEquals(Level.INFO, appender.list[0].level)
-            assertEquals("Retrieving metadata for all sessions", appender.list[0].message)
+            assertEquals("Retrieving metadata for all sessions for user: test@test.com", appender.list[0].message)
         }
     }
 

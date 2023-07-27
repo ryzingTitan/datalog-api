@@ -20,10 +20,10 @@ import java.util.UUID
 @ExperimentalCoroutinesApi
 class SessionMetadataServiceTests {
     @Nested
-    inner class GetAllSessionMetadata {
+    inner class GetAllSessionMetadataByUser {
         @Test
         fun `returns correct session metadata`() = runTest {
-            val sessionMetadataList = sessionMetadataService.getAllSessionMetadata()
+            val sessionMetadataList = sessionMetadataService.getAllSessionMetadataByUser(firstUsername)
 
             assertEquals(listOf(firstSessionMetadata, secondSessionMetadata), sessionMetadataList.toList())
         }
@@ -34,7 +34,7 @@ class SessionMetadataServiceTests {
         sessionMetadataService = SessionMetadataService(mockSessionMetadataRepository)
 
         whenever(mockSessionMetadataRepository.getAllSessionMetadata())
-            .thenReturn(flowOf(firstSessionMetadataEntity, secondSessionMetadataEntity))
+            .thenReturn(flowOf(firstSessionMetadataEntity, secondSessionMetadataEntity, thirdSessionMetadataEntity))
     }
 
     private lateinit var sessionMetadataService: SessionMetadataService
@@ -42,9 +42,13 @@ class SessionMetadataServiceTests {
     private val mockSessionMetadataRepository = mock<SessionMetadataRepository>()
     private val firstSessionId = UUID.randomUUID()
     private val secondSessionId = UUID.randomUUID()
+    private val thirdSessionId = UUID.randomUUID()
     private val firstSessionTimestamp = Instant.now()
     private val secondSessionStartTimestamp = Instant.now()
     private val secondSessionEndTimestamp = Instant.now().plusSeconds(500)
+    private val thirdSessionTimestamp = Instant.now()
+    private val firstUsername = "test@test.com"
+    private val secondUsername = "test2@test.com"
 
     private val firstSessionMetadata = SessionMetadata(
         sessionId = firstSessionId,
@@ -56,6 +60,7 @@ class SessionMetadataServiceTests {
         sessionId = firstSessionId,
         startTimeEpochMilliseconds = firstSessionTimestamp.toEpochMilli(),
         endTimeEpochMilliseconds = firstSessionTimestamp.toEpochMilli(),
+        username = firstUsername,
     )
 
     private val secondSessionMetadata = SessionMetadata(
@@ -68,5 +73,13 @@ class SessionMetadataServiceTests {
         sessionId = secondSessionId,
         startTimeEpochMilliseconds = secondSessionStartTimestamp.toEpochMilli(),
         endTimeEpochMilliseconds = secondSessionEndTimestamp.toEpochMilli(),
+        username = firstUsername,
+    )
+
+    private val thirdSessionMetadataEntity = SessionMetadataEntity(
+        sessionId = thirdSessionId,
+        startTimeEpochMilliseconds = thirdSessionTimestamp.toEpochMilli(),
+        endTimeEpochMilliseconds = thirdSessionTimestamp.toEpochMilli(),
+        username = secondUsername,
     )
 }
