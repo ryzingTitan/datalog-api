@@ -19,14 +19,14 @@ import java.time.Instant
 import java.util.*
 
 class SessionMetadataControllerStepDefs {
-    @When("the metadata for the sessions is retrieved")
-    fun whenTheMetadataForTheSessionsIsRetrieved() {
+    @When("the metadata for the sessions is retrieved for user {string}")
+    fun whenTheMetadataForTheSessionsIsRetrievedForUser(username: String) {
         val token = CommonControllerStepDefs.mockOAuth2Server
             .issueToken("default", "someclientid", DefaultOAuth2TokenCallback())
 
         runBlocking {
             CommonControllerStepDefs.webClient.get()
-                .uri("/metadata")
+                .uri("/metadata?username=$username")
                 .accept(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer ${token.serialize()}")
                 .awaitExchange { clientResponse ->

@@ -37,6 +37,15 @@ paths:
 
   /sessions/metadata:
     get:
+      parameters:
+        - name: username
+          in: query
+          description: The email address (username) of the current user
+          required: true
+          schema:
+            type: string
+            format: email
+            example: test@test.com
       tags:
         - Sessions
       description: Retrieve metadata for all sessions

@@ -15,6 +15,7 @@ interface SessionMetadataRepository : CoroutineCrudRepository<DatalogEntity, UUI
             { '${'$'}group': 
                 { '_id': '${'$'}sessionId', 
                   'sessionId': { '${'$'}first': '${'$'}sessionId' }, 
+                  'username': { '${'$'}first': '${'$'}user.email' }, 
                   'startTimeEpochMilliseconds': { '${'$'}min': '${'$'}_id' }, 
                   'endTimeEpochMilliseconds': { '${'$'}max': '${'$'}_id'}
                 }
