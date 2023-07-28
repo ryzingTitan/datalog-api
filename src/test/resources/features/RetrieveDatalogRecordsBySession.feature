@@ -4,6 +4,7 @@ Feature: Retrieve datalog records by session id
     Given the following datalogs exist:
       | sessionId                            | epochMilliseconds | longitude          | latitude           | altitude | intakeAirTemperature | boostPressure | coolantTemperature | engineRpm | speed | throttlePosition | airFuelRatio | trackName  | trackLatitude | trackLongitude | firstName | lastName | email         |
       | c61cc339-f93d-45a4-aa2b-923f0482b97f | 1663524947968     | -86.14170333333335 | 42.406800000000004 | 188.4    | 123                  | 15.6          | 150                | 5000      | 85    | 75.6             | 14.7         | Test Track | 42.4086       | -86.1374       | test      | tester   | test@test.com |
+    And the user has a valid authorization token
     When the datalogs for session with id 'c61cc339-f93d-45a4-aa2b-923f0482b97f' are retrieved
     Then the request response status is 'OK'
     And the following datalogs are returned:
@@ -70,3 +71,15 @@ Feature: Retrieve datalog records by session id
     And the application will log the following messages:
       | level | message                                                                         |
       | INFO  | Retrieving datalog records for session id: c61cc339-f93d-45a4-aa2b-923f0482b97f |
+
+  Scenario: Datalogs cannot be read with an invalid authorization token
+    Given the following datalogs exist:
+      | sessionId                            | epochMilliseconds | longitude          | latitude           | altitude | intakeAirTemperature | boostPressure | coolantTemperature | engineRpm | speed | throttlePosition | airFuelRatio | trackName  | trackLatitude | trackLongitude | firstName | lastName | email         |
+      | c61cc339-f93d-45a4-aa2b-923f0482b97f | 1663524947968     | -86.14170333333335 | 42.406800000000004 | 188.4    | 123                  | 15.6          | 150                | 5000      | 85    | 75.6             | 14.7         | Test Track | 42.4086       | -86.1374       | test      | tester   | test@test.com |
+    And the user has an invalid authorization token
+    When the datalogs for session with id 'c61cc339-f93d-45a4-aa2b-923f0482b97f' are retrieved
+    Then the request response status is 'UNAUTHORIZED'
+    And the following datalogs are returned:
+      | sessionId | timestamp | longitude | latitude | altitude | intakeAirTemperature | boostPressure | coolantTemperature | engineRpm | speed | throttlePosition | airFuelRatio | trackName | trackLatitude | trackLongitude | firstName | lastName | email |
+    And the application will log the following messages:
+      | level | message |
