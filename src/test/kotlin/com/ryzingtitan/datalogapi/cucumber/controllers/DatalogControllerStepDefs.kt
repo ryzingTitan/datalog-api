@@ -10,7 +10,6 @@ import io.cucumber.java.DataTableType
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 import kotlinx.coroutines.runBlocking
-import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -25,14 +24,14 @@ class DatalogControllerStepDefs {
     fun whenTheDatalogsForSessionWithIdAreRetrieved(sessionIdString: String) {
         val sessionId = UUID.fromString(sessionIdString)
 
-        val token = CommonControllerStepDefs.mockOAuth2Server
-            .issueToken("default", "someclientid", DefaultOAuth2TokenCallback())
-
         runBlocking {
             CommonControllerStepDefs.webClient.get()
                 .uri("/$sessionId/datalogs")
                 .accept(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer ${token.serialize()}")
+                .header(
+                    "Authorization",
+                    "Bearer ${CommonControllerStepDefs.authorizationToken?.serialize()}",
+                )
                 .awaitExchange { clientResponse ->
                     handleMultipleDatalogResponse(clientResponse)
                 }

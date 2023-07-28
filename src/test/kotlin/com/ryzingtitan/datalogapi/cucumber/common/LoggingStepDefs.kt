@@ -26,8 +26,8 @@ class LoggingStepDefs {
 
     @Before
     fun setup() {
-        datalogControllerLogger = LoggerFactory.getLogger(SessionMetadataController::class.java) as Logger
-        datalogControllerLogger.addAppender(appender)
+        sessionMetadataControllerLogger = LoggerFactory.getLogger(SessionMetadataController::class.java) as Logger
+        sessionMetadataControllerLogger.addAppender(appender)
 
         datalogControllerLogger = LoggerFactory.getLogger(DatalogController::class.java) as Logger
         datalogControllerLogger.addAppender(appender)
@@ -55,6 +55,7 @@ class LoggingStepDefs {
     }
 
     private lateinit var datalogControllerLogger: Logger
+    private lateinit var sessionMetadataControllerLogger: Logger
 
     private val appender: ListAppender<ILoggingEvent> = ListAppender()
 }
