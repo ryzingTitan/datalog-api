@@ -37,6 +37,43 @@ paths:
         500:
           description: Internal Server Error
 
+  /sessions/{sessionId}/upload:
+    put:
+      parameters:
+        - name: sessionId
+          in: path
+          description: The session id to be used when storing the data
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 515ef9d0-2059-4a11-b5c3-7c8dae93b57d
+      tags:
+        - File Upload
+      description: Upload a file with session data
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                trackInfo:
+                  $ref: '#/components/schemas/TrackInfo'
+                user:
+                  $ref: '#/components/schemas/User'
+                uploadFile:
+                  type: string
+                  format: binary
+      responses:
+        200:
+          description: Session data uploaded successfully
+        400:
+          description: Bad Request - Ensure the request contains all required data
+        401:
+          description: Unauthorized - Ensure the authorization token is valid
+        500:
+          description: Internal Server Error
+
   /sessions/metadata:
     get:
       parameters:

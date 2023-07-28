@@ -1,6 +1,7 @@
 package com.ryzingtitan.datalogapi.presentation.controllers
 
 import com.ryzingtitan.datalogapi.domain.datalog.services.DatalogService
+import com.ryzingtitan.datalogapi.domain.fileupload.services.FileParsingService
 import com.ryzingtitan.datalogapi.domain.sessionmetadata.services.SessionMetadataService
 import com.ryzingtitan.datalogapi.presentation.configuration.SecurityConfiguration
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,4 +24,7 @@ abstract class CommonControllerTests {
 
     @MockBean
     protected lateinit var mockSessionMetadataService: SessionMetadataService
+
+    @MockBean
+    protected lateinit var mockFileParsingService: FileParsingService
 }

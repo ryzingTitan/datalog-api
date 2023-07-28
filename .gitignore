@@ -37,3 +37,4 @@ out/
 .vscode/
 logs/*
 datalog-api/*
+testFiles/*

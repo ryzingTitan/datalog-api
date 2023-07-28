@@ -9,7 +9,9 @@ import io.cucumber.datatable.DataTable
 import io.cucumber.java.Before
 import io.cucumber.java.DataTableType
 import io.cucumber.java.en.Given
+import io.cucumber.java.en.Then
 import kotlinx.coroutines.runBlocking
+import org.junit.jupiter.api.Assertions.assertEquals
 import java.util.UUID
 
 class DatalogRepositoryStepDefs(
@@ -26,6 +28,25 @@ class DatalogRepositoryStepDefs(
                 datalogRepository.save(datalog)
             }
         }
+    }
+
+    @Then("the following datalogs will exist:")
+    fun thenTheFollowingDatalogsWillExist(table: DataTable) {
+        val expectedDatalogs =
+            table.tableConverter.toList<DatalogEntity>(table, DatalogEntity::class.java)
+                .sortedBy { it.epochMilliseconds }
+
+        val actualDatalogs = mutableListOf<DatalogEntity>()
+        runBlocking {
+            datalogRepository.findAll().collect { datalog ->
+                actualDatalogs.add(datalog)
+            }
+        }
+
+        assertEquals(
+            expectedDatalogs.sortedBy { it.epochMilliseconds },
+            actualDatalogs.sortedBy { it.epochMilliseconds },
+        )
     }
 
     @Before
