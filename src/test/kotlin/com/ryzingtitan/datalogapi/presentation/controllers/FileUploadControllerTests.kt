@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockJwt
@@ -24,6 +25,8 @@ class FileUploadControllerTests : CommonControllerTests() {
     inner class Upload {
         @Test
         fun `returns 'OK' and creates correct file upload`() = runTest {
+            whenever(mockUuidGenerator.generate()).thenReturn(UUID.randomUUID())
+
             Files.createDirectory(Path.of("testFiles"))
             Files.write(Path.of("testFiles", "testFile.txt"), listOf(""))
 
@@ -36,17 +39,16 @@ class FileUploadControllerTests : CommonControllerTests() {
             webTestClient
                 .mutateWith(mockJwt())
                 .put()
-                .uri("/api/sessions/$sessionId/upload")
+                .uri("/api/sessions/upload")
                 .body(BodyInserters.fromMultipartData(multiPartData))
                 .exchange()
                 .expectStatus()
                 .isOk
 
+            verify(mockUuidGenerator, times(1)).generate()
             verify(mockFileParsingService, times(1)).parse(any<FileUpload>())
         }
     }
-
-    private val sessionId = UUID.randomUUID()
 
     private val user = User(
         firstName = userFirstName,

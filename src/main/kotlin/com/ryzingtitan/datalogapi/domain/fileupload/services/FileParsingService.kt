@@ -3,6 +3,7 @@ package com.ryzingtitan.datalogapi.domain.fileupload.services
 import com.ryzingtitan.datalogapi.data.datalog.repositories.DatalogRepository
 import com.ryzingtitan.datalogapi.domain.fileupload.dtos.FileUpload
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -36,6 +37,15 @@ class FileParsingService(
         fileLinesWithoutHeader.map { fileLine ->
             val datalog =
                 rowParsingService.parse(fileLine, fileUpload.metadata, columnConfiguration)
+
+            if (datalog.sessionId != fileUpload.metadata.sessionId) {
+                val oldDatalogs = datalogRepository.deleteBySessionIdAndEpochMilliseconds(
+                    datalog.sessionId,
+                    datalog.epochMilliseconds,
+                )
+
+                oldDatalogs.collect()
+            }
 
             datalogRepository.save(datalog)
         }

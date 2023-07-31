@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -38,6 +39,14 @@ class FileParsingServiceTests {
     inner class Parse {
         @Test
         fun `reads the input data and creates data log records`() = runTest {
+            whenever(
+                mockRowParsingService.parse(
+                    "data row 1",
+                    fileUploadMetadata,
+                    columnConfiguration,
+                ),
+            )
+                .thenReturn(datalog)
             whenever(mockDatalogRepository.save(datalog)).thenReturn(datalog)
 
             val dataBufferFactory = DefaultDataBufferFactory()
@@ -51,7 +60,49 @@ class FileParsingServiceTests {
                 fileUploadMetadata,
                 columnConfiguration,
             )
-            verify(mockDatalogRepository, times(1)).save(any())
+            verify(mockDatalogRepository, never()).deleteBySessionIdAndEpochMilliseconds(any(), any())
+            verify(mockDatalogRepository, times(1)).save(datalog)
+
+            assertEquals(2, appender.list.size)
+            assertEquals(Level.INFO, appender.list[0].level)
+            assertEquals("Beginning to parse file: testFile.txt", appender.list[0].message)
+            assertEquals(Level.INFO, appender.list[0].level)
+            assertEquals("File parsing completed for file: testFile.txt", appender.list[1].message)
+        }
+
+        @Test
+        fun `removes existing records before saving new records when updating existing sessions`() = runTest {
+            val existingSessionId = UUID.randomUUID()
+
+            whenever(
+                mockRowParsingService.parse(
+                    "data row 1",
+                    fileUploadMetadata,
+                    columnConfiguration,
+                ),
+            )
+                .thenReturn(datalog.copy(sessionId = existingSessionId))
+            whenever(
+                mockDatalogRepository
+                    .deleteBySessionIdAndEpochMilliseconds(existingSessionId, datalog.epochMilliseconds),
+            )
+                .thenReturn(flowOf(datalog.copy(sessionId = existingSessionId)))
+            whenever(mockDatalogRepository.save(datalog)).thenReturn(datalog)
+
+            val dataBufferFactory = DefaultDataBufferFactory()
+            val dataBuffer = dataBufferFactory.wrap("header row 1\ndata row 1\n".toByteArray())
+
+            fileParsingService.parse(FileUpload(flowOf(dataBuffer), fileUploadMetadata))
+
+            verify(mockColumnConfigurationService, times(1)).create("header row 1")
+            verify(mockRowParsingService, times(1)).parse(
+                "data row 1",
+                fileUploadMetadata,
+                columnConfiguration,
+            )
+            verify(mockDatalogRepository, times(1))
+                .deleteBySessionIdAndEpochMilliseconds(existingSessionId, datalog.epochMilliseconds)
+            verify(mockDatalogRepository, times(1)).save(datalog.copy(sessionId = existingSessionId))
 
             assertEquals(2, appender.list.size)
             assertEquals(Level.INFO, appender.list[0].level)
@@ -68,15 +119,6 @@ class FileParsingServiceTests {
             mockRowParsingService,
             mockColumnConfigurationService,
         )
-
-        whenever(
-            mockRowParsingService.parse(
-                "data row 1",
-                fileUploadMetadata,
-                columnConfiguration,
-            ),
-        )
-            .thenReturn(datalog)
 
         whenever(mockColumnConfigurationService.create("header row 1")).thenReturn(columnConfiguration)
 

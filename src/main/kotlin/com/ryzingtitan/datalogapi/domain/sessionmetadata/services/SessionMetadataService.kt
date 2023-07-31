@@ -4,9 +4,11 @@ import com.ryzingtitan.datalogapi.data.sessionmetadata.repositories.SessionMetad
 import com.ryzingtitan.datalogapi.domain.sessionmetadata.dtos.SessionMetadata
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import org.springframework.stereotype.Service
 import java.time.Instant
+import java.util.*
 
 @Service
 class SessionMetadataService(
@@ -24,5 +26,14 @@ class SessionMetadataService(
                     endTime = Instant.ofEpochMilli(sessionMetadataEntity.endTimeEpochMilliseconds),
                 )
             }
+    }
+
+    suspend fun getExistingSessionId(username: String, epochMillisecond: Long): UUID? {
+        return sessionMetadataRepository.getAllSessionMetadata()
+            .filter { sessionMetadata ->
+                sessionMetadata.username == username &&
+                    sessionMetadata.startTimeEpochMilliseconds <= epochMillisecond &&
+                    sessionMetadata.endTimeEpochMilliseconds >= epochMillisecond
+            }.firstOrNull()?.sessionId
     }
 }

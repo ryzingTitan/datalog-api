@@ -17,9 +17,8 @@ import org.springframework.web.reactive.function.client.awaitExchange
 import java.util.*
 
 class FileUploadControllerStepDefs {
-    @When("the file is uploaded for a session with id {string} and the following data:")
-    fun theFileIsUploadedForSessionWithIdAndTheFollowingData(sessionIdString: String, table: DataTable) {
-        val sessionId = UUID.fromString(sessionIdString)
+    @When("the file is uploaded for a session with the following data:")
+    fun theFileIsUploadedForSessionWithIdAndTheFollowingData(table: DataTable) {
         val requestData = table.tableConverter.toList<RequestData>(table, RequestData::class.java)
 
         val multipartBodyBuilder = MultipartBodyBuilder()
@@ -31,7 +30,7 @@ class FileUploadControllerStepDefs {
         runBlocking {
             CommonControllerStepDefs.webClient
                 .put()
-                .uri("/$sessionId/upload")
+                .uri("/upload")
                 .body(BodyInserters.fromMultipartData(multiPartData))
                 .header(
                     "Authorization",

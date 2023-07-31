@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -29,6 +30,29 @@ class SessionMetadataServiceTests {
         }
     }
 
+    @Nested
+    inner class GetExistingSessionId {
+        @Test
+        fun `returns existing session id when session already exists`() = runTest {
+            val sessionId = sessionMetadataService.getExistingSessionId(
+                firstUsername,
+                startTime.plusSeconds(25).toEpochMilli(),
+            )
+
+            assertEquals(secondSessionMetadata.sessionId, sessionId)
+        }
+
+        @Test
+        fun `returns null when session already exists`() = runTest {
+            val sessionId = sessionMetadataService.getExistingSessionId(
+                firstUsername,
+                startTime.plusSeconds(80).toEpochMilli(),
+            )
+
+            assertNull(sessionId)
+        }
+    }
+
     @BeforeEach
     fun setup() {
         sessionMetadataService = SessionMetadataService(mockSessionMetadataRepository)
@@ -43,23 +67,26 @@ class SessionMetadataServiceTests {
     private val firstSessionId = UUID.randomUUID()
     private val secondSessionId = UUID.randomUUID()
     private val thirdSessionId = UUID.randomUUID()
-    private val firstSessionTimestamp = Instant.now()
-    private val secondSessionStartTimestamp = Instant.now()
-    private val secondSessionEndTimestamp = Instant.now().plusSeconds(500)
-    private val thirdSessionTimestamp = Instant.now()
+    private val startTime = Instant.now()
+    private val firstSessionStartTimestamp = startTime
+    private val firstSessionEndTimestamp = startTime.plusSeconds(10)
+    private val secondSessionStartTimestamp = startTime.plusSeconds(20)
+    private val secondSessionEndTimestamp = startTime.plusSeconds(60)
+    private val thirdSessionStartTimestamp = startTime.plusSeconds(20)
+    private val thirdSessionEndTimestamp = startTime.plusSeconds(60)
     private val firstUsername = "test@test.com"
     private val secondUsername = "test2@test.com"
 
     private val firstSessionMetadata = SessionMetadata(
         sessionId = firstSessionId,
-        startTime = firstSessionTimestamp.truncatedTo(ChronoUnit.MILLIS),
-        endTime = firstSessionTimestamp.truncatedTo(ChronoUnit.MILLIS),
+        startTime = firstSessionStartTimestamp.truncatedTo(ChronoUnit.MILLIS),
+        endTime = firstSessionEndTimestamp.truncatedTo(ChronoUnit.MILLIS),
     )
 
     private val firstSessionMetadataEntity = SessionMetadataEntity(
         sessionId = firstSessionId,
-        startTimeEpochMilliseconds = firstSessionTimestamp.toEpochMilli(),
-        endTimeEpochMilliseconds = firstSessionTimestamp.toEpochMilli(),
+        startTimeEpochMilliseconds = firstSessionStartTimestamp.toEpochMilli(),
+        endTimeEpochMilliseconds = firstSessionEndTimestamp.toEpochMilli(),
         username = firstUsername,
     )
 
@@ -78,8 +105,8 @@ class SessionMetadataServiceTests {
 
     private val thirdSessionMetadataEntity = SessionMetadataEntity(
         sessionId = thirdSessionId,
-        startTimeEpochMilliseconds = thirdSessionTimestamp.toEpochMilli(),
-        endTimeEpochMilliseconds = thirdSessionTimestamp.toEpochMilli(),
+        startTimeEpochMilliseconds = thirdSessionStartTimestamp.toEpochMilli(),
+        endTimeEpochMilliseconds = thirdSessionEndTimestamp.toEpochMilli(),
         username = secondUsername,
     )
 }

@@ -39,13 +39,13 @@ class DatalogRepositoryStepDefs(
         val actualDatalogs = mutableListOf<DatalogEntity>()
         runBlocking {
             datalogRepository.findAll().collect { datalog ->
-                actualDatalogs.add(datalog)
+                actualDatalogs.add(datalog.copy(id = null))
             }
         }
 
         assertEquals(
-            expectedDatalogs.sortedBy { it.epochMilliseconds },
-            actualDatalogs.sortedBy { it.epochMilliseconds },
+            expectedDatalogs.sortedBy { it.epochMilliseconds }.sortedBy { it.sessionId },
+            actualDatalogs.sortedBy { it.epochMilliseconds }.sortedBy { it.sessionId },
         )
     }
 

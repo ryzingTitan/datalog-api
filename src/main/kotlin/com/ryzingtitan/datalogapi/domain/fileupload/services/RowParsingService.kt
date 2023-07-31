@@ -8,14 +8,15 @@ import com.ryzingtitan.datalogapi.domain.datalog.dtos.TrackInfo
 import com.ryzingtitan.datalogapi.domain.datalog.dtos.User
 import com.ryzingtitan.datalogapi.domain.fileupload.configuration.ColumnConfiguration
 import com.ryzingtitan.datalogapi.domain.fileupload.dtos.FileUploadMetadata
+import com.ryzingtitan.datalogapi.domain.sessionmetadata.services.SessionMetadataService
 import org.springframework.stereotype.Service
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 @Service
-class RowParsingService {
-    fun parse(
+class RowParsingService(private val sessionMetadataService: SessionMetadataService) {
+    suspend fun parse(
         row: String,
         metadata: FileUploadMetadata,
         columnConfiguration: ColumnConfiguration,
@@ -23,7 +24,7 @@ class RowParsingService {
         return createDatalog(row, metadata, columnConfiguration)
     }
 
-    private fun createDatalog(
+    private suspend fun createDatalog(
         row: String,
         metadata: FileUploadMetadata,
         columnConfiguration: ColumnConfiguration,
@@ -33,7 +34,10 @@ class RowParsingService {
         val recordTimestamp = parseRowTimestamp(lineColumns[columnConfiguration.deviceTime])
 
         return DatalogEntity(
-            sessionId = metadata.sessionId,
+            sessionId = sessionMetadataService.getExistingSessionId(
+                metadata.user.email,
+                recordTimestamp.toEpochMilli(),
+            ) ?: metadata.sessionId,
             epochMilliseconds = recordTimestamp.toEpochMilli(),
             data = getData(lineColumns, columnConfiguration),
             trackInfo = getTrackInfo(metadata.trackInfo),
