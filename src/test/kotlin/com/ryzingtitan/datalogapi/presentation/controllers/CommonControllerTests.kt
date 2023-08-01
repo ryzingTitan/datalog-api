@@ -1,8 +1,10 @@
 package com.ryzingtitan.datalogapi.presentation.controllers
 
 import com.ryzingtitan.datalogapi.domain.datalog.services.DatalogService
+import com.ryzingtitan.datalogapi.domain.fileupload.services.FileParsingService
 import com.ryzingtitan.datalogapi.domain.sessionmetadata.services.SessionMetadataService
 import com.ryzingtitan.datalogapi.presentation.configuration.SecurityConfiguration
+import com.ryzingtitan.datalogapi.presentation.uuid.UuidGenerator
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest
 import org.springframework.boot.test.mock.mockito.MockBean
@@ -23,4 +25,10 @@ abstract class CommonControllerTests {
 
     @MockBean
     protected lateinit var mockSessionMetadataService: SessionMetadataService
+
+    @MockBean
+    protected lateinit var mockFileParsingService: FileParsingService
+
+    @MockBean
+    protected lateinit var mockUuidGenerator: UuidGenerator
 }

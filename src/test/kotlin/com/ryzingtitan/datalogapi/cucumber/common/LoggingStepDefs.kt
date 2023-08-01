@@ -5,6 +5,7 @@ import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
 import com.ryzingtitan.datalogapi.cucumber.dtos.LogMessage
+import com.ryzingtitan.datalogapi.domain.fileupload.services.FileParsingService
 import com.ryzingtitan.datalogapi.presentation.controllers.DatalogController
 import com.ryzingtitan.datalogapi.presentation.controllers.SessionMetadataController
 import io.cucumber.datatable.DataTable
@@ -32,6 +33,9 @@ class LoggingStepDefs {
         datalogControllerLogger = LoggerFactory.getLogger(DatalogController::class.java) as Logger
         datalogControllerLogger.addAppender(appender)
 
+        fileParsingServiceLogger = LoggerFactory.getLogger(FileParsingService::class.java) as Logger
+        fileParsingServiceLogger.addAppender(appender)
+
         appender.context = LoggerContext()
         appender.start()
     }
@@ -56,6 +60,7 @@ class LoggingStepDefs {
 
     private lateinit var datalogControllerLogger: Logger
     private lateinit var sessionMetadataControllerLogger: Logger
+    private lateinit var fileParsingServiceLogger: Logger
 
     private val appender: ListAppender<ILoggingEvent> = ListAppender()
 }

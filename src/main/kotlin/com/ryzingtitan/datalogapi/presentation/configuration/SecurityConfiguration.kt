@@ -20,6 +20,8 @@ class SecurityConfiguration {
                     .authenticated()
                     .pathMatchers(HttpMethod.OPTIONS, "/api/sessions/**")
                     .authenticated()
+                    .pathMatchers(HttpMethod.PUT, "/api/sessions/upload")
+                    .authenticated()
                     .pathMatchers(HttpMethod.GET, "/actuator/health")
                     .permitAll()
                     .pathMatchers("/**")
