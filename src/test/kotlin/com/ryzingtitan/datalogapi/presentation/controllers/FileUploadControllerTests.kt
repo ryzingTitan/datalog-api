@@ -39,7 +39,7 @@ class FileUploadControllerTests : CommonControllerTests() {
             webTestClient
                 .mutateWith(mockJwt())
                 .put()
-                .uri("/api/sessions/upload")
+                .uri("/api/sessions")
                 .body(BodyInserters.fromMultipartData(multiPartData))
                 .exchange()
                 .expectStatus()

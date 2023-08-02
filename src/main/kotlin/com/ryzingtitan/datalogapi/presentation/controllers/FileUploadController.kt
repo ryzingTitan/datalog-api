@@ -22,7 +22,7 @@ class FileUploadController(
     private val fileParsingService: FileParsingService,
     private val uuidGenerator: UuidGenerator,
 ) {
-    @PutMapping("/upload")
+    @PutMapping
     suspend fun upload(
         @RequestPart(name = "user") user: User,
         @RequestPart(name = "trackInfo") trackInfo: TrackInfo,

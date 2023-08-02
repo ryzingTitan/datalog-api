@@ -37,10 +37,10 @@ paths:
         500:
           description: Internal Server Error
 
-  /sessions/upload:
+  /sessions:
     put:
       tags:
-        - File Upload
+        - Data Upload
       description: Upload a file with session data
       requestBody:
         content:
