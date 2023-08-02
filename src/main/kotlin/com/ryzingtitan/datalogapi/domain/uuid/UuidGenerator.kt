@@ -1,4 +1,4 @@
-package com.ryzingtitan.datalogapi.presentation.uuid
+package com.ryzingtitan.datalogapi.domain.uuid
 
 import java.util.*
 

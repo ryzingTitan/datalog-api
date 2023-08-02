@@ -5,7 +5,7 @@ import com.ryzingtitan.datalogapi.domain.datalog.dtos.User
 import com.ryzingtitan.datalogapi.domain.fileupload.dtos.FileUpload
 import com.ryzingtitan.datalogapi.domain.fileupload.dtos.FileUploadMetadata
 import com.ryzingtitan.datalogapi.domain.fileupload.services.FileParsingService
-import com.ryzingtitan.datalogapi.presentation.uuid.UuidGenerator
+import com.ryzingtitan.datalogapi.domain.uuid.UuidGenerator
 import kotlinx.coroutines.reactive.asFlow
 import org.springframework.http.codec.multipart.FilePart
 import org.springframework.web.bind.annotation.CrossOrigin
