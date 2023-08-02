@@ -1,6 +1,6 @@
 package com.ryzingtitan.datalogapi.cucumber.components
 
-import com.ryzingtitan.datalogapi.presentation.uuid.UuidGenerator
+import com.ryzingtitan.datalogapi.domain.uuid.UuidGenerator
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 import java.util.*

@@ -22,21 +22,6 @@ spring:
       on-profile: production
   data:
     mongodb:
-      uri: mongodb://host.docker.internal:27017
-      database: dataLogging
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: https://accounts.google.com
-
----
-spring:
-  config:
-    activate:
-      on-profile: cloud
-  data:
-    mongodb:
       uri: ${MONGO_DB_URL}
       database: dataLogging
   security:

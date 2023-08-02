@@ -1,11 +1,11 @@
-package com.ryzingtitan.datalogapi.presentation.uuid
+package com.ryzingtitan.datalogapi.domain.uuid
 
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 import java.util.*
 
 @Component
-@Profile("production")
+@Profile("production", "local")
 class RandomUuidGenerator : UuidGenerator {
     override fun generate(): UUID {
         return UUID.randomUUID()

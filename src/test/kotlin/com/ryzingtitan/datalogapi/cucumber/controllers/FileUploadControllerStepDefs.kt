@@ -30,7 +30,6 @@ class FileUploadControllerStepDefs {
         runBlocking {
             CommonControllerStepDefs.webClient
                 .put()
-                .uri("/upload")
                 .body(BodyInserters.fromMultipartData(multiPartData))
                 .header(
                     "Authorization",

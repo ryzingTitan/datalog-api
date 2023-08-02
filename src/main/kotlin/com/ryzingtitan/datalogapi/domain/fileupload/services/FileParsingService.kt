@@ -22,13 +22,14 @@ class FileParsingService(
     suspend fun parse(fileUpload: FileUpload) {
         logger.info("Beginning to parse file: ${fileUpload.metadata.fileName}")
 
-        val fileLines = mutableListOf<String>()
+        val fileData = StringBuilder()
 
         fileUpload.file.map { dataBuffer ->
-            val fileData = dataBuffer.asInputStream().readAllBytes().decodeToString()
-            fileLines.addAll(fileData.split("\n").dropLast(1))
+            fileData.append(dataBuffer.asInputStream().readAllBytes().decodeToString())
         }
-            .flowOn(Dispatchers.IO).first()
+            .flowOn(Dispatchers.IO).collect()
+
+        val fileLines = fileData.toString().replace("\r", "").split("\n").dropLast(1)
 
         val columnConfiguration = columnConfigurationService.create(fileLines.first())
 
