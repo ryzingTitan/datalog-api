@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.cache.annotation.CacheEvict
 import org.springframework.stereotype.Service
 
 @Service
@@ -19,6 +20,7 @@ class FileParsingService(
 ) {
     private val logger: Logger = LoggerFactory.getLogger(FileParsingService::class.java)
 
+    @CacheEvict(cacheNames = ["datalogs"], allEntries = true)
     suspend fun parse(fileUpload: FileUpload) {
         logger.info("Beginning to parse file: ${fileUpload.metadata.fileName}")
 
