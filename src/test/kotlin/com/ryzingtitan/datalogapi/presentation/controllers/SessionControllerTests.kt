@@ -2,9 +2,10 @@ package com.ryzingtitan.datalogapi.presentation.controllers
 
 import com.ryzingtitan.datalogapi.domain.datalog.dtos.TrackInfo
 import com.ryzingtitan.datalogapi.domain.datalog.dtos.User
-import com.ryzingtitan.datalogapi.domain.fileupload.dtos.FileUpload
+import com.ryzingtitan.datalogapi.domain.session.dtos.FileUpload
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -20,12 +21,13 @@ import java.nio.file.Path
 import java.util.*
 
 @ExperimentalCoroutinesApi
-class FileUploadControllerTests : CommonControllerTests() {
+class SessionControllerTests : CommonControllerTests() {
     @Nested
-    inner class Upload {
+    inner class CreateSession {
         @Test
-        fun `returns 'OK' and creates correct file upload`() = runTest {
-            whenever(mockUuidGenerator.generate()).thenReturn(UUID.randomUUID())
+        fun `returns 'CREATED' and creates new session`() = runTest {
+            val sessionId = UUID.randomUUID()
+            whenever(mockSessionService.create(any<FileUpload>())).thenReturn(sessionId)
 
             Files.createDirectory(Path.of("testFiles"))
             Files.write(Path.of("testFiles", "testFile.txt"), listOf(""))
@@ -38,16 +40,51 @@ class FileUploadControllerTests : CommonControllerTests() {
 
             webTestClient
                 .mutateWith(mockJwt())
-                .put()
+                .post()
                 .uri("/api/sessions")
+                .body(BodyInserters.fromMultipartData(multiPartData))
+                .exchange()
+                .expectStatus()
+                .isCreated
+                .expectHeader()
+                .location("/api/sessions/$sessionId")
+
+            verify(mockSessionService, times(1)).create(any<FileUpload>())
+        }
+    }
+
+    @Nested
+    inner class UpdateSession {
+        @Test
+        fun `returns 'OK' and updates session data`() = runTest {
+            Files.createDirectory(Path.of("testFiles"))
+            Files.write(Path.of("testFiles", "testFile.txt"), listOf(""))
+
+            val multipartBodyBuilder = MultipartBodyBuilder()
+            multipartBodyBuilder.part("user", user)
+            multipartBodyBuilder.part("trackInfo", trackInfo)
+            multipartBodyBuilder.part("uploadFile", FileSystemResource("testFiles/testFile.txt"))
+            val multiPartData = multipartBodyBuilder.build()
+
+            val sessionId = UUID.randomUUID()
+
+            webTestClient
+                .mutateWith(mockJwt())
+                .put()
+                .uri("/api/sessions/$sessionId")
                 .body(BodyInserters.fromMultipartData(multiPartData))
                 .exchange()
                 .expectStatus()
                 .isOk
 
-            verify(mockUuidGenerator, times(1)).generate()
-            verify(mockFileParsingService, times(1)).parse(any<FileUpload>())
+            verify(mockSessionService, times(1)).update(any<FileUpload>())
         }
+    }
+
+    @BeforeEach
+    fun setup() {
+        Files.deleteIfExists(Path.of("testFiles", "testFile.txt"))
+        Files.deleteIfExists(Path.of("testFiles"))
     }
 
     private val user = User(

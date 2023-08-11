@@ -1,6 +1,6 @@
-Feature: Retrieve datalog records by session id
+Feature: Retrieve datalogs by session id
 
-  Scenario: Retrieve datalog records for a session with a single record
+  Scenario: Retrieve datalogs for a session with a single record
     Given the following datalogs exist:
       | sessionId                            | epochMilliseconds | longitude          | latitude           | altitude | intakeAirTemperature | boostPressure | coolantTemperature | engineRpm | speed | throttlePosition | airFuelRatio | trackName  | trackLatitude | trackLongitude | firstName | lastName | email         |
       | c61cc339-f93d-45a4-aa2b-923f0482b97f | 1663524947968     | -86.14170333333335 | 42.406800000000004 | 188.4    | 123                  | 15.6          | 150                | 5000      | 85    | 75.6             | 14.7         | Test Track | 42.4086       | -86.1374       | test      | tester   | test@test.com |
@@ -14,7 +14,7 @@ Feature: Retrieve datalog records by session id
       | level | message                                                                         |
       | INFO  | Retrieving datalog records for session id: c61cc339-f93d-45a4-aa2b-923f0482b97f |
 
-  Scenario: Retrieve datalog records for a session with multiple records
+  Scenario: Retrieve datalogs for a session with multiple records
     Given the following datalogs exist:
       | sessionId                            | epochMilliseconds | longitude          | latitude            | altitude | intakeAirTemperature | boostPressure | coolantTemperature | engineRpm | speed | throttlePosition | airFuelRatio | trackName  | trackLatitude | trackLongitude | firstName | lastName | email         |
       | c61cc339-f93d-45a4-aa2b-923f0482b97f | 1663510547968     | -86.14170333333335 | 42.406800000000004  | 188.4    | 123                  | 15.6          | 150                | 5000      | 85    | 75.6             | 14.7         | Test Track | 42.4086       | -86.1374       | test      | tester   | test@test.com |
@@ -30,7 +30,7 @@ Feature: Retrieve datalog records by session id
       | level | message                                                                         |
       | INFO  | Retrieving datalog records for session id: c61cc339-f93d-45a4-aa2b-923f0482b97f |
 
-  Scenario: Retrieve datalog records with null data
+  Scenario: Retrieve datalogs with null data
     Given the following datalogs exist:
       | sessionId                            | epochMilliseconds | longitude          | latitude            | altitude | intakeAirTemperature | boostPressure | coolantTemperature | engineRpm | speed | throttlePosition | airFuelRatio | trackName  | trackLatitude | trackLongitude | firstName | lastName | email         |
       | c61cc339-f93d-45a4-aa2b-923f0482b97f | 1663510547968     | -86.14170333333335 | 42.406800000000004  | 188.4    | 123                  |               | 150                |           | 85    |                  |              | Test Track | 42.4086       | -86.1374       | test      | tester   | test@test.com |
@@ -48,7 +48,7 @@ Feature: Retrieve datalog records by session id
       | level | message                                                                         |
       | INFO  | Retrieving datalog records for session id: c61cc339-f93d-45a4-aa2b-923f0482b97f |
 
-  Scenario: Retrieve datalog records for a session that does not exist
+  Scenario: Retrieve datalogs for a session that does not exist
     Given the following datalogs exist:
       | sessionId                            | epochMilliseconds | longitude          | latitude            | altitude | intakeAirTemperature | boostPressure | coolantTemperature | engineRpm | speed | throttlePosition | airFuelRatio | trackName  | trackLatitude | trackLongitude | firstName | lastName | email         |
       | c61cc339-f93d-45a4-aa2b-923f0482b97f | 1663524947968     | -86.14170333333335 | 42.406800000000004  | 188.4    | 123                  | 15.6          | 150                | 5000      | 85    | 75.6             | 15.8         | Test Track | 42.4086       | -86.1374       | test      | tester   | test@test.com |
@@ -62,7 +62,7 @@ Feature: Retrieve datalog records by session id
       | level | message                                                                         |
       | INFO  | Retrieving datalog records for session id: d854a6f2-6642-4a7c-8b06-1b6d559f0171 |
 
-  Scenario: Backwards compatibility for records without air fuel ratio data
+  Scenario: Backwards compatibility for datalogs without air fuel ratio data
     Given the following datalogs exist:
       | sessionId                            | epochMilliseconds | longitude          | latitude           | altitude | intakeAirTemperature | boostPressure | coolantTemperature | engineRpm | speed | throttlePosition | trackName  | trackLatitude | trackLongitude | firstName | lastName | email         |
       | c61cc339-f93d-45a4-aa2b-923f0482b97f | 1663524947968     | -86.14170333333335 | 42.406800000000004 | 188.4    | 123                  | 15.6          | 150                | 5000      | 85    | 75.6             | Test Track | 42.4086       | -86.1374       | test      | tester   | test@test.com |

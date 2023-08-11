@@ -38,10 +38,49 @@ paths:
           description: Internal Server Error
 
   /sessions:
-    put:
+    post:
       tags:
-        - Data Upload
-      description: Upload a file with session data
+        - Session Administration
+      description: Create a new session from a file
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                trackInfo:
+                  $ref: '#/components/schemas/TrackInfo'
+                user:
+                  $ref: '#/components/schemas/User'
+                uploadFile:
+                  type: string
+                  format: binary
+      responses:
+        201:
+          description: Session created successfully
+        400:
+          description: Bad Request - Ensure the request contains all required data
+        401:
+          description: Unauthorized - Ensure the authorization token is valid
+        409:
+          description: Conflict - Session already exists
+        500:
+          description: Internal Server Error
+
+  /sessions/{sessionId}:
+    put:
+      parameters:
+        - name: sessionId
+          in: path
+          description: The session id to be updated
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 515ef9d0-2059-4a11-b5c3-7c8dae93b57d
+      tags:
+        - Session Administration
+      description: Update an existing session from a file
       requestBody:
         content:
           multipart/form-data:
@@ -57,11 +96,13 @@ paths:
                   format: binary
       responses:
         200:
-          description: Session data uploaded successfully
+          description: Session updated successfully
         400:
           description: Bad Request - Ensure the request contains all required data
         401:
           description: Unauthorized - Ensure the authorization token is valid
+        410:
+          description: Gone - Session does not exist
         500:
           description: Internal Server Error
 

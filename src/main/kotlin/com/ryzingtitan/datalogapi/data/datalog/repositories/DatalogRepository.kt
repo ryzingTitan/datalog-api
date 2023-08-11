@@ -9,5 +9,6 @@ import java.util.UUID
 @Repository
 interface DatalogRepository : CoroutineCrudRepository<DatalogEntity, String> {
     fun findAllBySessionIdOrderByEpochMillisecondsAsc(sessionId: UUID): Flow<DatalogEntity>
-    fun deleteBySessionIdAndEpochMilliseconds(sessionId: UUID, epochMilliseconds: Long): Flow<DatalogEntity>
+    fun findAllBySessionId(sessionId: UUID): Flow<DatalogEntity>
+    fun deleteBySessionId(sessionId: UUID): Flow<DatalogEntity>
 }

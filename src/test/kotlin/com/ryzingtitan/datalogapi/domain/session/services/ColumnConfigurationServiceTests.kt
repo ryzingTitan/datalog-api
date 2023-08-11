@@ -1,6 +1,6 @@
-package com.ryzingtitan.datalogapi.domain.fileupload.services
+package com.ryzingtitan.datalogapi.domain.session.services
 
-import com.ryzingtitan.datalogapi.domain.fileupload.configuration.ColumnConfiguration
+import com.ryzingtitan.datalogapi.domain.session.configuration.ColumnConfiguration
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested

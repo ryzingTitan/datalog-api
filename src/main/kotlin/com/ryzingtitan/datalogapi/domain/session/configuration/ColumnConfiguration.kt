@@ -1,4 +1,4 @@
-package com.ryzingtitan.datalogapi.domain.fileupload.configuration
+package com.ryzingtitan.datalogapi.domain.session.configuration
 
 import lombok.Generated
 
