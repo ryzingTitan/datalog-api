@@ -1,4 +1,4 @@
-package com.ryzingtitan.datalogapi.domain.fileupload.dtos
+package com.ryzingtitan.datalogapi.domain.session.dtos
 
 import kotlinx.coroutines.flow.Flow
 import lombok.Generated

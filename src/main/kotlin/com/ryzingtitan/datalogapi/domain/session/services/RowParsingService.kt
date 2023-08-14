@@ -1,4 +1,4 @@
-package com.ryzingtitan.datalogapi.domain.fileupload.services
+package com.ryzingtitan.datalogapi.domain.session.services
 
 import com.ryzingtitan.datalogapi.data.datalog.entities.DataEntity
 import com.ryzingtitan.datalogapi.data.datalog.entities.DatalogEntity
@@ -6,16 +6,15 @@ import com.ryzingtitan.datalogapi.data.datalog.entities.TrackInfoEntity
 import com.ryzingtitan.datalogapi.data.datalog.entities.UserEntity
 import com.ryzingtitan.datalogapi.domain.datalog.dtos.TrackInfo
 import com.ryzingtitan.datalogapi.domain.datalog.dtos.User
-import com.ryzingtitan.datalogapi.domain.fileupload.configuration.ColumnConfiguration
-import com.ryzingtitan.datalogapi.domain.fileupload.dtos.FileUploadMetadata
-import com.ryzingtitan.datalogapi.domain.sessionmetadata.services.SessionMetadataService
+import com.ryzingtitan.datalogapi.domain.session.configuration.ColumnConfiguration
+import com.ryzingtitan.datalogapi.domain.session.dtos.FileUploadMetadata
 import org.springframework.stereotype.Service
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 @Service
-class RowParsingService(private val sessionMetadataService: SessionMetadataService) {
+class RowParsingService {
     suspend fun parse(
         row: String,
         metadata: FileUploadMetadata,
@@ -34,10 +33,7 @@ class RowParsingService(private val sessionMetadataService: SessionMetadataServi
         val recordTimestamp = parseRowTimestamp(lineColumns[columnConfiguration.deviceTime])
 
         return DatalogEntity(
-            sessionId = sessionMetadataService.getExistingSessionId(
-                metadata.user.email,
-                recordTimestamp.toEpochMilli(),
-            ) ?: metadata.sessionId,
+            sessionId = metadata.sessionId,
             epochMilliseconds = recordTimestamp.toEpochMilli(),
             data = getData(lineColumns, columnConfiguration),
             trackInfo = getTrackInfo(metadata.trackInfo),

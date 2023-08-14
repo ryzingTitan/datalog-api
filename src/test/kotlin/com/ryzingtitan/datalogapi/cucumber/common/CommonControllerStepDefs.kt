@@ -29,6 +29,11 @@ class CommonControllerStepDefs {
         assertEquals(statusCode, responseStatus?.name)
     }
 
+    @Then("the location header will end with {string}")
+    fun theLocationHeaderWillEndWith(location: String) {
+        assertEquals("http://localhost:$port$location", locationHeader)
+    }
+
     @Before
     fun setup() {
         webClient = WebClient.create("http://localhost:$port/api/sessions")
@@ -48,6 +53,7 @@ class CommonControllerStepDefs {
     companion object CommonControllerStepDefsSharedState {
         internal var responseStatus: HttpStatus? = null
         internal var authorizationToken: SignedJWT? = null
+        internal var locationHeader: String = ""
 
         internal lateinit var webClient: WebClient
         internal lateinit var mockOAuth2Server: MockOAuth2Server

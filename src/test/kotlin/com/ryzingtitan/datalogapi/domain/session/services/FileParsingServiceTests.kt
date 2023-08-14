@@ -1,4 +1,4 @@
-package com.ryzingtitan.datalogapi.domain.fileupload.services
+package com.ryzingtitan.datalogapi.domain.session.services
 
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.Logger
@@ -9,12 +9,11 @@ import com.ryzingtitan.datalogapi.data.datalog.entities.DataEntity
 import com.ryzingtitan.datalogapi.data.datalog.entities.DatalogEntity
 import com.ryzingtitan.datalogapi.data.datalog.entities.TrackInfoEntity
 import com.ryzingtitan.datalogapi.data.datalog.entities.UserEntity
-import com.ryzingtitan.datalogapi.data.datalog.repositories.DatalogRepository
 import com.ryzingtitan.datalogapi.domain.datalog.dtos.TrackInfo
 import com.ryzingtitan.datalogapi.domain.datalog.dtos.User
-import com.ryzingtitan.datalogapi.domain.fileupload.configuration.ColumnConfiguration
-import com.ryzingtitan.datalogapi.domain.fileupload.dtos.FileUpload
-import com.ryzingtitan.datalogapi.domain.fileupload.dtos.FileUploadMetadata
+import com.ryzingtitan.datalogapi.domain.session.configuration.ColumnConfiguration
+import com.ryzingtitan.datalogapi.domain.session.dtos.FileUpload
+import com.ryzingtitan.datalogapi.domain.session.dtos.FileUploadMetadata
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
@@ -22,9 +21,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -47,12 +44,11 @@ class FileParsingServiceTests {
                 ),
             )
                 .thenReturn(datalog)
-            whenever(mockDatalogRepository.save(datalog)).thenReturn(datalog)
 
             val dataBufferFactory = DefaultDataBufferFactory()
             val dataBuffer = dataBufferFactory.wrap("header row 1\ndata row 1\n".toByteArray())
 
-            fileParsingService.parse(FileUpload(flowOf(dataBuffer), fileUploadMetadata))
+            val datalogs = fileParsingService.parse(FileUpload(flowOf(dataBuffer), fileUploadMetadata))
 
             verify(mockColumnConfigurationService, times(1)).create("header row 1")
             verify(mockRowParsingService, times(1)).parse(
@@ -60,50 +56,8 @@ class FileParsingServiceTests {
                 fileUploadMetadata,
                 columnConfiguration,
             )
-            verify(mockDatalogRepository, never()).deleteBySessionIdAndEpochMilliseconds(any(), any())
-            verify(mockDatalogRepository, times(1)).save(datalog)
 
-            assertEquals(2, appender.list.size)
-            assertEquals(Level.INFO, appender.list[0].level)
-            assertEquals("Beginning to parse file: testFile.txt", appender.list[0].message)
-            assertEquals(Level.INFO, appender.list[0].level)
-            assertEquals("File parsing completed for file: testFile.txt", appender.list[1].message)
-        }
-
-        @Test
-        fun `removes existing records before saving new records when updating existing sessions`() = runTest {
-            val existingSessionId = UUID.randomUUID()
-
-            whenever(
-                mockRowParsingService.parse(
-                    "data row 1",
-                    fileUploadMetadata,
-                    columnConfiguration,
-                ),
-            )
-                .thenReturn(datalog.copy(sessionId = existingSessionId))
-            whenever(
-                mockDatalogRepository
-                    .deleteBySessionIdAndEpochMilliseconds(existingSessionId, datalog.epochMilliseconds),
-            )
-                .thenReturn(flowOf(datalog.copy(sessionId = existingSessionId)))
-            whenever(mockDatalogRepository.save(datalog)).thenReturn(datalog)
-
-            val dataBufferFactory = DefaultDataBufferFactory()
-            val dataBuffer = dataBufferFactory.wrap("header row 1\ndata row 1\n".toByteArray())
-
-            fileParsingService.parse(FileUpload(flowOf(dataBuffer), fileUploadMetadata))
-
-            verify(mockColumnConfigurationService, times(1)).create("header row 1")
-            verify(mockRowParsingService, times(1)).parse(
-                "data row 1",
-                fileUploadMetadata,
-                columnConfiguration,
-            )
-            verify(mockDatalogRepository, times(1))
-                .deleteBySessionIdAndEpochMilliseconds(existingSessionId, datalog.epochMilliseconds)
-            verify(mockDatalogRepository, times(1)).save(datalog.copy(sessionId = existingSessionId))
-
+            assertEquals(listOf(datalog), datalogs)
             assertEquals(2, appender.list.size)
             assertEquals(Level.INFO, appender.list[0].level)
             assertEquals("Beginning to parse file: testFile.txt", appender.list[0].message)
@@ -115,7 +69,6 @@ class FileParsingServiceTests {
     @BeforeEach
     fun setup() {
         fileParsingService = FileParsingService(
-            mockDatalogRepository,
             mockRowParsingService,
             mockColumnConfigurationService,
         )
@@ -133,7 +86,6 @@ class FileParsingServiceTests {
     private lateinit var logger: Logger
     private lateinit var appender: ListAppender<ILoggingEvent>
 
-    private val mockDatalogRepository = mock<DatalogRepository>()
     private val mockRowParsingService = mock<RowParsingService>()
     private val mockColumnConfigurationService = mock<ColumnConfigurationService>()
 
@@ -143,14 +95,14 @@ class FileParsingServiceTests {
         fileName = "testFile.txt",
         sessionId = sessionId,
         trackInfo = TrackInfo(
-            name = RowParsingServiceTests.trackName,
-            latitude = RowParsingServiceTests.trackLatitude,
-            longitude = RowParsingServiceTests.trackLongitude,
+            name = trackName,
+            latitude = trackLatitude,
+            longitude = trackLongitude,
         ),
         user = User(
-            email = RowParsingServiceTests.userEmail,
-            firstName = RowParsingServiceTests.userFirstName,
-            lastName = RowParsingServiceTests.userLastName,
+            email = userEmail,
+            firstName = userFirstName,
+            lastName = userLastName,
         ),
     )
 
@@ -194,4 +146,14 @@ class FileParsingServiceTests {
             lastName = "tester",
         ),
     )
+
+    companion object FileParsingServiceTestConstants {
+        const val trackName = "Test Track"
+        const val trackLatitude = 42.4086
+        const val trackLongitude = -86.1374
+
+        const val userEmail = "test@test.com"
+        const val userFirstName = "test"
+        const val userLastName = "tester"
+    }
 }

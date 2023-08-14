@@ -11,7 +11,7 @@ import java.util.*
 @Document("datalog")
 data class DatalogEntity(
     @Id val id: String? = null,
-    @Indexed val sessionId: UUID,
+    @Indexed val sessionId: UUID?,
     @Indexed(direction = IndexDirection.ASCENDING) val epochMilliseconds: Long,
     val data: DataEntity,
     val trackInfo: TrackInfoEntity,

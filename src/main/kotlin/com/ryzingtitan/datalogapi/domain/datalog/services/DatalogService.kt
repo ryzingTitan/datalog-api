@@ -20,7 +20,7 @@ class DatalogService(private val datalogRepository: DatalogRepository) {
             .findAllBySessionIdOrderByEpochMillisecondsAsc(sessionId)
             .map { datalogEntity ->
                 Datalog(
-                    datalogEntity.sessionId,
+                    datalogEntity.sessionId!!,
                     Instant.ofEpochMilli(datalogEntity.epochMilliseconds),
                     Data(
                         datalogEntity.data.longitude,

@@ -1,25 +1,25 @@
-package com.ryzingtitan.datalogapi.domain.fileupload.services
+package com.ryzingtitan.datalogapi.domain.session.services
 
-import com.ryzingtitan.datalogapi.data.datalog.repositories.DatalogRepository
-import com.ryzingtitan.datalogapi.domain.fileupload.dtos.FileUpload
+import com.ryzingtitan.datalogapi.data.datalog.entities.DatalogEntity
+import com.ryzingtitan.datalogapi.domain.session.dtos.FileUpload
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.cache.annotation.CacheEvict
 import org.springframework.stereotype.Service
 
 @Service
 class FileParsingService(
-    private val datalogRepository: DatalogRepository,
     private val rowParsingService: RowParsingService,
     private val columnConfigurationService: ColumnConfigurationService,
 ) {
     private val logger: Logger = LoggerFactory.getLogger(FileParsingService::class.java)
 
-    suspend fun parse(fileUpload: FileUpload) {
+    @CacheEvict(cacheNames = ["datalogs"], allEntries = true)
+    suspend fun parse(fileUpload: FileUpload): List<DatalogEntity> {
         logger.info("Beginning to parse file: ${fileUpload.metadata.fileName}")
 
         val fileData = StringBuilder()
@@ -35,25 +35,18 @@ class FileParsingService(
 
         val fileLinesWithoutHeader = removeHeaderRow(fileLines)
 
+        val datalogs = mutableListOf<DatalogEntity>()
         fileLinesWithoutHeader.map { fileLine ->
-            val datalog =
-                rowParsingService.parse(fileLine, fileUpload.metadata, columnConfiguration)
-
-            if (datalog.sessionId != fileUpload.metadata.sessionId) {
-                val oldDatalogs = datalogRepository.deleteBySessionIdAndEpochMilliseconds(
-                    datalog.sessionId,
-                    datalog.epochMilliseconds,
-                )
-
-                oldDatalogs.collect()
-            }
-
-            datalogRepository.save(datalog)
+            val datalog = rowParsingService.parse(fileLine, fileUpload.metadata, columnConfiguration)
+            datalogs.add(datalog)
         }
+
         logger.info("File parsing completed for file: ${fileUpload.metadata.fileName}")
+
+        return datalogs
     }
 
-    fun removeHeaderRow(fileLines: List<String>): List<String> {
+    private fun removeHeaderRow(fileLines: List<String>): List<String> {
         return fileLines.drop(1)
     }
 }

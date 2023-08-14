@@ -9,6 +9,7 @@ import io.cucumber.java.DataTableType
 import io.cucumber.java.en.When
 import kotlinx.coroutines.runBlocking
 import org.springframework.core.io.FileSystemResource
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.web.reactive.function.BodyInserters
@@ -16,9 +17,9 @@ import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.awaitExchange
 import java.util.*
 
-class FileUploadControllerStepDefs {
+class SessionControllerStepDefs {
     @When("the file is uploaded for a session with the following data:")
-    fun theFileIsUploadedForSessionWithIdAndTheFollowingData(table: DataTable) {
+    fun theFileIsUploadedForSessionWithTheFollowingData(table: DataTable) {
         val requestData = table.tableConverter.toList<RequestData>(table, RequestData::class.java)
 
         val multipartBodyBuilder = MultipartBodyBuilder()
@@ -29,7 +30,33 @@ class FileUploadControllerStepDefs {
 
         runBlocking {
             CommonControllerStepDefs.webClient
+                .post()
+                .body(BodyInserters.fromMultipartData(multiPartData))
+                .header(
+                    "Authorization",
+                    "Bearer ${CommonControllerStepDefs.authorizationToken?.serialize()}",
+                )
+                .awaitExchange { clientResponse ->
+                    handleUploadFileResponse(clientResponse)
+                }
+        }
+    }
+
+    @When("the file is uploaded for a session with the following data and session id {string}:")
+    fun theFileIsUploadedForSessionWithTheFollowingDataAndSessionId(sessionIdString: String, table: DataTable) {
+        val requestData = table.tableConverter.toList<RequestData>(table, RequestData::class.java)
+        val sessionId = UUID.fromString(sessionIdString)
+
+        val multipartBodyBuilder = MultipartBodyBuilder()
+        multipartBodyBuilder.part("user", requestData.first().user)
+        multipartBodyBuilder.part("trackInfo", requestData.first().trackInfo)
+        multipartBodyBuilder.part("uploadFile", FileSystemResource("testFiles/testFile.txt"))
+        val multiPartData = multipartBodyBuilder.build()
+
+        runBlocking {
+            CommonControllerStepDefs.webClient
                 .put()
+                .uri("/$sessionId")
                 .body(BodyInserters.fromMultipartData(multiPartData))
                 .header(
                     "Authorization",
@@ -43,6 +70,8 @@ class FileUploadControllerStepDefs {
 
     private fun handleUploadFileResponse(clientResponse: ClientResponse) {
         CommonControllerStepDefs.responseStatus = clientResponse.statusCode() as HttpStatus
+        CommonControllerStepDefs.locationHeader =
+            clientResponse.headers().header(HttpHeaders.LOCATION).firstOrNull() ?: ""
     }
 
     @DataTableType

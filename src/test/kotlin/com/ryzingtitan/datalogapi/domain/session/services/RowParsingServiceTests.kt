@@ -1,10 +1,9 @@
-package com.ryzingtitan.datalogapi.domain.fileupload.services
+package com.ryzingtitan.datalogapi.domain.session.services
 
 import com.ryzingtitan.datalogapi.domain.datalog.dtos.TrackInfo
 import com.ryzingtitan.datalogapi.domain.datalog.dtos.User
-import com.ryzingtitan.datalogapi.domain.fileupload.configuration.ColumnConfiguration
-import com.ryzingtitan.datalogapi.domain.fileupload.dtos.FileUploadMetadata
-import com.ryzingtitan.datalogapi.domain.sessionmetadata.services.SessionMetadataService
+import com.ryzingtitan.datalogapi.domain.session.configuration.ColumnConfiguration
+import com.ryzingtitan.datalogapi.domain.session.dtos.FileUploadMetadata
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -12,8 +11,6 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.whenever
 import java.time.Instant
 import java.util.*
 
@@ -41,7 +38,47 @@ class RowParsingServiceTests {
                 columnConfiguration,
             )
 
-            assertEquals(newSessionId, datalog.sessionId)
+            assertEquals(sessionId, datalog.sessionId)
+            assertEquals(firstLineEpochMilliseconds, datalog.epochMilliseconds)
+            assertEquals(firstLineLongitude, datalog.data.longitude)
+            assertEquals(firstLineLatitude, datalog.data.latitude)
+            assertEquals(firstLineAltitude, datalog.data.altitude)
+            assertEquals(firstLineIntakeAirTemperature, datalog.data.intakeAirTemperature)
+            assertEquals(firstLineBoostPressure, datalog.data.boostPressure)
+            assertEquals(firstLineCoolantTemperature, datalog.data.coolantTemperature)
+            assertEquals(firstLineEngineRpm, datalog.data.engineRpm)
+            assertEquals(firstLineSpeed, datalog.data.speed)
+            assertEquals(firstLineThrottlePosition, datalog.data.throttlePosition)
+            assertEquals(firstLineAirFuelRatio, datalog.data.airFuelRatio)
+            assertEquals("Test Track", datalog.trackInfo.name)
+            assertEquals(42.4086, datalog.trackInfo.latitude)
+            assertEquals(-86.1374, datalog.trackInfo.longitude)
+            assertEquals("test@test.com", datalog.user.email)
+            assertEquals("test", datalog.user.firstName)
+            assertEquals("tester", datalog.user.lastName)
+        }
+
+        @Test
+        fun `parses the row correctly when session id is null`() = runTest {
+            val row = "$firstLineDeviceTime," +
+                "$firstLineLongitude," +
+                "$firstLineLatitude," +
+                "$firstLineAltitude," +
+                "${firstLineCoolantTemperature.toFloat()}," +
+                "${firstLineEngineRpm.toFloat()}," +
+                "${firstLineIntakeAirTemperature.toFloat()}," +
+                "${firstLineSpeed.toFloat()}," +
+                "$firstLineThrottlePosition," +
+                "$firstLineBoostPressure," +
+                firstLineAirFuelRatio
+
+            val datalog = rowParsingService.parse(
+                row,
+                fileUploadMetadata.copy(sessionId = null),
+                columnConfiguration,
+            )
+
+            assertNull(datalog.sessionId)
             assertEquals(firstLineEpochMilliseconds, datalog.epochMilliseconds)
             assertEquals(firstLineLongitude, datalog.data.longitude)
             assertEquals(firstLineLatitude, datalog.data.latitude)
@@ -81,7 +118,7 @@ class RowParsingServiceTests {
                 columnConfiguration,
             )
 
-            assertEquals(newSessionId, datalog.sessionId)
+            assertEquals(sessionId, datalog.sessionId)
             assertEquals(secondLineEpochMilliseconds, datalog.epochMilliseconds)
             assertEquals(secondLineLongitude, datalog.data.longitude)
             assertEquals(secondLineLatitude, datalog.data.latitude)
@@ -100,64 +137,22 @@ class RowParsingServiceTests {
             assertEquals(userFirstName, datalog.user.firstName)
             assertEquals(userLastName, datalog.user.lastName)
         }
-
-        @Test
-        fun `parses the row correctly when session already exists`() = runTest {
-            whenever(mockSessionMetadataService.getExistingSessionId(userEmail, firstLineEpochMilliseconds))
-                .thenReturn(existingSessionId)
-
-            val row = "$firstLineDeviceTime," +
-                "$firstLineLongitude," +
-                "$firstLineLatitude," +
-                "$firstLineAltitude," +
-                "${firstLineCoolantTemperature.toFloat()}," +
-                "${firstLineEngineRpm.toFloat()}," +
-                "${firstLineIntakeAirTemperature.toFloat()}," +
-                "${firstLineSpeed.toFloat()}," +
-                "$firstLineThrottlePosition," +
-                "$firstLineBoostPressure," +
-                firstLineAirFuelRatio
-
-            val datalog = rowParsingService.parse(row, fileUploadMetadata, columnConfiguration)
-
-            assertEquals(existingSessionId, datalog.sessionId)
-            assertEquals(firstLineEpochMilliseconds, datalog.epochMilliseconds)
-            assertEquals(firstLineLongitude, datalog.data.longitude)
-            assertEquals(firstLineLatitude, datalog.data.latitude)
-            assertEquals(firstLineAltitude, datalog.data.altitude)
-            assertEquals(firstLineIntakeAirTemperature, datalog.data.intakeAirTemperature)
-            assertEquals(firstLineBoostPressure, datalog.data.boostPressure)
-            assertEquals(firstLineCoolantTemperature, datalog.data.coolantTemperature)
-            assertEquals(firstLineEngineRpm, datalog.data.engineRpm)
-            assertEquals(firstLineSpeed, datalog.data.speed)
-            assertEquals(firstLineThrottlePosition, datalog.data.throttlePosition)
-            assertEquals(firstLineAirFuelRatio, datalog.data.airFuelRatio)
-            assertEquals("Test Track", datalog.trackInfo.name)
-            assertEquals(42.4086, datalog.trackInfo.latitude)
-            assertEquals(-86.1374, datalog.trackInfo.longitude)
-            assertEquals("test@test.com", datalog.user.email)
-            assertEquals("test", datalog.user.firstName)
-            assertEquals("tester", datalog.user.lastName)
-        }
     }
 
     @BeforeEach
     fun setup() {
-        rowParsingService = RowParsingService(mockSessionMetadataService)
+        rowParsingService = RowParsingService()
     }
 
     private lateinit var rowParsingService: RowParsingService
 
-    private val mockSessionMetadataService = mock<SessionMetadataService>()
-
-    private val newSessionId: UUID = UUID.fromString("c61cc339-f93d-45a4-aa2b-923f0482b97f")
-    private val existingSessionId = UUID.randomUUID()
+    private val sessionId: UUID = UUID.fromString("c61cc339-f93d-45a4-aa2b-923f0482b97f")
     private val firstLineEpochMilliseconds = Instant.parse("2022-09-18T18:15:47.963Z").toEpochMilli()
     private val secondLineEpochMilliseconds = Instant.parse("2022-09-18T18:18:47.968Z").toEpochMilli()
 
     private val fileUploadMetadata = FileUploadMetadata(
         fileName = "testFile.txt",
-        sessionId = newSessionId,
+        sessionId = sessionId,
         trackInfo = TrackInfo(
             name = trackName,
             latitude = trackLatitude,
