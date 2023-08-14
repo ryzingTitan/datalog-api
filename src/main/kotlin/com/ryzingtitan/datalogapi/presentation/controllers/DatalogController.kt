@@ -19,7 +19,7 @@ class DatalogController(private val datalogService: DatalogService) {
 
     @GetMapping("/{sessionId}/datalogs")
     fun getDatalogsBySessionId(@PathVariable(name = "sessionId") sessionId: UUID): Flow<Datalog> {
-        logger.info("Retrieving datalog records for session id: $sessionId")
+        logger.info("Retrieving datalogs for session id: $sessionId")
         return datalogService.getAllBySessionId(sessionId)
     }
 }

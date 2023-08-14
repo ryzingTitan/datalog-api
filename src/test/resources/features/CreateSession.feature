@@ -1,6 +1,6 @@
 Feature: Create a new session from an uploaded file
 
-  Scenario: Create a new session with a single record with valid session data
+  Scenario: Create a new session with a single datalog with valid session data
     Given a file with the following rows:
       | Device Time              | Longitude          | Latitude           | Altitude | Engine Coolant Temperature(°F) | Engine RPM(rpm) | Intake Air Temperature(°F) | Speed (OBD)(mph) | Throttle Position(Manifold)(%) | Turbo Boost & Vacuum Gauge(psi) | Air Fuel Ratio(Measured)(:1) |
       | 18-Sep-2022 14:15:47.968 | -86.14170333333335 | 42.406800000000004 | 188.4    | 95.9                           | 3500.35         | 123.8                      | 74.56            | 5.6                            | 16.5                            | 17.5                         |
@@ -18,7 +18,7 @@ Feature: Create a new session from an uploaded file
       | INFO  | Beginning to parse file: testFile.txt         |
       | INFO  | File parsing completed for file: testFile.txt |
 
-  Scenario: Create a new session with multiple records with valid session data
+  Scenario: Create a new session with multiple datalogs with valid session data
     Given a file with the following rows:
       | Device Time              | Longitude          | Latitude            | Altitude | Engine Coolant Temperature(°F) | Engine RPM(rpm) | Intake Air Temperature(°F) | Speed (OBD)(mph) | Throttle Position(Manifold)(%) | Turbo Boost & Vacuum Gauge(psi) | Air Fuel Ratio(Measured)(:1) |
       | 18-Sep-2022 14:15:47.968 | -86.14170333333335 | 42.406800000000004  | 188.4    | 95.9                           | 3500.35         | 123.8                      | 74.56            | 5.6                            | 16.5                            | 17.5                         |
@@ -38,7 +38,7 @@ Feature: Create a new session from an uploaded file
       | INFO  | Beginning to parse file: testFile.txt         |
       | INFO  | File parsing completed for file: testFile.txt |
 
-  Scenario: Create a new session with records with invalid session data
+  Scenario: Create a new session with datalogs with invalid session data
     Given a file with the following rows:
       | Device Time              | Longitude          | Latitude            | Altitude | Engine Coolant Temperature(°F) | Engine RPM(rpm) | Intake Air Temperature(°F) | Speed (OBD)(mph) | Throttle Position(Manifold)(%) | Turbo Boost & Vacuum Gauge(psi) | Air Fuel Ratio(Measured)(:1) |
       | 18-Sep-2022 14:15:47.968 | -86.14170333333335 | 42.406800000000004  | 188.4    | 166.2                          | -               | 123.8                      | 74.56            | 5.6                            | -                               | -                            |

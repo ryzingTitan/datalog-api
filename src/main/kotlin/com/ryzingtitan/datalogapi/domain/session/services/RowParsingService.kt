@@ -30,11 +30,11 @@ class RowParsingService {
     ): DatalogEntity {
         val lineColumns = row.split(',')
 
-        val recordTimestamp = parseRowTimestamp(lineColumns[columnConfiguration.deviceTime])
+        val datalogTimestamp = parseRowTimestamp(lineColumns[columnConfiguration.deviceTime])
 
         return DatalogEntity(
             sessionId = metadata.sessionId,
-            epochMilliseconds = recordTimestamp.toEpochMilli(),
+            epochMilliseconds = datalogTimestamp.toEpochMilli(),
             data = getData(lineColumns, columnConfiguration),
             trackInfo = getTrackInfo(metadata.trackInfo),
             user = getUser(metadata.user),

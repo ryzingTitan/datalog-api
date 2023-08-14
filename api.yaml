@@ -20,10 +20,10 @@ paths:
             example: 515ef9d0-2059-4a11-b5c3-7c8dae93b57d
       tags:
         - Sessions
-      description: Retrieve all sessions with the given session id sorted by timestamp ascending
+      description: Retrieve all datalogs with the given session id sorted by timestamp ascending
       responses:
         200:
-          description: The list of datalog records with the given session id sorted by timestamp ascending
+          description: The list of datalogs with the given session id sorted by timestamp ascending
           content:
             application/json:
               schema:
@@ -147,12 +147,12 @@ components:
         sessionId:
           type: string
           format: uuid
-          description: The session id of the datalog record
+          description: The session id of the datalog
           example: 515ef9d0-2059-4a11-b5c3-7c8dae93b57d
         timestamp:
           type: string
           format: date-time
-          description: The timestamp of the datalog record
+          description: The timestamp of the datalog
           example: 2022-09-18T18:15:47.968Z
         data:
           $ref: '#/components/schemas/Data'

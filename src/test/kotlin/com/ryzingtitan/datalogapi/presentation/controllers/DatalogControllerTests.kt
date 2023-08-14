@@ -43,7 +43,7 @@ class DatalogControllerTests : CommonControllerTests() {
 
             assertEquals(1, appender.list.size)
             assertEquals(Level.INFO, appender.list[0].level)
-            assertEquals("Retrieving datalog records for session id: $sessionId", appender.list[0].message)
+            assertEquals("Retrieving datalogs for session id: $sessionId", appender.list[0].message)
         }
     }
 

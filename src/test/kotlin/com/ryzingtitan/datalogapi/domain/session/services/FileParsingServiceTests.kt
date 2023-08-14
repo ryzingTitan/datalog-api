@@ -35,7 +35,7 @@ class FileParsingServiceTests {
     @Nested
     inner class Parse {
         @Test
-        fun `reads the input data and creates data log records`() = runTest {
+        fun `reads the input data and creates datalogs`() = runTest {
             whenever(
                 mockRowParsingService.parse(
                     "data row 1",

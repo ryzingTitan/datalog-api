@@ -1,6 +1,6 @@
 Feature: Retrieve metadata for all sessions by user
 
-  Scenario: Retrieve metadata for a user session with a single record
+  Scenario: Retrieve metadata for a user session with a single datalog
     Given the following datalogs exist:
       | sessionId                            | epochMilliseconds | longitude          | latitude           | altitude | trackName  | trackLatitude | trackLongitude | firstName | lastName | email         |
       | c61cc339-f93d-45a4-aa2b-923f0482b97f | 1663510547968     | -86.14170333333335 | 42.406800000000004 | 188.4    | Test Track | 42.4086       | -86.1374       | test      | tester   | test@test.com |
@@ -14,7 +14,7 @@ Feature: Retrieve metadata for all sessions by user
       | level | message                                                      |
       | INFO  | Retrieving metadata for all sessions for user: test@test.com |
 
-  Scenario: Retrieve metadata for a user session with multiple records
+  Scenario: Retrieve metadata for a user session with multiple datalogs
     Given the following datalogs exist:
       | sessionId                            | epochMilliseconds | longitude          | latitude           | altitude | trackName  | trackLatitude | trackLongitude | firstName | lastName | email         |
       | c61cc339-f93d-45a4-aa2b-923f0482b97f | 1663510547968     | -86.14170333333335 | 42.406800000000004 | 188.4    | Test Track | 42.4086       | -86.1374       | test      | tester   | test@test.com |
