@@ -31,13 +31,14 @@ class SessionControllerStepDefs {
         runBlocking {
             CommonControllerStepDefs.webClient
                 .post()
+                .uri("/sessions")
                 .body(BodyInserters.fromMultipartData(multiPartData))
                 .header(
                     "Authorization",
                     "Bearer ${CommonControllerStepDefs.authorizationToken?.serialize()}",
                 )
                 .awaitExchange { clientResponse ->
-                    handleUploadFileResponse(clientResponse)
+                    handleSessionResponse(clientResponse)
                 }
         }
     }
@@ -56,19 +57,19 @@ class SessionControllerStepDefs {
         runBlocking {
             CommonControllerStepDefs.webClient
                 .put()
-                .uri("/$sessionId")
+                .uri("/sessions/$sessionId")
                 .body(BodyInserters.fromMultipartData(multiPartData))
                 .header(
                     "Authorization",
                     "Bearer ${CommonControllerStepDefs.authorizationToken?.serialize()}",
                 )
                 .awaitExchange { clientResponse ->
-                    handleUploadFileResponse(clientResponse)
+                    handleSessionResponse(clientResponse)
                 }
         }
     }
 
-    private fun handleUploadFileResponse(clientResponse: ClientResponse) {
+    private fun handleSessionResponse(clientResponse: ClientResponse) {
         CommonControllerStepDefs.responseStatus = clientResponse.statusCode() as HttpStatus
         CommonControllerStepDefs.locationHeader =
             clientResponse.headers().header(HttpHeaders.LOCATION).firstOrNull() ?: ""

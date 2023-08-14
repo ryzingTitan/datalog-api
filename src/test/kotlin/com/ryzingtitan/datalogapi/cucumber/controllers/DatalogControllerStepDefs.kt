@@ -26,7 +26,7 @@ class DatalogControllerStepDefs {
 
         runBlocking {
             CommonControllerStepDefs.webClient.get()
-                .uri("/$sessionId/datalogs")
+                .uri("/sessions/$sessionId/datalogs")
                 .accept(MediaType.APPLICATION_JSON)
                 .header(
                     "Authorization",

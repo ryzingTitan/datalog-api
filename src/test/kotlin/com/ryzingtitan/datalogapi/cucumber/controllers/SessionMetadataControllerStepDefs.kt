@@ -22,7 +22,7 @@ class SessionMetadataControllerStepDefs {
     fun whenTheMetadataForTheSessionsIsRetrievedForUser(username: String) {
         runBlocking {
             CommonControllerStepDefs.webClient.get()
-                .uri("/metadata?username=$username")
+                .uri("/sessions/metadata?username=$username")
                 .accept(MediaType.APPLICATION_JSON)
                 .header(
                     "Authorization",

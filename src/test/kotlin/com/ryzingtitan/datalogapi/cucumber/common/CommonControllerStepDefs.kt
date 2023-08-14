@@ -36,7 +36,7 @@ class CommonControllerStepDefs {
 
     @Before
     fun setup() {
-        webClient = WebClient.create("http://localhost:$port/api/sessions")
+        webClient = WebClient.create("http://localhost:$port/api")
 
         mockOAuth2Server = MockOAuth2Server()
         mockOAuth2Server.start(8088)

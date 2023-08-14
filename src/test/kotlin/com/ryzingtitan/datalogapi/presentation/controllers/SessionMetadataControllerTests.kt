@@ -12,10 +12,13 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.reset
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockJwt
+import org.springframework.test.web.reactive.server.expectBodyList
 import java.time.Instant
 import java.util.*
 
@@ -36,12 +39,14 @@ class SessionMetadataControllerTests : CommonControllerTests() {
                 .exchange()
                 .expectStatus()
                 .isOk
-                .expectBodyList(SessionMetadata::class.java)
+                .expectBodyList<SessionMetadata>()
                 .contains(firstSessionMetadata, secondSessionMetadata)
 
             assertEquals(1, appender.list.size)
             assertEquals(Level.INFO, appender.list[0].level)
             assertEquals("Retrieving metadata for all sessions for user: test@test.com", appender.list[0].message)
+
+            verify(mockSessionMetadataService, times(1)).getAllSessionMetadataByUser("test@test.com")
         }
     }
 

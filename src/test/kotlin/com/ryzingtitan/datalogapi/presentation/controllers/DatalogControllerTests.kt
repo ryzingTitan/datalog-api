@@ -15,10 +15,13 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.reset
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockJwt
+import org.springframework.test.web.reactive.server.expectBodyList
 import java.time.Instant
 import java.util.*
 
@@ -38,12 +41,14 @@ class DatalogControllerTests : CommonControllerTests() {
                 .exchange()
                 .expectStatus()
                 .isOk
-                .expectBodyList(Datalog::class.java)
+                .expectBodyList<Datalog>()
                 .contains(firstDatalog, secondDatalog)
 
             assertEquals(1, appender.list.size)
             assertEquals(Level.INFO, appender.list[0].level)
             assertEquals("Retrieving datalogs for session id: $sessionId", appender.list[0].message)
+
+            verify(mockDatalogService, times(1)).getAllBySessionId(sessionId)
         }
     }
 
