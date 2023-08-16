@@ -1,5 +1,10 @@
 package com.ryzingtitan.datalogapi.domain.session.services
 
+import ch.qos.logback.classic.Level
+import ch.qos.logback.classic.Logger
+import ch.qos.logback.classic.LoggerContext
+import ch.qos.logback.classic.spi.ILoggingEvent
+import ch.qos.logback.core.read.ListAppender
 import com.ryzingtitan.datalogapi.data.datalog.entities.DataEntity
 import com.ryzingtitan.datalogapi.data.datalog.entities.DatalogEntity
 import com.ryzingtitan.datalogapi.data.datalog.entities.TrackInfoEntity
@@ -7,10 +12,10 @@ import com.ryzingtitan.datalogapi.data.datalog.entities.UserEntity
 import com.ryzingtitan.datalogapi.data.datalog.repositories.DatalogRepository
 import com.ryzingtitan.datalogapi.domain.datalog.dtos.TrackInfo
 import com.ryzingtitan.datalogapi.domain.datalog.dtos.User
-import com.ryzingtitan.datalogapi.domain.exceptions.SessionAlreadyExistsException
-import com.ryzingtitan.datalogapi.domain.exceptions.SessionDoesNotExistException
 import com.ryzingtitan.datalogapi.domain.session.dtos.FileUpload
 import com.ryzingtitan.datalogapi.domain.session.dtos.FileUploadMetadata
+import com.ryzingtitan.datalogapi.domain.session.exceptions.SessionAlreadyExistsException
+import com.ryzingtitan.datalogapi.domain.session.exceptions.SessionDoesNotExistException
 import com.ryzingtitan.datalogapi.domain.sessionmetadata.services.SessionMetadataService
 import com.ryzingtitan.datalogapi.domain.uuid.UuidGenerator
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -28,6 +33,7 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import org.slf4j.LoggerFactory
 import org.springframework.core.io.buffer.DefaultDataBufferFactory
 import java.time.Instant
 import java.util.UUID
@@ -51,6 +57,9 @@ class SessionServiceTests {
             val sessionId = sessionService.create(FileUpload(flowOf(dataBuffer), fileUploadMetadata))
 
             assertEquals(newSessionId, sessionId)
+            assertEquals(1, appender.list.size)
+            assertEquals(Level.INFO, appender.list[0].level)
+            assertEquals("Session $newSessionId created", appender.list[0].message)
 
             verify(mockFileParsingService, times(1)).parse(any<FileUpload>())
             verify(mockSessionMetadataService, times(1))
@@ -70,6 +79,9 @@ class SessionServiceTests {
             }
 
             assertEquals("A session already exists for this user and timestamp", exception.message)
+            assertEquals(1, appender.list.size)
+            assertEquals(Level.ERROR, appender.list[0].level)
+            assertEquals("A session already exists for this user and timestamp", appender.list[0].message)
 
             verify(mockFileParsingService, times(1)).parse(any<FileUpload>())
             verify(mockSessionMetadataService, times(1))
@@ -81,7 +93,7 @@ class SessionServiceTests {
     @Nested
     inner class Update {
         @Test
-        fun `updates existing session`() = runTest {
+        fun `updates an existing session`() = runTest {
             val currentSessionId = UUID.randomUUID()
 
             whenever(mockDatalogRepository.findAllBySessionId(currentSessionId))
@@ -95,6 +107,10 @@ class SessionServiceTests {
 
             sessionService.update(FileUpload(flowOf(dataBuffer), fileUploadMetadata.copy(sessionId = currentSessionId)))
 
+            assertEquals(1, appender.list.size)
+            assertEquals(Level.INFO, appender.list[0].level)
+            assertEquals("Session $currentSessionId updated", appender.list[0].message)
+
             verify(mockDatalogRepository, times(1)).findAllBySessionId(currentSessionId)
             verify(mockDatalogRepository, times(1)).deleteBySessionId(currentSessionId)
             verify(mockFileParsingService, times(1)).parse(any<FileUpload>())
@@ -103,7 +119,7 @@ class SessionServiceTests {
         }
 
         @Test
-        fun `does not update session that does not exist`() = runTest {
+        fun `does not update a session that does not exist`() = runTest {
             val currentSessionId = UUID.randomUUID()
 
             whenever(mockDatalogRepository.findAllBySessionId(currentSessionId)).thenReturn(emptyFlow())
@@ -114,6 +130,9 @@ class SessionServiceTests {
             }
 
             assertEquals("Session id $currentSessionId does not exist", exception.message)
+            assertEquals(1, appender.list.size)
+            assertEquals(Level.ERROR, appender.list[0].level)
+            assertEquals("Session id $currentSessionId does not exist", appender.list[0].message)
 
             verify(mockDatalogRepository, times(1)).findAllBySessionId(currentSessionId)
             verify(mockDatalogRepository, never()).deleteBySessionId(any())
@@ -130,9 +149,17 @@ class SessionServiceTests {
             mockUuidGenerator,
             mockSessionMetadataService,
         )
+
+        logger = LoggerFactory.getLogger(SessionService::class.java) as Logger
+        appender = ListAppender()
+        appender.context = LoggerContext()
+        logger.addAppender(appender)
+        appender.start()
     }
 
     private lateinit var sessionService: SessionService
+    private lateinit var logger: Logger
+    private lateinit var appender: ListAppender<ILoggingEvent>
 
     private val mockFileParsingService = mock<FileParsingService>()
     private val mockDatalogRepository = mock<DatalogRepository>()

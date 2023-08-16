@@ -6,16 +6,16 @@ import java.util.*
 
 plugins {
     id("org.springframework.boot") version "3.1.2"
-    id("io.spring.dependency-management") version "1.1.2"
-    kotlin("jvm") version "1.8.21"
-    kotlin("plugin.spring") version "1.8.21"
-    id("org.jlleitschuh.gradle.ktlint") version "11.5.0"
-    id("io.gitlab.arturbosch.detekt") version "1.23.0"
+    id("io.spring.dependency-management") version "1.1.3"
+    kotlin("jvm") version "1.9.0"
+    kotlin("plugin.spring") version "1.9.0"
+    id("org.jlleitschuh.gradle.ktlint") version "11.5.1"
+    id("io.gitlab.arturbosch.detekt") version "1.23.1"
     id("com.github.ben-manes.versions") version "0.47.0"
     id("org.sonarqube") version "4.3.0.3225"
     id("org.owasp.dependencycheck") version "8.3.1"
     id("org.cyclonedx.bom") version "1.7.4"
-    id("org.graalvm.buildtools.native") version "0.9.23"
+    id("org.graalvm.buildtools.native") version "0.9.24"
     jacoco
 }
 
@@ -40,19 +40,19 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
-    implementation("com.github.ben-manes.caffeine:caffeine:3.1.6")
+    implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2")
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions:1.2.2")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.7.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.7.3")
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test:")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.2")
-    testImplementation("org.junit.platform:junit-platform-suite-api:1.9.3")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:5.0.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    testImplementation("org.junit.platform:junit-platform-suite-api:1.10.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
     testImplementation("io.cucumber:cucumber-java:7.13.0")
     testImplementation("io.cucumber:cucumber-junit-platform-engine:7.13.0")
     testImplementation("io.cucumber:cucumber-spring:7.13.0")

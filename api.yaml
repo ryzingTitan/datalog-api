@@ -19,11 +19,11 @@ paths:
             format: uuid
             example: 515ef9d0-2059-4a11-b5c3-7c8dae93b57d
       tags:
-        - Sessions
-      description: Retrieve all sessions with the given session id sorted by timestamp ascending
+        - Datalogs
+      description: Retrieve all datalogs with the given session id sorted by timestamp ascending
       responses:
         200:
-          description: The list of datalog records with the given session id sorted by timestamp ascending
+          description: The list of datalogs with the given session id sorted by timestamp ascending
           content:
             application/json:
               schema:
@@ -119,10 +119,10 @@ paths:
             example: test@test.com
       tags:
         - Sessions
-      description: Retrieve metadata for all sessions
+      description: Retrieve metadata for all sessions by user
       responses:
         200:
-          description: The metadata for every session
+          description: The metadata for every session associated with the provided user
           content:
             application/json:
               schema:
@@ -134,6 +134,77 @@ paths:
         500:
           description: Internal Server Error
 
+  /tracks:
+    get:
+      tags:
+        - Tracks
+      description: Retrieve all tracks
+      responses:
+        200:
+          description: The list of tracks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Track'
+        401:
+          description: Unauthorized - Ensure the authorization token is valid
+        500:
+          description: Internal Server Error
+
+    post:
+      tags:
+        - Track Administration
+      description: Create a new track
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Track'
+      responses:
+        201:
+          description: Track created successfully
+        400:
+          description: Bad Request - Ensure the request contains all required data
+        401:
+          description: Unauthorized - Ensure the authorization token is valid
+        409:
+          description: Conflict - Track already exists
+        500:
+          description: Internal Server Error
+
+  /tracks/{trackId}:
+    put:
+      parameters:
+        - name: trackId
+          in: path
+          description: The track id to be updated
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 515ef9d0-2059-4a11-b5c3-7c8dae93b57d
+      tags:
+        - Track Administration
+      description: Update an existing track
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Track'
+      responses:
+        200:
+          description: Track updated successfully
+        400:
+          description: Bad Request - Ensure the request contains all required data
+        401:
+          description: Unauthorized - Ensure the authorization token is valid
+        410:
+          description: Gone - Track does not exist
+        500:
+          description: Internal Server Error
+
 components:
   securitySchemes:
     bearerAuth:
@@ -141,25 +212,6 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
-    Datalog:
-      type: object
-      properties:
-        sessionId:
-          type: string
-          format: uuid
-          description: The session id of the datalog record
-          example: 515ef9d0-2059-4a11-b5c3-7c8dae93b57d
-        timestamp:
-          type: string
-          format: date-time
-          description: The timestamp of the datalog record
-          example: 2022-09-18T18:15:47.968Z
-        data:
-          $ref: '#/components/schemas/Data'
-        trackInfo:
-          $ref: '#/components/schemas/TrackInfo'
-        user:
-          $ref: '#/components/schemas/User'
     Data:
       type: object
       properties:
@@ -213,6 +265,65 @@ components:
           format: float
           description: The current air fuel ratio
           example: 14.6
+    Datalog:
+      type: object
+      properties:
+        sessionId:
+          type: string
+          format: uuid
+          description: The session id of the datalog
+          example: 515ef9d0-2059-4a11-b5c3-7c8dae93b57d
+        timestamp:
+          type: string
+          format: date-time
+          description: The timestamp of the datalog
+          example: 2022-09-18T18:15:47.968Z
+        data:
+          $ref: '#/components/schemas/Data'
+        trackInfo:
+          $ref: '#/components/schemas/TrackInfo'
+        user:
+          $ref: '#/components/schemas/User'
+    SessionMetadata:
+      type: object
+      properties:
+        sessionId:
+          type: string
+          format: uuid
+          description: The session id
+          example: 515ef9d0-2059-4a11-b5c3-7c8dae93b57d
+        startTime:
+          type: string
+          format: date-time
+          description: The start time of the session
+          example: 2022-09-18T18:15:47.968Z
+        endTime:
+          type: string
+          format: date-time
+          description: The end time of the session
+          example: 2022-09-18T18:18:47.968Z
+    Track:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The track id
+          example: 515ef9d0-2059-4a11-b5c3-7c8dae93b57d
+        name:
+          type: string
+          description: The name of the track associated with the datalog
+          example: Test Track
+        latitude:
+          type: number
+          format: double
+          description: The latitude location of the track
+          example: 42.406800000000004
+        longitude:
+          type: number
+          format: double
+          description: The longitude location of the track
+          example: -86.14170333333335
     TrackInfo:
       type: object
       properties:
@@ -246,24 +357,6 @@ components:
           format: email
           description: The email address of the user associated with the datalog
           example: test@test.com
-    SessionMetadata:
-      type: object
-      properties:
-        sessionId:
-          type: string
-          format: uuid
-          description: The session id
-          example: 515ef9d0-2059-4a11-b5c3-7c8dae93b57d
-        startTime:
-          type: string
-          format: date-time
-          description: The start time of the session
-          example: 2022-09-18T18:15:47.968Z
-        endTime:
-          type: string
-          format: date-time
-          description: The end time of the session
-          example: 2022-09-18T18:18:47.968Z
 
 security:
   - bearerAuth: []

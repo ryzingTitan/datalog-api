@@ -30,7 +30,7 @@ class DatalogServiceTests {
     @Nested
     inner class GetAllBySessionId {
         @Test
-        fun `returns all datalog records with the session id that is provided`() = runTest {
+        fun `returns all datalogs with the session id that is provided`() = runTest {
             whenever(mockDatalogRepository.findAllBySessionIdOrderByEpochMillisecondsAsc(sessionId))
                 .thenReturn(flowOf(firstDatalogEntity, secondDatalogEntity))
 

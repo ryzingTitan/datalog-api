@@ -25,7 +25,7 @@ class SessionControllerTests : CommonControllerTests() {
     @Nested
     inner class CreateSession {
         @Test
-        fun `returns 'CREATED' and creates new session`() = runTest {
+        fun `returns 'CREATED' status and creates new session`() = runTest {
             val sessionId = UUID.randomUUID()
             whenever(mockSessionService.create(any<FileUpload>())).thenReturn(sessionId)
 
@@ -56,7 +56,7 @@ class SessionControllerTests : CommonControllerTests() {
     @Nested
     inner class UpdateSession {
         @Test
-        fun `returns 'OK' and updates session data`() = runTest {
+        fun `returns 'OK' status and updates session data`() = runTest {
             Files.createDirectory(Path.of("testFiles"))
             Files.write(Path.of("testFiles", "testFile.txt"), listOf(""))
 
