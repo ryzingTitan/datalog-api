@@ -16,9 +16,9 @@ class SecurityConfiguration {
     fun springSecurityFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain {
         http
             .authorizeExchange { exchange ->
-                exchange.pathMatchers(HttpMethod.GET, "/api/sessions/**")
-                    .authenticated()
-                    .pathMatchers(HttpMethod.OPTIONS, "/api/sessions/**")
+                exchange.pathMatchers(HttpMethod.OPTIONS, "/api/**")
+                    .permitAll()
+                    .pathMatchers(HttpMethod.GET, "/api/sessions/**")
                     .authenticated()
                     .pathMatchers(HttpMethod.PUT, "/api/sessions/*")
                     .authenticated()
