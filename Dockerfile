@@ -1,4 +1,4 @@
-FROM gradle:8.2.1-jdk17-alpine as build
+FROM gradle:8.4-jdk17-alpine as build
 
 # build project within temporary Docker image
 COPY --chown=gradle:gradle . /home/gradle/src

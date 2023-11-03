@@ -37,6 +37,7 @@ class SecurityConfiguration {
             }
             .cors { it.disable() }
             .csrf { it.disable() }
+            .headers { it.cache { }.disable() }
             .httpBasic { it.disable() }
             .formLogin { it.disable() }
             .logout { it.disable() }
