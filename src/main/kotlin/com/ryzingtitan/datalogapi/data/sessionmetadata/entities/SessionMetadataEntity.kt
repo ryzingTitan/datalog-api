@@ -1,7 +1,7 @@
 package com.ryzingtitan.datalogapi.data.sessionmetadata.entities
 
 import lombok.Generated
-import java.util.*
+import java.util.UUID
 
 @Generated
 data class SessionMetadataEntity(

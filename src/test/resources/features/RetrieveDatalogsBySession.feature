@@ -1,5 +1,8 @@
 Feature: Retrieve datalogs by session id
 
+  Background:
+    Given the cache is empty
+
   Scenario: Retrieve datalogs for a session with a single datalog
     Given the following datalogs exist:
       | sessionId                            | epochMilliseconds | longitude          | latitude           | altitude | intakeAirTemperature | boostPressure | coolantTemperature | engineRpm | speed | throttlePosition | airFuelRatio | trackName  | trackLatitude | trackLongitude | firstName | lastName | email         |

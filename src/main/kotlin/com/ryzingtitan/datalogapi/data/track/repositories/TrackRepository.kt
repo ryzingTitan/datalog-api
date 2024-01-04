@@ -7,5 +7,6 @@ import java.util.UUID
 
 interface TrackRepository : CoroutineCrudRepository<TrackEntity, String> {
     fun findByName(name: String): Flow<TrackEntity>
+
     fun deleteByTrackId(trackId: UUID): Flow<TrackEntity>
 }

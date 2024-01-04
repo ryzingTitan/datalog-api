@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import org.springframework.stereotype.Service
 import java.time.Instant
-import java.util.*
+import java.util.UUID
 
 @Service
 class SessionMetadataService(
@@ -28,7 +28,10 @@ class SessionMetadataService(
             }
     }
 
-    suspend fun getExistingSessionId(username: String, epochMillisecond: Long): UUID? {
+    suspend fun getExistingSessionId(
+        username: String,
+        epochMillisecond: Long,
+    ): UUID? {
         return sessionMetadataRepository.getAllSessionMetadata()
             .filter { sessionMetadata ->
                 sessionMetadata.username == username &&

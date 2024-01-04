@@ -10,7 +10,7 @@ import io.cucumber.java.en.Then
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
-import java.util.*
+import java.util.UUID
 
 class TrackRepositoryStepDefs(private val trackRepository: TrackRepository) {
     @Given("the following tracks exist:")

@@ -23,7 +23,7 @@ import org.springframework.http.MediaType
 import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockJwt
 import org.springframework.test.web.reactive.server.expectBodyList
 import java.time.Instant
-import java.util.*
+import java.util.UUID
 
 class DatalogControllerTests : CommonControllerTests() {
     @Nested
@@ -68,41 +68,45 @@ class DatalogControllerTests : CommonControllerTests() {
 
     private val sessionId = UUID.randomUUID()
 
-    private val firstDatalog = Datalog(
-        sessionId = sessionId,
-        timestamp = Instant.now(),
-        data = Data(
-            longitude = -86.14162,
-            latitude = 42.406800000000004,
-            altitude = 188.4f,
-            intakeAirTemperature = 130,
-            boostPressure = 15.6f,
-            coolantTemperature = 150,
-            engineRpm = 5000,
-            speed = 85,
-            throttlePosition = 75.6f,
-            airFuelRatio = 14.7f,
-        ),
-        trackInfo = TrackInfo("", 0.0, 0.0),
-        user = User("", "", ""),
-    )
+    private val firstDatalog =
+        Datalog(
+            sessionId = sessionId,
+            timestamp = Instant.now(),
+            data =
+                Data(
+                    longitude = -86.14162,
+                    latitude = 42.406800000000004,
+                    altitude = 188.4f,
+                    intakeAirTemperature = 130,
+                    boostPressure = 15.6f,
+                    coolantTemperature = 150,
+                    engineRpm = 5000,
+                    speed = 85,
+                    throttlePosition = 75.6f,
+                    airFuelRatio = 14.7f,
+                ),
+            trackInfo = TrackInfo("", 0.0, 0.0),
+            user = User("", "", ""),
+        )
 
-    private val secondDatalog = Datalog(
-        sessionId = sessionId,
-        timestamp = Instant.now(),
-        data = Data(
-            longitude = 86.14162,
-            latitude = -42.406800000000004,
-            altitude = 188.0f,
-            intakeAirTemperature = 135,
-            boostPressure = 15.0f,
-            coolantTemperature = 165,
-            engineRpm = 5500,
-            speed = 80,
-            throttlePosition = 75.0f,
-            airFuelRatio = 15.9f,
-        ),
-        trackInfo = TrackInfo("", 0.0, 0.0),
-        user = User("", "", ""),
-    )
+    private val secondDatalog =
+        Datalog(
+            sessionId = sessionId,
+            timestamp = Instant.now(),
+            data =
+                Data(
+                    longitude = 86.14162,
+                    latitude = -42.406800000000004,
+                    altitude = 188.0f,
+                    intakeAirTemperature = 135,
+                    boostPressure = 15.0f,
+                    coolantTemperature = 165,
+                    engineRpm = 5500,
+                    speed = 80,
+                    throttlePosition = 75.0f,
+                    airFuelRatio = 15.9f,
+                ),
+            trackInfo = TrackInfo("", 0.0, 0.0),
+            user = User("", "", ""),
+        )
 }

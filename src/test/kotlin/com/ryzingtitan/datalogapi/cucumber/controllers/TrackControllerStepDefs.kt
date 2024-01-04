@@ -15,7 +15,7 @@ import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.awaitEntityList
 import org.springframework.web.reactive.function.client.awaitExchange
-import java.util.*
+import java.util.UUID
 
 class TrackControllerStepDefs {
     @When("all tracks are retrieved")

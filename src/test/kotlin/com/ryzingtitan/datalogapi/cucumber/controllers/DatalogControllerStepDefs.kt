@@ -17,7 +17,7 @@ import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.awaitEntityList
 import org.springframework.web.reactive.function.client.awaitExchange
 import java.time.Instant
-import java.util.*
+import java.util.UUID
 
 class DatalogControllerStepDefs {
     @When("the datalogs for session with id {string} are retrieved")
@@ -50,28 +50,31 @@ class DatalogControllerStepDefs {
         return Datalog(
             sessionId = UUID.fromString(tableRow["sessionId"]),
             timestamp = Instant.parse(tableRow["timestamp"]),
-            data = Data(
-                longitude = tableRow["longitude"].toString().toDouble(),
-                latitude = tableRow["latitude"].toString().toDouble(),
-                altitude = tableRow["altitude"].toString().toFloat(),
-                intakeAirTemperature = tableRow["intakeAirTemperature"].toString().toIntOrNull(),
-                boostPressure = tableRow["boostPressure"].toString().toFloatOrNull(),
-                coolantTemperature = tableRow["coolantTemperature"].toString().toIntOrNull(),
-                engineRpm = tableRow["engineRpm"].toString().toIntOrNull(),
-                speed = tableRow["speed"].toString().toIntOrNull(),
-                throttlePosition = tableRow["throttlePosition"].toString().toFloatOrNull(),
-                airFuelRatio = tableRow["airFuelRatio"].toString().toFloatOrNull(),
-            ),
-            trackInfo = TrackInfo(
-                name = tableRow["trackName"].toString(),
-                latitude = tableRow["trackLatitude"].toString().toDouble(),
-                longitude = tableRow["trackLongitude"].toString().toDouble(),
-            ),
-            user = User(
-                firstName = tableRow["firstName"].toString(),
-                lastName = tableRow["lastName"].toString(),
-                email = tableRow["email"].toString(),
-            ),
+            data =
+                Data(
+                    longitude = tableRow["longitude"].toString().toDouble(),
+                    latitude = tableRow["latitude"].toString().toDouble(),
+                    altitude = tableRow["altitude"].toString().toFloat(),
+                    intakeAirTemperature = tableRow["intakeAirTemperature"].toString().toIntOrNull(),
+                    boostPressure = tableRow["boostPressure"].toString().toFloatOrNull(),
+                    coolantTemperature = tableRow["coolantTemperature"].toString().toIntOrNull(),
+                    engineRpm = tableRow["engineRpm"].toString().toIntOrNull(),
+                    speed = tableRow["speed"].toString().toIntOrNull(),
+                    throttlePosition = tableRow["throttlePosition"].toString().toFloatOrNull(),
+                    airFuelRatio = tableRow["airFuelRatio"].toString().toFloatOrNull(),
+                ),
+            trackInfo =
+                TrackInfo(
+                    name = tableRow["trackName"].toString(),
+                    latitude = tableRow["trackLatitude"].toString().toDouble(),
+                    longitude = tableRow["trackLongitude"].toString().toDouble(),
+                ),
+            user =
+                User(
+                    firstName = tableRow["firstName"].toString(),
+                    lastName = tableRow["lastName"].toString(),
+                    email = tableRow["email"].toString(),
+                ),
         )
     }
 

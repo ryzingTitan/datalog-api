@@ -23,34 +23,39 @@ class SessionMetadataServiceTests {
     @Nested
     inner class GetAllSessionMetadataByUser {
         @Test
-        fun `returns correct session metadata`() = runTest {
-            val sessionMetadataList = sessionMetadataService.getAllSessionMetadataByUser(firstUsername)
+        fun `returns correct session metadata`() =
+            runTest {
+                val sessionMetadataList = sessionMetadataService.getAllSessionMetadataByUser(firstUsername)
 
-            assertEquals(listOf(firstSessionMetadata, secondSessionMetadata), sessionMetadataList.toList())
-        }
+                assertEquals(listOf(firstSessionMetadata, secondSessionMetadata), sessionMetadataList.toList())
+            }
     }
 
     @Nested
     inner class GetExistingSessionId {
         @Test
-        fun `returns existing session id when session already exists`() = runTest {
-            val sessionId = sessionMetadataService.getExistingSessionId(
-                firstUsername,
-                startTime.plusSeconds(25).toEpochMilli(),
-            )
+        fun `returns existing session id when session already exists`() =
+            runTest {
+                val sessionId =
+                    sessionMetadataService.getExistingSessionId(
+                        firstUsername,
+                        startTime.plusSeconds(25).toEpochMilli(),
+                    )
 
-            assertEquals(secondSessionMetadata.sessionId, sessionId)
-        }
+                assertEquals(secondSessionMetadata.sessionId, sessionId)
+            }
 
         @Test
-        fun `returns null when session already exists`() = runTest {
-            val sessionId = sessionMetadataService.getExistingSessionId(
-                firstUsername,
-                startTime.plusSeconds(80).toEpochMilli(),
-            )
+        fun `returns null when session already exists`() =
+            runTest {
+                val sessionId =
+                    sessionMetadataService.getExistingSessionId(
+                        firstUsername,
+                        startTime.plusSeconds(80).toEpochMilli(),
+                    )
 
-            assertNull(sessionId)
-        }
+                assertNull(sessionId)
+            }
     }
 
     @BeforeEach
@@ -77,36 +82,41 @@ class SessionMetadataServiceTests {
     private val firstUsername = "test@test.com"
     private val secondUsername = "test2@test.com"
 
-    private val firstSessionMetadata = SessionMetadata(
-        sessionId = firstSessionId,
-        startTime = firstSessionStartTimestamp.truncatedTo(ChronoUnit.MILLIS),
-        endTime = firstSessionEndTimestamp.truncatedTo(ChronoUnit.MILLIS),
-    )
+    private val firstSessionMetadata =
+        SessionMetadata(
+            sessionId = firstSessionId,
+            startTime = firstSessionStartTimestamp.truncatedTo(ChronoUnit.MILLIS),
+            endTime = firstSessionEndTimestamp.truncatedTo(ChronoUnit.MILLIS),
+        )
 
-    private val firstSessionMetadataEntity = SessionMetadataEntity(
-        sessionId = firstSessionId,
-        startTimeEpochMilliseconds = firstSessionStartTimestamp.toEpochMilli(),
-        endTimeEpochMilliseconds = firstSessionEndTimestamp.toEpochMilli(),
-        username = firstUsername,
-    )
+    private val firstSessionMetadataEntity =
+        SessionMetadataEntity(
+            sessionId = firstSessionId,
+            startTimeEpochMilliseconds = firstSessionStartTimestamp.toEpochMilli(),
+            endTimeEpochMilliseconds = firstSessionEndTimestamp.toEpochMilli(),
+            username = firstUsername,
+        )
 
-    private val secondSessionMetadata = SessionMetadata(
-        sessionId = secondSessionId,
-        startTime = secondSessionStartTimestamp.truncatedTo(ChronoUnit.MILLIS),
-        endTime = secondSessionEndTimestamp.truncatedTo(ChronoUnit.MILLIS),
-    )
+    private val secondSessionMetadata =
+        SessionMetadata(
+            sessionId = secondSessionId,
+            startTime = secondSessionStartTimestamp.truncatedTo(ChronoUnit.MILLIS),
+            endTime = secondSessionEndTimestamp.truncatedTo(ChronoUnit.MILLIS),
+        )
 
-    private val secondSessionMetadataEntity = SessionMetadataEntity(
-        sessionId = secondSessionId,
-        startTimeEpochMilliseconds = secondSessionStartTimestamp.toEpochMilli(),
-        endTimeEpochMilliseconds = secondSessionEndTimestamp.toEpochMilli(),
-        username = firstUsername,
-    )
+    private val secondSessionMetadataEntity =
+        SessionMetadataEntity(
+            sessionId = secondSessionId,
+            startTimeEpochMilliseconds = secondSessionStartTimestamp.toEpochMilli(),
+            endTimeEpochMilliseconds = secondSessionEndTimestamp.toEpochMilli(),
+            username = firstUsername,
+        )
 
-    private val thirdSessionMetadataEntity = SessionMetadataEntity(
-        sessionId = thirdSessionId,
-        startTimeEpochMilliseconds = thirdSessionStartTimestamp.toEpochMilli(),
-        endTimeEpochMilliseconds = thirdSessionEndTimestamp.toEpochMilli(),
-        username = secondUsername,
-    )
+    private val thirdSessionMetadataEntity =
+        SessionMetadataEntity(
+            sessionId = thirdSessionId,
+            startTimeEpochMilliseconds = thirdSessionStartTimestamp.toEpochMilli(),
+            endTimeEpochMilliseconds = thirdSessionEndTimestamp.toEpochMilli(),
+            username = secondUsername,
+        )
 }

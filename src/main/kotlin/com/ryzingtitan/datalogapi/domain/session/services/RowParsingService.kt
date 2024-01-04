@@ -48,7 +48,10 @@ class RowParsingService {
         return Instant.from(parsedDateTime)
     }
 
-    private fun getData(lineColumns: List<String>, columnConfiguration: ColumnConfiguration): DataEntity {
+    private fun getData(
+        lineColumns: List<String>,
+        columnConfiguration: ColumnConfiguration,
+    ): DataEntity {
         val longitude = lineColumns[columnConfiguration.longitude].toDouble()
         val latitude = lineColumns[columnConfiguration.latitude].toDouble()
         val altitude = lineColumns[columnConfiguration.altitude].toFloat()

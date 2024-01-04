@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ServerWebExchange
-import java.util.*
+import java.util.UUID
 
 @RestController
 @CrossOrigin(origins = ["http://localhost:3000", "https://datalog-viewer-uonahdb5jq-uc.a.run.app"])
@@ -34,15 +34,17 @@ class SessionController(
         response: ServerHttpResponse,
         exchange: ServerWebExchange,
     ) {
-        val fileUpload = FileUpload(
-            file = uploadFile.content().asFlow(),
-            metadata = FileUploadMetadata(
-                fileName = uploadFile.filename(),
-                sessionId = null,
-                trackInfo = trackInfo,
-                user = user,
-            ),
-        )
+        val fileUpload =
+            FileUpload(
+                file = uploadFile.content().asFlow(),
+                metadata =
+                    FileUploadMetadata(
+                        fileName = uploadFile.filename(),
+                        sessionId = null,
+                        trackInfo = trackInfo,
+                        user = user,
+                    ),
+            )
         val sessionId = sessionService.create(fileUpload)
         response.headers.add(
             HttpHeaders.LOCATION,
@@ -58,15 +60,17 @@ class SessionController(
         @RequestPart(name = "uploadFile") uploadFile: FilePart,
         @PathVariable(name = "sessionId") sessionId: UUID,
     ) {
-        val fileUpload = FileUpload(
-            file = uploadFile.content().asFlow(),
-            metadata = FileUploadMetadata(
-                fileName = uploadFile.filename(),
-                sessionId = sessionId,
-                trackInfo = trackInfo,
-                user = user,
-            ),
-        )
+        val fileUpload =
+            FileUpload(
+                file = uploadFile.content().asFlow(),
+                metadata =
+                    FileUploadMetadata(
+                        fileName = uploadFile.filename(),
+                        sessionId = sessionId,
+                        trackInfo = trackInfo,
+                        user = user,
+                    ),
+            )
         sessionService.update(fileUpload)
     }
 }

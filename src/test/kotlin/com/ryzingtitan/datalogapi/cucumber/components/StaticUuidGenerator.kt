@@ -3,7 +3,7 @@ package com.ryzingtitan.datalogapi.cucumber.components
 import com.ryzingtitan.datalogapi.domain.uuid.UuidGenerator
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
-import java.util.*
+import java.util.UUID
 
 @Component
 @Profile("test")

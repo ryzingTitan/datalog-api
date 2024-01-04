@@ -35,94 +35,101 @@ class TrackServiceTests {
     @Nested
     inner class Create {
         @Test
-        fun `creates a new track`() = runTest {
-            val expectedTrackId = UUID.randomUUID()
-            whenever(mockUuidGenerator.generate()).thenReturn(expectedTrackId)
-            whenever(mockTrackRepository.findByName(firstTrackName)).thenReturn(emptyFlow())
+        fun `creates a new track`() =
+            runTest {
+                val expectedTrackId = UUID.randomUUID()
+                whenever(mockUuidGenerator.generate()).thenReturn(expectedTrackId)
+                whenever(mockTrackRepository.findByName(FIRST_TRACK_NAME)).thenReturn(emptyFlow())
 
-            val trackId = trackService.create(firstTrack.copy(id = null))
+                val trackId = trackService.create(firstTrack.copy(id = null))
 
-            assertEquals(expectedTrackId, trackId)
-            assertEquals(1, appender.list.size)
-            assertEquals(Level.INFO, appender.list[0].level)
-            assertEquals("Created track named $firstTrackName", appender.list[0].message)
+                assertEquals(expectedTrackId, trackId)
+                assertEquals(1, appender.list.size)
+                assertEquals(Level.INFO, appender.list[0].level)
+                assertEquals("Created track named $FIRST_TRACK_NAME", appender.list[0].message)
 
-            verify(mockTrackRepository, times(1)).findByName(firstTrackName)
-            verify(mockUuidGenerator, times(1)).generate()
-            verify(mockTrackRepository, times(1)).save(firstTrackEntity.copy(trackId = expectedTrackId))
-        }
-
-        @Test
-        fun `does not create a duplicate track`() = runTest {
-            val expectedTrackId = UUID.randomUUID()
-            whenever(mockUuidGenerator.generate()).thenReturn(expectedTrackId)
-            whenever(mockTrackRepository.findByName(firstTrackName)).thenReturn(flowOf(firstTrackEntity))
-
-            val exception = assertThrows<TrackAlreadyExistsException> {
-                trackService.create(firstTrack.copy(id = null))
+                verify(mockTrackRepository, times(1)).findByName(FIRST_TRACK_NAME)
+                verify(mockUuidGenerator, times(1)).generate()
+                verify(mockTrackRepository, times(1)).save(firstTrackEntity.copy(trackId = expectedTrackId))
             }
 
-            assertEquals("A track already exists named $firstTrackName", exception.message)
-            assertEquals(1, appender.list.size)
-            assertEquals(Level.ERROR, appender.list[0].level)
-            assertEquals("A track already exists named $firstTrackName", appender.list[0].message)
+        @Test
+        fun `does not create a duplicate track`() =
+            runTest {
+                val expectedTrackId = UUID.randomUUID()
+                whenever(mockUuidGenerator.generate()).thenReturn(expectedTrackId)
+                whenever(mockTrackRepository.findByName(FIRST_TRACK_NAME)).thenReturn(flowOf(firstTrackEntity))
 
-            verify(mockTrackRepository, times(1)).findByName(firstTrackName)
-            verify(mockUuidGenerator, never()).generate()
-            verify(mockTrackRepository, never()).save(any())
-        }
+                val exception =
+                    assertThrows<TrackAlreadyExistsException> {
+                        trackService.create(firstTrack.copy(id = null))
+                    }
+
+                assertEquals("A track already exists named $FIRST_TRACK_NAME", exception.message)
+                assertEquals(1, appender.list.size)
+                assertEquals(Level.ERROR, appender.list[0].level)
+                assertEquals("A track already exists named $FIRST_TRACK_NAME", appender.list[0].message)
+
+                verify(mockTrackRepository, times(1)).findByName(FIRST_TRACK_NAME)
+                verify(mockUuidGenerator, never()).generate()
+                verify(mockTrackRepository, never()).save(any())
+            }
     }
 
     @Nested
     inner class Update {
         @Test
-        fun `updates an existing track`() = runTest {
-            whenever(mockTrackRepository.findByName(secondTrackName)).thenReturn(flowOf(secondTrackEntity))
-            whenever(mockTrackRepository.deleteByTrackId(secondTrackId)).thenReturn(flowOf(secondTrackEntity))
+        fun `updates an existing track`() =
+            runTest {
+                whenever(mockTrackRepository.findByName(SECOND_TRACK_NAME)).thenReturn(flowOf(secondTrackEntity))
+                whenever(mockTrackRepository.deleteByTrackId(secondTrackId)).thenReturn(flowOf(secondTrackEntity))
 
-            trackService.update(secondTrack)
-
-            assertEquals(1, appender.list.size)
-            assertEquals(Level.INFO, appender.list[0].level)
-            assertEquals("Updated track named $secondTrackName", appender.list[0].message)
-
-            verify(mockTrackRepository, times(1)).findByName(secondTrackName)
-            verify(mockTrackRepository, times(1)).deleteByTrackId(secondTrackId)
-            verify(mockTrackRepository, times(1)).save(secondTrackEntity)
-        }
-
-        @Test
-        fun `does not update a track that does not exist`() = runTest {
-            whenever(mockTrackRepository.findByName(secondTrackName)).thenReturn(emptyFlow())
-
-            val exception = assertThrows<TrackDoesNotExistException> {
                 trackService.update(secondTrack)
+
+                assertEquals(1, appender.list.size)
+                assertEquals(Level.INFO, appender.list[0].level)
+                assertEquals("Updated track named $SECOND_TRACK_NAME", appender.list[0].message)
+
+                verify(mockTrackRepository, times(1)).findByName(SECOND_TRACK_NAME)
+                verify(mockTrackRepository, times(1)).deleteByTrackId(secondTrackId)
+                verify(mockTrackRepository, times(1)).save(secondTrackEntity)
             }
 
-            assertEquals("A track named $secondTrackName does not exist", exception.message)
-            assertEquals(1, appender.list.size)
-            assertEquals(Level.ERROR, appender.list[0].level)
-            assertEquals("A track named $secondTrackName does not exist", appender.list[0].message)
+        @Test
+        fun `does not update a track that does not exist`() =
+            runTest {
+                whenever(mockTrackRepository.findByName(SECOND_TRACK_NAME)).thenReturn(emptyFlow())
 
-            verify(mockTrackRepository, times(1)).findByName(secondTrackName)
-            verify(mockTrackRepository, never()).deleteByTrackId(any())
-            verify(mockTrackRepository, never()).save(any())
-        }
+                val exception =
+                    assertThrows<TrackDoesNotExistException> {
+                        trackService.update(secondTrack)
+                    }
+
+                assertEquals("A track named $SECOND_TRACK_NAME does not exist", exception.message)
+                assertEquals(1, appender.list.size)
+                assertEquals(Level.ERROR, appender.list[0].level)
+                assertEquals("A track named $SECOND_TRACK_NAME does not exist", appender.list[0].message)
+
+                verify(mockTrackRepository, times(1)).findByName(SECOND_TRACK_NAME)
+                verify(mockTrackRepository, never()).deleteByTrackId(any())
+                verify(mockTrackRepository, never()).save(any())
+            }
     }
 
     @Nested
     inner class GetAll {
         @Test
-        fun `returns all tracks`() = runTest {
-            whenever(mockTrackRepository.findAll()).thenReturn(flowOf(firstTrackEntity, secondTrackEntity))
+        fun `returns all tracks`() =
+            runTest {
+                whenever(mockTrackRepository.findAll()).thenReturn(flowOf(firstTrackEntity, secondTrackEntity))
 
-            val tracks = trackService.getAll()
+                val tracks = trackService.getAll()
 
-            assertEquals(listOf(firstTrack, secondTrack), tracks.toList())
-            assertEquals(1, appender.list.size)
-            assertEquals(Level.INFO, appender.list[0].level)
-            assertEquals("Retrieving all tracks", appender.list[0].message)
-        }
+                assertEquals(listOf(firstTrack, secondTrack), tracks.toList())
+                assertEquals(1, appender.list.size)
+                assertEquals(Level.INFO, appender.list[0].level)
+                assertEquals("Retrieving all tracks", appender.list[0].message)
+            }
     }
 
     @BeforeEach
@@ -146,41 +153,45 @@ class TrackServiceTests {
     private val firstTrackId = UUID.randomUUID()
     private val secondTrackId = UUID.randomUUID()
 
-    private val firstTrackEntity = TrackEntity(
-        trackId = firstTrackId,
-        name = firstTrackName,
-        latitude = firstTrackLatitude,
-        longitude = firstTrackLongitude,
-    )
+    private val firstTrackEntity =
+        TrackEntity(
+            trackId = firstTrackId,
+            name = FIRST_TRACK_NAME,
+            latitude = FIRST_TRACK_LATITUDE,
+            longitude = FIRST_TRACK_LONGITUDE,
+        )
 
-    private val firstTrack = Track(
-        id = firstTrackId,
-        name = firstTrackName,
-        latitude = firstTrackLatitude,
-        longitude = firstTrackLongitude,
-    )
+    private val firstTrack =
+        Track(
+            id = firstTrackId,
+            name = FIRST_TRACK_NAME,
+            latitude = FIRST_TRACK_LATITUDE,
+            longitude = FIRST_TRACK_LONGITUDE,
+        )
 
-    private val secondTrackEntity = TrackEntity(
-        trackId = secondTrackId,
-        name = secondTrackName,
-        latitude = secondTrackLatitude,
-        longitude = secondTrackLongitude,
-    )
+    private val secondTrackEntity =
+        TrackEntity(
+            trackId = secondTrackId,
+            name = SECOND_TRACK_NAME,
+            latitude = SECOND_TRACK_LATITUDE,
+            longitude = SECOND_TRACK_LONGITUDE,
+        )
 
-    private val secondTrack = Track(
-        id = secondTrackId,
-        name = secondTrackName,
-        latitude = secondTrackLatitude,
-        longitude = secondTrackLongitude,
-    )
+    private val secondTrack =
+        Track(
+            id = secondTrackId,
+            name = SECOND_TRACK_NAME,
+            latitude = SECOND_TRACK_LATITUDE,
+            longitude = SECOND_TRACK_LONGITUDE,
+        )
 
     companion object TrackServiceTestConstants {
-        const val firstTrackName = "Test Track 1"
-        const val firstTrackLatitude = 12.0
-        const val firstTrackLongitude = 14.0
+        const val FIRST_TRACK_NAME = "Test Track 1"
+        const val FIRST_TRACK_LATITUDE = 12.0
+        const val FIRST_TRACK_LONGITUDE = 14.0
 
-        const val secondTrackName = "Test Track 2"
-        const val secondTrackLatitude = 30.0
-        const val secondTrackLongitude = 33.0
+        const val SECOND_TRACK_NAME = "Test Track 2"
+        const val SECOND_TRACK_LATITUDE = 30.0
+        const val SECOND_TRACK_LONGITUDE = 33.0
     }
 }
