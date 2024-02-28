@@ -38,7 +38,10 @@ class FileParsingService(
         val datalogs = mutableListOf<DatalogEntity>()
         fileLinesWithoutHeader.map { fileLine ->
             val datalog = rowParsingService.parse(fileLine, fileUpload.metadata, columnConfiguration)
-            datalogs.add(datalog)
+
+            if (datalog != null) {
+                datalogs.add(datalog)
+            }
         }
 
         logger.info("File parsing completed for file: ${fileUpload.metadata.fileName}")

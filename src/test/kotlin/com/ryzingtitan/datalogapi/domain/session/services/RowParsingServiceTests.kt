@@ -1,5 +1,10 @@
 package com.ryzingtitan.datalogapi.domain.session.services
 
+import ch.qos.logback.classic.Level
+import ch.qos.logback.classic.Logger
+import ch.qos.logback.classic.LoggerContext
+import ch.qos.logback.classic.spi.ILoggingEvent
+import ch.qos.logback.core.read.ListAppender
 import com.ryzingtitan.datalogapi.domain.datalog.dtos.TrackInfo
 import com.ryzingtitan.datalogapi.domain.datalog.dtos.User
 import com.ryzingtitan.datalogapi.domain.session.configuration.ColumnConfiguration
@@ -11,6 +16,7 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.slf4j.LoggerFactory
 import java.time.Instant
 import java.util.UUID
 
@@ -41,24 +47,24 @@ class RowParsingServiceTests {
                         columnConfiguration,
                     )
 
-                assertEquals(sessionId, datalog.sessionId)
-                assertEquals(firstLineEpochMilliseconds, datalog.epochMilliseconds)
-                assertEquals(FIRST_LINE_LONGITUDE, datalog.data.longitude)
-                assertEquals(FIRST_LINE_LATITUDE, datalog.data.latitude)
-                assertEquals(FIRST_LINE_ALTITUDE, datalog.data.altitude)
-                assertEquals(FIRST_LINE_INTAKE_AIR_TEMPERATURE, datalog.data.intakeAirTemperature)
-                assertEquals(FIRST_LINE_BOOST_PRESSURE, datalog.data.boostPressure)
-                assertEquals(FIRST_LINE_COOLANT_TEMPERATURE, datalog.data.coolantTemperature)
-                assertEquals(FIRST_LINE_ENGINE_RPM, datalog.data.engineRpm)
-                assertEquals(FIRST_LINE_SPEED, datalog.data.speed)
-                assertEquals(FIRST_LINE_THROTTLE_POSITION, datalog.data.throttlePosition)
-                assertEquals(FIRST_LINE_AIR_FUEL_RATIO, datalog.data.airFuelRatio)
-                assertEquals("Test Track", datalog.trackInfo.name)
-                assertEquals(42.4086, datalog.trackInfo.latitude)
-                assertEquals(-86.1374, datalog.trackInfo.longitude)
-                assertEquals("test@test.com", datalog.user.email)
-                assertEquals("test", datalog.user.firstName)
-                assertEquals("tester", datalog.user.lastName)
+                assertEquals(sessionId, datalog?.sessionId)
+                assertEquals(firstLineEpochMilliseconds, datalog?.epochMilliseconds)
+                assertEquals(FIRST_LINE_LONGITUDE, datalog?.data?.longitude)
+                assertEquals(FIRST_LINE_LATITUDE, datalog?.data?.latitude)
+                assertEquals(FIRST_LINE_ALTITUDE, datalog?.data?.altitude)
+                assertEquals(FIRST_LINE_INTAKE_AIR_TEMPERATURE, datalog?.data?.intakeAirTemperature)
+                assertEquals(FIRST_LINE_BOOST_PRESSURE, datalog?.data?.boostPressure)
+                assertEquals(FIRST_LINE_COOLANT_TEMPERATURE, datalog?.data?.coolantTemperature)
+                assertEquals(FIRST_LINE_ENGINE_RPM, datalog?.data?.engineRpm)
+                assertEquals(FIRST_LINE_SPEED, datalog?.data?.speed)
+                assertEquals(FIRST_LINE_THROTTLE_POSITION, datalog?.data?.throttlePosition)
+                assertEquals(FIRST_LINE_AIR_FUEL_RATIO, datalog?.data?.airFuelRatio)
+                assertEquals("Test Track", datalog?.trackInfo?.name)
+                assertEquals(42.4086, datalog?.trackInfo?.latitude)
+                assertEquals(-86.1374, datalog?.trackInfo?.longitude)
+                assertEquals("test@test.com", datalog?.user?.email)
+                assertEquals("test", datalog?.user?.firstName)
+                assertEquals("tester", datalog?.user?.lastName)
             }
 
         @Test
@@ -84,24 +90,24 @@ class RowParsingServiceTests {
                         columnConfiguration,
                     )
 
-                assertNull(datalog.sessionId)
-                assertEquals(firstLineEpochMilliseconds, datalog.epochMilliseconds)
-                assertEquals(FIRST_LINE_LONGITUDE, datalog.data.longitude)
-                assertEquals(FIRST_LINE_LATITUDE, datalog.data.latitude)
-                assertEquals(FIRST_LINE_ALTITUDE, datalog.data.altitude)
-                assertEquals(FIRST_LINE_INTAKE_AIR_TEMPERATURE, datalog.data.intakeAirTemperature)
-                assertEquals(FIRST_LINE_BOOST_PRESSURE, datalog.data.boostPressure)
-                assertEquals(FIRST_LINE_COOLANT_TEMPERATURE, datalog.data.coolantTemperature)
-                assertEquals(FIRST_LINE_ENGINE_RPM, datalog.data.engineRpm)
-                assertEquals(FIRST_LINE_SPEED, datalog.data.speed)
-                assertEquals(FIRST_LINE_THROTTLE_POSITION, datalog.data.throttlePosition)
-                assertEquals(FIRST_LINE_AIR_FUEL_RATIO, datalog.data.airFuelRatio)
-                assertEquals("Test Track", datalog.trackInfo.name)
-                assertEquals(42.4086, datalog.trackInfo.latitude)
-                assertEquals(-86.1374, datalog.trackInfo.longitude)
-                assertEquals("test@test.com", datalog.user.email)
-                assertEquals("test", datalog.user.firstName)
-                assertEquals("tester", datalog.user.lastName)
+                assertNull(datalog?.sessionId)
+                assertEquals(firstLineEpochMilliseconds, datalog?.epochMilliseconds)
+                assertEquals(FIRST_LINE_LONGITUDE, datalog?.data?.longitude)
+                assertEquals(FIRST_LINE_LATITUDE, datalog?.data?.latitude)
+                assertEquals(FIRST_LINE_ALTITUDE, datalog?.data?.altitude)
+                assertEquals(FIRST_LINE_INTAKE_AIR_TEMPERATURE, datalog?.data?.intakeAirTemperature)
+                assertEquals(FIRST_LINE_BOOST_PRESSURE, datalog?.data?.boostPressure)
+                assertEquals(FIRST_LINE_COOLANT_TEMPERATURE, datalog?.data?.coolantTemperature)
+                assertEquals(FIRST_LINE_ENGINE_RPM, datalog?.data?.engineRpm)
+                assertEquals(FIRST_LINE_SPEED, datalog?.data?.speed)
+                assertEquals(FIRST_LINE_THROTTLE_POSITION, datalog?.data?.throttlePosition)
+                assertEquals(FIRST_LINE_AIR_FUEL_RATIO, datalog?.data?.airFuelRatio)
+                assertEquals("Test Track", datalog?.trackInfo?.name)
+                assertEquals(42.4086, datalog?.trackInfo?.latitude)
+                assertEquals(-86.1374, datalog?.trackInfo?.longitude)
+                assertEquals("test@test.com", datalog?.user?.email)
+                assertEquals("test", datalog?.user?.firstName)
+                assertEquals("tester", datalog?.user?.lastName)
             }
 
         @Test
@@ -127,33 +133,72 @@ class RowParsingServiceTests {
                         columnConfiguration,
                     )
 
-                assertEquals(sessionId, datalog.sessionId)
-                assertEquals(secondLineEpochMilliseconds, datalog.epochMilliseconds)
-                assertEquals(SECOND_LINE_LONGITUDE, datalog.data.longitude)
-                assertEquals(SECOND_LINE_LATITUDE, datalog.data.latitude)
-                assertEquals(SECOND_LINE_ALTITUDE, datalog.data.altitude)
-                assertNull(datalog.data.intakeAirTemperature)
-                assertNull(datalog.data.boostPressure)
-                assertNull(datalog.data.coolantTemperature)
-                assertNull(datalog.data.engineRpm)
-                assertNull(datalog.data.speed)
-                assertNull(datalog.data.throttlePosition)
-                assertNull(datalog.data.airFuelRatio)
-                assertEquals(TRACK_NAME, datalog.trackInfo.name)
-                assertEquals(TRACK_LATITUDE, datalog.trackInfo.latitude)
-                assertEquals(TRACK_LONGITUDE, datalog.trackInfo.longitude)
-                assertEquals(USER_EMAIL, datalog.user.email)
-                assertEquals(USER_FIRST_NAME, datalog.user.firstName)
-                assertEquals(USER_LAST_NAME, datalog.user.lastName)
+                assertEquals(sessionId, datalog?.sessionId)
+                assertEquals(secondLineEpochMilliseconds, datalog?.epochMilliseconds)
+                assertEquals(SECOND_LINE_LONGITUDE, datalog?.data?.longitude)
+                assertEquals(SECOND_LINE_LATITUDE, datalog?.data?.latitude)
+                assertEquals(SECOND_LINE_ALTITUDE, datalog?.data?.altitude)
+                assertNull(datalog?.data?.intakeAirTemperature)
+                assertNull(datalog?.data?.boostPressure)
+                assertNull(datalog?.data?.coolantTemperature)
+                assertNull(datalog?.data?.engineRpm)
+                assertNull(datalog?.data?.speed)
+                assertNull(datalog?.data?.throttlePosition)
+                assertNull(datalog?.data?.airFuelRatio)
+                assertEquals(TRACK_NAME, datalog?.trackInfo?.name)
+                assertEquals(TRACK_LATITUDE, datalog?.trackInfo?.latitude)
+                assertEquals(TRACK_LONGITUDE, datalog?.trackInfo?.longitude)
+                assertEquals(USER_EMAIL, datalog?.user?.email)
+                assertEquals(USER_FIRST_NAME, datalog?.user?.firstName)
+                assertEquals(USER_LAST_NAME, datalog?.user?.lastName)
+            }
+
+        @Test
+        fun `does not throw error when the row contains unparseable data`() =
+            runTest {
+                val row =
+                    "Device Time," +
+                        "$FIRST_LINE_LONGITUDE," +
+                        "$FIRST_LINE_LATITUDE," +
+                        "$FIRST_LINE_ALTITUDE," +
+                        "${FIRST_LINE_COOLANT_TEMPERATURE.toFloat()}," +
+                        "${FIRST_LINE_ENGINE_RPM.toFloat()}," +
+                        "${FIRST_LINE_INTAKE_AIR_TEMPERATURE.toFloat()}," +
+                        "${FIRST_LINE_SPEED.toFloat()}," +
+                        "$FIRST_LINE_THROTTLE_POSITION," +
+                        "$FIRST_LINE_BOOST_PRESSURE," +
+                        FIRST_LINE_AIR_FUEL_RATIO
+
+                val datalog =
+                    rowParsingService.parse(
+                        row,
+                        fileUploadMetadata,
+                        columnConfiguration,
+                    )
+
+                assertNull(datalog)
+
+                assertEquals(1, appender.list.size)
+                assertEquals(Level.ERROR, appender.list[0].level)
+                assertEquals("Unable to parse row: $row", appender.list[0].message)
             }
     }
 
     @BeforeEach
     fun setup() {
         rowParsingService = RowParsingService()
+
+        logger = LoggerFactory.getLogger(RowParsingService::class.java) as Logger
+        appender = ListAppender()
+        appender.context = LoggerContext()
+        logger.addAppender(appender)
+        appender.start()
     }
 
     private lateinit var rowParsingService: RowParsingService
+
+    private lateinit var logger: Logger
+    private lateinit var appender: ListAppender<ILoggingEvent>
 
     private val sessionId: UUID = UUID.fromString("c61cc339-f93d-45a4-aa2b-923f0482b97f")
     private val firstLineEpochMilliseconds = Instant.parse("2022-09-18T18:15:47.963Z").toEpochMilli()
