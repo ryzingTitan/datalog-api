@@ -2,26 +2,26 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
-import java.util.*
+import java.util.Locale
 
 plugins {
-    id("org.springframework.boot") version "3.1.5"
-    id("io.spring.dependency-management") version "1.1.3"
-    kotlin("jvm") version "1.9.10"
-    kotlin("plugin.spring") version "1.9.10"
-    id("org.jlleitschuh.gradle.ktlint") version "11.6.1"
-    id("io.gitlab.arturbosch.detekt") version "1.23.3"
-    id("com.github.ben-manes.versions") version "0.49.0"
+    id("org.springframework.boot") version "3.2.3"
+    id("io.spring.dependency-management") version "1.1.4"
+    kotlin("jvm") version "1.9.22"
+    kotlin("plugin.spring") version "1.9.22"
+    id("org.jlleitschuh.gradle.ktlint") version "12.1.0"
+    id("io.gitlab.arturbosch.detekt") version "1.23.5"
+    id("com.github.ben-manes.versions") version "0.51.0"
     id("org.sonarqube") version "4.4.1.3373"
-    id("org.owasp.dependencycheck") version "8.4.2"
-    id("org.cyclonedx.bom") version "1.8.0"
-    id("org.graalvm.buildtools.native") version "0.9.28"
+    id("org.owasp.dependencycheck") version "9.0.9"
+    id("org.cyclonedx.bom") version "1.8.2"
+    id("org.graalvm.buildtools.native") version "0.10.1"
     jacoco
 }
 
 group = "com.ryzingtitan"
 version = "3.0.0"
-java.sourceCompatibility = JavaVersion.VERSION_17
+java.sourceCompatibility = JavaVersion.VERSION_21
 
 configurations {
     compileOnly {
@@ -41,29 +41,29 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.3")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.16.1")
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions:1.2.2")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.8.0")
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.springframework.security:spring-security-test:")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
-    testImplementation("org.junit.platform:junit-platform-suite-api:1.10.0")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
-    testImplementation("io.cucumber:cucumber-java:7.14.0")
-    testImplementation("io.cucumber:cucumber-junit-platform-engine:7.14.0")
-    testImplementation("io.cucumber:cucumber-spring:7.14.0")
-    testImplementation("io.projectreactor:reactor-test:3.5.11")
-    testImplementation("no.nav.security:mock-oauth2-server:2.0.0")
+    testImplementation("org.springframework.security:spring-security-test")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
+    testImplementation("org.junit.platform:junit-platform-suite-api:1.10.2")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
+    testImplementation("io.cucumber:cucumber-java:7.15.0")
+    testImplementation("io.cucumber:cucumber-junit-platform-engine:7.15.0")
+    testImplementation("io.cucumber:cucumber-spring:7.15.0")
+    testImplementation("io.projectreactor:reactor-test:3.6.2")
+    testImplementation("no.nav.security:mock-oauth2-server:2.1.2")
 }
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
-        jvmTarget = "17"
+        jvmTarget = "21"
     }
 }
 
@@ -92,7 +92,7 @@ tasks.getByName("compileKotlin") {
 }
 
 ktlint {
-    version.set("0.50.0")
+    version.set("1.1.1")
     verbose.set(true)
     outputToConsole.set(true)
     coloredOutput.set(true)
@@ -102,7 +102,7 @@ ktlint {
 }
 
 tasks.withType<Detekt>().configureEach {
-    jvmTarget = "17"
+    jvmTarget = "21"
 
     reports {
         html.required.set(true)
@@ -111,7 +111,7 @@ tasks.withType<Detekt>().configureEach {
 }
 
 jacoco {
-    toolVersion = "0.8.10"
+    toolVersion = "0.8.11"
 }
 
 tasks.jacocoTestReport {

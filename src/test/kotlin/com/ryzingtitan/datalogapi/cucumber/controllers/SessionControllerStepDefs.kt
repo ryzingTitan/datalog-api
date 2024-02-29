@@ -15,7 +15,7 @@ import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.awaitExchange
-import java.util.*
+import java.util.UUID
 
 class SessionControllerStepDefs {
     @When("the file is uploaded for a session with the following data:")
@@ -44,7 +44,10 @@ class SessionControllerStepDefs {
     }
 
     @When("the file is uploaded for a session with the following data and session id {string}:")
-    fun theFileIsUploadedForSessionWithTheFollowingDataAndSessionId(sessionIdString: String, table: DataTable) {
+    fun theFileIsUploadedForSessionWithTheFollowingDataAndSessionId(
+        sessionIdString: String,
+        table: DataTable,
+    ) {
         val requestData = table.tableConverter.toList<RequestData>(table, RequestData::class.java)
         val sessionId = UUID.fromString(sessionIdString)
 
@@ -78,16 +81,18 @@ class SessionControllerStepDefs {
     @DataTableType
     fun mapRequestData(tableRow: Map<String, String>): RequestData {
         return RequestData(
-            trackInfo = TrackInfo(
-                name = tableRow["trackName"].toString(),
-                latitude = tableRow["latitude"].toString().toDouble(),
-                longitude = tableRow["longitude"].toString().toDouble(),
-            ),
-            user = User(
-                firstName = tableRow["firstName"].toString(),
-                lastName = tableRow["lastName"].toString(),
-                email = tableRow["email"].toString(),
-            ),
+            trackInfo =
+                TrackInfo(
+                    name = tableRow["trackName"].toString(),
+                    latitude = tableRow["latitude"].toString().toDouble(),
+                    longitude = tableRow["longitude"].toString().toDouble(),
+                ),
+            user =
+                User(
+                    firstName = tableRow["firstName"].toString(),
+                    lastName = tableRow["lastName"].toString(),
+                    email = tableRow["email"].toString(),
+                ),
         )
     }
 }

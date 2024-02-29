@@ -28,50 +28,52 @@ import org.mockito.kotlin.whenever
 import org.slf4j.LoggerFactory
 import org.springframework.core.io.buffer.DefaultDataBufferFactory
 import java.time.Instant
-import java.util.*
+import java.util.UUID
 
 @ExperimentalCoroutinesApi
 class FileParsingServiceTests {
     @Nested
     inner class Parse {
         @Test
-        fun `reads the input data and creates datalogs`() = runTest {
-            whenever(
-                mockRowParsingService.parse(
+        fun `reads the input data and creates datalogs`() =
+            runTest {
+                whenever(
+                    mockRowParsingService.parse(
+                        "data row 1",
+                        fileUploadMetadata,
+                        columnConfiguration,
+                    ),
+                )
+                    .thenReturn(datalog)
+
+                val dataBufferFactory = DefaultDataBufferFactory()
+                val dataBuffer = dataBufferFactory.wrap("header row 1\ndata row 1\n".toByteArray())
+
+                val datalogs = fileParsingService.parse(FileUpload(flowOf(dataBuffer), fileUploadMetadata))
+
+                verify(mockColumnConfigurationService, times(1)).create("header row 1")
+                verify(mockRowParsingService, times(1)).parse(
                     "data row 1",
                     fileUploadMetadata,
                     columnConfiguration,
-                ),
-            )
-                .thenReturn(datalog)
+                )
 
-            val dataBufferFactory = DefaultDataBufferFactory()
-            val dataBuffer = dataBufferFactory.wrap("header row 1\ndata row 1\n".toByteArray())
-
-            val datalogs = fileParsingService.parse(FileUpload(flowOf(dataBuffer), fileUploadMetadata))
-
-            verify(mockColumnConfigurationService, times(1)).create("header row 1")
-            verify(mockRowParsingService, times(1)).parse(
-                "data row 1",
-                fileUploadMetadata,
-                columnConfiguration,
-            )
-
-            assertEquals(listOf(datalog), datalogs)
-            assertEquals(2, appender.list.size)
-            assertEquals(Level.INFO, appender.list[0].level)
-            assertEquals("Beginning to parse file: testFile.txt", appender.list[0].message)
-            assertEquals(Level.INFO, appender.list[0].level)
-            assertEquals("File parsing completed for file: testFile.txt", appender.list[1].message)
-        }
+                assertEquals(listOf(datalog), datalogs)
+                assertEquals(2, appender.list.size)
+                assertEquals(Level.INFO, appender.list[0].level)
+                assertEquals("Beginning to parse file: testFile.txt", appender.list[0].message)
+                assertEquals(Level.INFO, appender.list[0].level)
+                assertEquals("File parsing completed for file: testFile.txt", appender.list[1].message)
+            }
     }
 
     @BeforeEach
     fun setup() {
-        fileParsingService = FileParsingService(
-            mockRowParsingService,
-            mockColumnConfigurationService,
-        )
+        fileParsingService =
+            FileParsingService(
+                mockRowParsingService,
+                mockColumnConfigurationService,
+            )
 
         whenever(mockColumnConfigurationService.create("header row 1")).thenReturn(columnConfiguration)
 
@@ -91,69 +93,77 @@ class FileParsingServiceTests {
 
     private val sessionId = UUID.randomUUID()
 
-    private val fileUploadMetadata = FileUploadMetadata(
-        fileName = "testFile.txt",
-        sessionId = sessionId,
-        trackInfo = TrackInfo(
-            name = trackName,
-            latitude = trackLatitude,
-            longitude = trackLongitude,
-        ),
-        user = User(
-            email = userEmail,
-            firstName = userFirstName,
-            lastName = userLastName,
-        ),
-    )
+    private val fileUploadMetadata =
+        FileUploadMetadata(
+            fileName = "testFile.txt",
+            sessionId = sessionId,
+            trackInfo =
+                TrackInfo(
+                    name = TRACK_NAME,
+                    latitude = TRACK_LATITUDE,
+                    longitude = TRACK_LONGITUDE,
+                ),
+            user =
+                User(
+                    email = USER_EMAIL,
+                    firstName = USER_FIRST_NAME,
+                    lastName = USER_LAST_NAME,
+                ),
+        )
 
-    private val columnConfiguration = ColumnConfiguration(
-        deviceTime = 0,
-        longitude = 1,
-        latitude = 2,
-        altitude = 3,
-        coolantTemperature = 4,
-        engineRpm = 5,
-        intakeAirTemperature = 6,
-        speed = 7,
-        throttlePosition = 8,
-        boostPressure = 9,
-        airFuelRatio = 10,
-    )
+    private val columnConfiguration =
+        ColumnConfiguration(
+            deviceTime = 0,
+            longitude = 1,
+            latitude = 2,
+            altitude = 3,
+            coolantTemperature = 4,
+            engineRpm = 5,
+            intakeAirTemperature = 6,
+            speed = 7,
+            throttlePosition = 8,
+            boostPressure = 9,
+            airFuelRatio = 10,
+        )
 
-    private val datalog = DatalogEntity(
-        sessionId = sessionId,
-        epochMilliseconds = Instant.now().toEpochMilli(),
-        data = DataEntity(
-            longitude = -86.14162,
-            latitude = 42.406800000000004,
-            altitude = 188.4f,
-            intakeAirTemperature = 138,
-            boostPressure = 16.5f,
-            coolantTemperature = 155,
-            engineRpm = 3500,
-            speed = 79,
-            throttlePosition = 83.2f,
-            airFuelRatio = 17.5f,
-        ),
-        trackInfo = TrackInfoEntity(
-            name = "Test Track",
-            latitude = 42.4086,
-            longitude = -86.1374,
-        ),
-        user = UserEntity(
-            email = "test@test.com",
-            firstName = "test",
-            lastName = "tester",
-        ),
-    )
+    private val datalog =
+        DatalogEntity(
+            sessionId = sessionId,
+            epochMilliseconds = Instant.now().toEpochMilli(),
+            data =
+                DataEntity(
+                    longitude = -86.14162,
+                    latitude = 42.406800000000004,
+                    altitude = 188.4f,
+                    intakeAirTemperature = 138,
+                    boostPressure = 16.5f,
+                    coolantTemperature = 155,
+                    engineRpm = 3500,
+                    speed = 79,
+                    throttlePosition = 83.2f,
+                    airFuelRatio = 17.5f,
+                ),
+            trackInfo =
+                TrackInfoEntity(
+                    name = "Test Track",
+                    latitude = 42.4086,
+                    longitude = -86.1374,
+                ),
+            user =
+                UserEntity(
+                    email = "test@test.com",
+                    firstName = "test",
+                    lastName = "tester",
+                ),
+        )
 
     companion object FileParsingServiceTestConstants {
-        const val trackName = "Test Track"
-        const val trackLatitude = 42.4086
-        const val trackLongitude = -86.1374
+        const val TRACK_NAME = "Test Track"
+        const val TRACK_LATITUDE = 42.4086
+        const val TRACK_LONGITUDE = -86.1374
 
-        const val userEmail = "test@test.com"
-        const val userFirstName = "test"
-        const val userLastName = "tester"
+        const val USER_EMAIL = "test@test.com"
+        const val USER_FIRST_NAME = "test"
+        const val USER_LAST_NAME = "tester"
     }
 }

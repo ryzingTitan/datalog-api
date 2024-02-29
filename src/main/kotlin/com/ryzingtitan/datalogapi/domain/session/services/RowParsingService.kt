@@ -8,6 +8,7 @@ import com.ryzingtitan.datalogapi.domain.datalog.dtos.TrackInfo
 import com.ryzingtitan.datalogapi.domain.datalog.dtos.User
 import com.ryzingtitan.datalogapi.domain.session.configuration.ColumnConfiguration
 import com.ryzingtitan.datalogapi.domain.session.dtos.FileUploadMetadata
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.Instant
 import java.time.ZoneId
@@ -15,12 +16,20 @@ import java.time.format.DateTimeFormatter
 
 @Service
 class RowParsingService {
+    private val logger = LoggerFactory.getLogger(RowParsingService::class.java)
+
+    @Suppress("TooGenericExceptionCaught", "SwallowedException")
     suspend fun parse(
         row: String,
         metadata: FileUploadMetadata,
         columnConfiguration: ColumnConfiguration,
-    ): DatalogEntity {
-        return createDatalog(row, metadata, columnConfiguration)
+    ): DatalogEntity? {
+        return try {
+            createDatalog(row, metadata, columnConfiguration)
+        } catch (exception: Exception) {
+            logger.error("Unable to parse row: $row")
+            null
+        }
     }
 
     private suspend fun createDatalog(
@@ -48,7 +57,10 @@ class RowParsingService {
         return Instant.from(parsedDateTime)
     }
 
-    private fun getData(lineColumns: List<String>, columnConfiguration: ColumnConfiguration): DataEntity {
+    private fun getData(
+        lineColumns: List<String>,
+        columnConfiguration: ColumnConfiguration,
+    ): DataEntity {
         val longitude = lineColumns[columnConfiguration.longitude].toDouble()
         val latitude = lineColumns[columnConfiguration.latitude].toDouble()
         val altitude = lineColumns[columnConfiguration.altitude].toFloat()

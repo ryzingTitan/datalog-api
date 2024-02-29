@@ -19,25 +19,25 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.reset
-import org.mockito.kotlin.times
 import org.mockito.kotlin.whenever
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import java.util.*
+import java.util.UUID
 
 @ExperimentalCoroutinesApi
 class DatalogServiceTests {
     @Nested
     inner class GetAllBySessionId {
         @Test
-        fun `returns all datalogs with the session id that is provided`() = runTest {
-            whenever(mockDatalogRepository.findAllBySessionIdOrderByEpochMillisecondsAsc(sessionId))
-                .thenReturn(flowOf(firstDatalogEntity, secondDatalogEntity))
+        fun `returns all datalogs with the session id that is provided`() =
+            runTest {
+                whenever(mockDatalogRepository.findAllBySessionIdOrderByEpochMillisecondsAsc(sessionId))
+                    .thenReturn(flowOf(firstDatalogEntity, secondDatalogEntity))
 
-            val datalogs = datalogService.getAllBySessionId(sessionId)
+                val datalogs = datalogService.getAllBySessionId(sessionId)
 
-            assertEquals(listOf(firstExpectedDatalog, secondExpectedDatalog), datalogs.toList())
-        }
+                assertEquals(listOf(firstExpectedDatalog, secondExpectedDatalog), datalogs.toList())
+            }
     }
 
     @BeforeEach
@@ -52,79 +52,87 @@ class DatalogServiceTests {
     private val sessionId = UUID.randomUUID()
     private val timestamp = Instant.now()
 
-    private val firstDatalogEntity = DatalogEntity(
-        sessionId = sessionId,
-        epochMilliseconds = timestamp.toEpochMilli(),
-        data = DataEntity(
-            longitude = -86.14162,
-            latitude = 42.406800000000004,
-            altitude = 188.4f,
-            intakeAirTemperature = 135,
-            boostPressure = 15.6f,
-            coolantTemperature = 150,
-            engineRpm = 5000,
-            speed = 85,
-            throttlePosition = 75.6f,
-            airFuelRatio = 15.8f,
-        ),
-        trackInfo = TrackInfoEntity("", 0.0, 0.0),
-        user = UserEntity("", "", ""),
-    )
+    private val firstDatalogEntity =
+        DatalogEntity(
+            sessionId = sessionId,
+            epochMilliseconds = timestamp.toEpochMilli(),
+            data =
+                DataEntity(
+                    longitude = -86.14162,
+                    latitude = 42.406800000000004,
+                    altitude = 188.4f,
+                    intakeAirTemperature = 135,
+                    boostPressure = 15.6f,
+                    coolantTemperature = 150,
+                    engineRpm = 5000,
+                    speed = 85,
+                    throttlePosition = 75.6f,
+                    airFuelRatio = 15.8f,
+                ),
+            trackInfo = TrackInfoEntity("", 0.0, 0.0),
+            user = UserEntity("", "", ""),
+        )
 
-    private val secondDatalogEntity = DatalogEntity(
-        sessionId = sessionId,
-        epochMilliseconds = timestamp.toEpochMilli(),
-        data = DataEntity(
-            longitude = 86.14162,
-            latitude = -42.406800000000004,
-            altitude = 188.0f,
-            intakeAirTemperature = null,
-            boostPressure = null,
-            coolantTemperature = null,
-            engineRpm = null,
-            speed = null,
-            throttlePosition = null,
-            airFuelRatio = null,
-        ),
-        trackInfo = TrackInfoEntity("", 0.0, 0.0),
-        user = UserEntity("", "", ""),
-    )
+    private val secondDatalogEntity =
+        DatalogEntity(
+            sessionId = sessionId,
+            epochMilliseconds = timestamp.toEpochMilli(),
+            data =
+                DataEntity(
+                    longitude = 86.14162,
+                    latitude = -42.406800000000004,
+                    altitude = 188.0f,
+                    intakeAirTemperature = null,
+                    boostPressure = null,
+                    coolantTemperature = null,
+                    engineRpm = null,
+                    speed = null,
+                    throttlePosition = null,
+                    airFuelRatio = null,
+                ),
+            trackInfo = TrackInfoEntity("", 0.0, 0.0),
+            user = UserEntity("", "", ""),
+        )
 
-    private val firstExpectedDatalog = Datalog(
-        sessionId = sessionId,
-        timestamp = timestamp.truncatedTo(ChronoUnit.MILLIS),
-        data = Data(
-            longitude = -86.14162,
-            latitude = 42.406800000000004,
-            altitude = 188.4f,
-            intakeAirTemperature = 135,
-            boostPressure = 15.6f,
-            coolantTemperature = 150,
-            engineRpm = 5000,
-            speed = 85,
-            throttlePosition = 75.6f,
-            airFuelRatio = 15.8f,
-        ),
-        trackInfo = TrackInfo("", 0.0, 0.0),
-        user = User("", "", ""),
-    )
+    private val firstExpectedDatalog =
+        Datalog(
+            sessionId = sessionId,
+            timestamp = timestamp.truncatedTo(ChronoUnit.MILLIS),
+            data =
+                Data(
+                    longitude = -86.14162,
+                    latitude = 42.406800000000004,
+                    altitude = 188.4f,
+                    intakeAirTemperature = 135,
+                    boostPressure = 15.6f,
+                    coolantTemperature = 150,
+                    engineRpm = 5000,
+                    speed = 85,
+                    throttlePosition = 75.6f,
+                    airFuelRatio = 15.8f,
+                ),
+            trackInfo = TrackInfo("", 0.0, 0.0),
+            user = User("", "", ""),
+        )
 
-    private val secondExpectedDatalog = Datalog(
-        sessionId = sessionId,
-        timestamp = timestamp.truncatedTo(ChronoUnit.MILLIS),
-        data = Data(
-            longitude = 86.14162,
-            latitude = -42.406800000000004,
-            altitude = 188.0f,
-            intakeAirTemperature = null,
-            boostPressure = null,
-            coolantTemperature = null,
-            engineRpm = null,
-            speed = null,
-            throttlePosition = null,
-            airFuelRatio = null,
-        ),
-        trackInfo = TrackInfo("", 0.0, 0.0),
-        user = User("", "", ""),
-    )
+    private val secondExpectedDatalog =
+        Datalog(
+            sessionId = sessionId,
+            timestamp = timestamp.truncatedTo(ChronoUnit.MILLIS),
+            data =
+                Data(
+                    longitude = 86.14162,
+                    latitude = -42.406800000000004,
+                    altitude = 188.0f,
+                    intakeAirTemperature = null,
+                    boostPressure = null,
+                    coolantTemperature = null,
+                    engineRpm = null,
+                    speed = null,
+                    throttlePosition = null,
+                    airFuelRatio = null,
+                ),
+            trackInfo = TrackInfo("", 0.0, 0.0),
+            user = User("", "", ""),
+        )
 }

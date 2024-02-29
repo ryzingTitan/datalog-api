@@ -3,7 +3,7 @@ package com.ryzingtitan.datalogapi.domain.session.dtos
 import com.ryzingtitan.datalogapi.domain.datalog.dtos.TrackInfo
 import com.ryzingtitan.datalogapi.domain.datalog.dtos.User
 import lombok.Generated
-import java.util.*
+import java.util.UUID
 
 @Generated
 data class FileUploadMetadata(

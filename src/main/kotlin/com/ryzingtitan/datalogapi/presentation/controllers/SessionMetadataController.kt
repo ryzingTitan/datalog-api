@@ -17,7 +17,9 @@ class SessionMetadataController(private val sessionMetadataService: SessionMetad
     private val logger = LoggerFactory.getLogger(SessionMetadataController::class.java)
 
     @GetMapping("/metadata")
-    fun getAllSessionMetadataByUser(@RequestParam username: String): Flow<SessionMetadata> {
+    fun getAllSessionMetadataByUser(
+        @RequestParam username: String,
+    ): Flow<SessionMetadata> {
         logger.info("Retrieving metadata for all sessions for user: $username")
         return sessionMetadataService.getAllSessionMetadataByUser(username)
     }

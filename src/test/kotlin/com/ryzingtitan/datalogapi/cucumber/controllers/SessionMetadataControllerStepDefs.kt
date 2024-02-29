@@ -15,7 +15,7 @@ import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.awaitEntityList
 import org.springframework.web.reactive.function.client.awaitExchange
 import java.time.Instant
-import java.util.*
+import java.util.UUID
 
 class SessionMetadataControllerStepDefs {
     @When("the metadata for the sessions is retrieved for user {string}")

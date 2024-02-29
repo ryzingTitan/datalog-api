@@ -43,112 +43,129 @@ class SessionServiceTests {
     @Nested
     inner class Create {
         @Test
-        fun `creates a new session`() = runTest {
-            whenever(mockFileParsingService.parse(any<FileUpload>())).thenReturn(listOf(datalog))
-            whenever(mockSessionMetadataService.getExistingSessionId(userEmail, datalog.epochMilliseconds))
-                .thenReturn(null)
+        fun `creates a new session`() =
+            runTest {
+                whenever(mockFileParsingService.parse(any<FileUpload>())).thenReturn(listOf(datalog))
+                whenever(mockSessionMetadataService.getExistingSessionId(USER_EMAIL, datalog.epochMilliseconds))
+                    .thenReturn(null)
 
-            val newSessionId = UUID.randomUUID()
-            whenever(mockUuidGenerator.generate()).thenReturn(newSessionId)
+                val newSessionId = UUID.randomUUID()
+                whenever(mockUuidGenerator.generate()).thenReturn(newSessionId)
 
-            val updatedDatalog = datalog.copy(sessionId = newSessionId)
-            whenever(mockDatalogRepository.saveAll(listOf(updatedDatalog))).thenReturn(flowOf(updatedDatalog))
+                val updatedDatalog = datalog.copy(sessionId = newSessionId)
+                whenever(mockDatalogRepository.saveAll(listOf(updatedDatalog))).thenReturn(flowOf(updatedDatalog))
 
-            val sessionId = sessionService.create(FileUpload(flowOf(dataBuffer), fileUploadMetadata))
+                val sessionId = sessionService.create(FileUpload(flowOf(dataBuffer), fileUploadMetadata))
 
-            assertEquals(newSessionId, sessionId)
-            assertEquals(1, appender.list.size)
-            assertEquals(Level.INFO, appender.list[0].level)
-            assertEquals("Session $newSessionId created", appender.list[0].message)
+                assertEquals(newSessionId, sessionId)
+                assertEquals(1, appender.list.size)
+                assertEquals(Level.INFO, appender.list[0].level)
+                assertEquals("Session $newSessionId created", appender.list[0].message)
 
-            verify(mockFileParsingService, times(1)).parse(any<FileUpload>())
-            verify(mockSessionMetadataService, times(1))
-                .getExistingSessionId(userEmail, datalog.epochMilliseconds)
-            verify(mockUuidGenerator, times(1)).generate()
-            verify(mockDatalogRepository, times(1)).saveAll(listOf(datalog.copy(sessionId = newSessionId)))
-        }
-
-        @Test
-        fun `does not create duplicate sessions for a user`() = runTest {
-            whenever(mockFileParsingService.parse(any<FileUpload>())).thenReturn(listOf(datalog))
-            whenever(mockSessionMetadataService.getExistingSessionId(userEmail, datalog.epochMilliseconds))
-                .thenReturn(UUID.randomUUID())
-
-            val exception = assertThrows<SessionAlreadyExistsException> {
-                sessionService.create(FileUpload(flowOf(dataBuffer), fileUploadMetadata))
+                verify(mockFileParsingService, times(1)).parse(any<FileUpload>())
+                verify(mockSessionMetadataService, times(1))
+                    .getExistingSessionId(USER_EMAIL, datalog.epochMilliseconds)
+                verify(mockUuidGenerator, times(1)).generate()
+                verify(mockDatalogRepository, times(1)).saveAll(listOf(datalog.copy(sessionId = newSessionId)))
             }
 
-            assertEquals("A session already exists for this user and timestamp", exception.message)
-            assertEquals(1, appender.list.size)
-            assertEquals(Level.ERROR, appender.list[0].level)
-            assertEquals("A session already exists for this user and timestamp", appender.list[0].message)
+        @Test
+        fun `does not create duplicate sessions for a user`() =
+            runTest {
+                whenever(mockFileParsingService.parse(any<FileUpload>())).thenReturn(listOf(datalog))
+                whenever(mockSessionMetadataService.getExistingSessionId(USER_EMAIL, datalog.epochMilliseconds))
+                    .thenReturn(UUID.randomUUID())
 
-            verify(mockFileParsingService, times(1)).parse(any<FileUpload>())
-            verify(mockSessionMetadataService, times(1))
-                .getExistingSessionId(userEmail, datalog.epochMilliseconds)
-            verify(mockUuidGenerator, never()).generate()
-        }
+                val exception =
+                    assertThrows<SessionAlreadyExistsException> {
+                        sessionService.create(FileUpload(flowOf(dataBuffer), fileUploadMetadata))
+                    }
+
+                assertEquals("A session already exists for this user and timestamp", exception.message)
+                assertEquals(1, appender.list.size)
+                assertEquals(Level.ERROR, appender.list[0].level)
+                assertEquals("A session already exists for this user and timestamp", appender.list[0].message)
+
+                verify(mockFileParsingService, times(1)).parse(any<FileUpload>())
+                verify(mockSessionMetadataService, times(1))
+                    .getExistingSessionId(USER_EMAIL, datalog.epochMilliseconds)
+                verify(mockUuidGenerator, never()).generate()
+            }
     }
 
     @Nested
     inner class Update {
         @Test
-        fun `updates an existing session`() = runTest {
-            val currentSessionId = UUID.randomUUID()
+        fun `updates an existing session`() =
+            runTest {
+                val currentSessionId = UUID.randomUUID()
 
-            whenever(mockDatalogRepository.findAllBySessionId(currentSessionId))
-                .thenReturn(flowOf(datalog.copy(sessionId = currentSessionId)))
-            whenever(mockDatalogRepository.deleteBySessionId(currentSessionId))
-                .thenReturn(flowOf(datalog.copy(sessionId = currentSessionId)))
-            whenever(mockFileParsingService.parse(any<FileUpload>()))
-                .thenReturn(listOf(datalog.copy(sessionId = currentSessionId)))
-            whenever(mockDatalogRepository.saveAll(listOf(datalog.copy(sessionId = currentSessionId))))
-                .thenReturn(flowOf(datalog.copy(sessionId = currentSessionId)))
+                whenever(mockDatalogRepository.findAllBySessionId(currentSessionId))
+                    .thenReturn(flowOf(datalog.copy(sessionId = currentSessionId)))
+                whenever(mockDatalogRepository.deleteBySessionId(currentSessionId))
+                    .thenReturn(flowOf(datalog.copy(sessionId = currentSessionId)))
+                whenever(mockFileParsingService.parse(any<FileUpload>()))
+                    .thenReturn(listOf(datalog.copy(sessionId = currentSessionId)))
+                whenever(mockDatalogRepository.saveAll(listOf(datalog.copy(sessionId = currentSessionId))))
+                    .thenReturn(flowOf(datalog.copy(sessionId = currentSessionId)))
 
-            sessionService.update(FileUpload(flowOf(dataBuffer), fileUploadMetadata.copy(sessionId = currentSessionId)))
+                sessionService.update(
+                    FileUpload(
+                        flowOf(dataBuffer),
+                        fileUploadMetadata.copy(sessionId = currentSessionId),
+                    ),
+                )
 
-            assertEquals(1, appender.list.size)
-            assertEquals(Level.INFO, appender.list[0].level)
-            assertEquals("Session $currentSessionId updated", appender.list[0].message)
+                assertEquals(1, appender.list.size)
+                assertEquals(Level.INFO, appender.list[0].level)
+                assertEquals("Session $currentSessionId updated", appender.list[0].message)
 
-            verify(mockDatalogRepository, times(1)).findAllBySessionId(currentSessionId)
-            verify(mockDatalogRepository, times(1)).deleteBySessionId(currentSessionId)
-            verify(mockFileParsingService, times(1)).parse(any<FileUpload>())
-            verify(mockDatalogRepository, times(1))
-                .saveAll(listOf(datalog.copy(sessionId = currentSessionId)))
-        }
-
-        @Test
-        fun `does not update a session that does not exist`() = runTest {
-            val currentSessionId = UUID.randomUUID()
-
-            whenever(mockDatalogRepository.findAllBySessionId(currentSessionId)).thenReturn(emptyFlow())
-
-            val exception = assertThrows<SessionDoesNotExistException> {
-                sessionService
-                    .update(FileUpload(flowOf(dataBuffer), fileUploadMetadata.copy(sessionId = currentSessionId)))
+                verify(mockDatalogRepository, times(1)).findAllBySessionId(currentSessionId)
+                verify(mockDatalogRepository, times(1)).deleteBySessionId(currentSessionId)
+                verify(mockFileParsingService, times(1)).parse(any<FileUpload>())
+                verify(mockDatalogRepository, times(1))
+                    .saveAll(listOf(datalog.copy(sessionId = currentSessionId)))
             }
 
-            assertEquals("Session id $currentSessionId does not exist", exception.message)
-            assertEquals(1, appender.list.size)
-            assertEquals(Level.ERROR, appender.list[0].level)
-            assertEquals("Session id $currentSessionId does not exist", appender.list[0].message)
+        @Test
+        fun `does not update a session that does not exist`() =
+            runTest {
+                val currentSessionId = UUID.randomUUID()
 
-            verify(mockDatalogRepository, times(1)).findAllBySessionId(currentSessionId)
-            verify(mockDatalogRepository, never()).deleteBySessionId(any())
-            verify(mockFileParsingService, never()).parse(any())
-            verify(mockDatalogRepository, never()).saveAll(any<List<DatalogEntity>>())
-        }
+                whenever(mockDatalogRepository.findAllBySessionId(currentSessionId)).thenReturn(emptyFlow())
+
+                val exception =
+                    assertThrows<SessionDoesNotExistException> {
+                        sessionService
+                            .update(
+                                FileUpload(
+                                    flowOf(dataBuffer),
+                                    fileUploadMetadata.copy(sessionId = currentSessionId),
+                                ),
+                            )
+                    }
+
+                assertEquals("Session id $currentSessionId does not exist", exception.message)
+                assertEquals(1, appender.list.size)
+                assertEquals(Level.ERROR, appender.list[0].level)
+                assertEquals("Session id $currentSessionId does not exist", appender.list[0].message)
+
+                verify(mockDatalogRepository, times(1)).findAllBySessionId(currentSessionId)
+                verify(mockDatalogRepository, never()).deleteBySessionId(any())
+                verify(mockFileParsingService, never()).parse(any())
+                verify(mockDatalogRepository, never()).saveAll(any<List<DatalogEntity>>())
+            }
     }
 
     @BeforeEach
     fun setup() {
-        sessionService = SessionService(
-            mockFileParsingService,
-            mockDatalogRepository,
-            mockUuidGenerator,
-            mockSessionMetadataService,
-        )
+        sessionService =
+            SessionService(
+                mockFileParsingService,
+                mockDatalogRepository,
+                mockUuidGenerator,
+                mockSessionMetadataService,
+            )
 
         logger = LoggerFactory.getLogger(SessionService::class.java) as Logger
         appender = ListAppender()
@@ -169,55 +186,62 @@ class SessionServiceTests {
     private val dataBufferFactory = DefaultDataBufferFactory()
     private val dataBuffer = dataBufferFactory.wrap("header row 1\ndata row 1\n".toByteArray())
 
-    private val fileUploadMetadata = FileUploadMetadata(
-        fileName = "testFile.txt",
-        sessionId = null,
-        trackInfo = TrackInfo(
-            name = trackName,
-            latitude = trackLatitude,
-            longitude = trackLongitude,
-        ),
-        user = User(
-            email = userEmail,
-            firstName = userFirstName,
-            lastName = userLastName,
-        ),
-    )
+    private val fileUploadMetadata =
+        FileUploadMetadata(
+            fileName = "testFile.txt",
+            sessionId = null,
+            trackInfo =
+                TrackInfo(
+                    name = TRACK_NAME,
+                    latitude = TRACK_LATITUDE,
+                    longitude = TRACK_LONGITUDE,
+                ),
+            user =
+                User(
+                    email = USER_EMAIL,
+                    firstName = USER_FIRST_NAME,
+                    lastName = USER_LAST_NAME,
+                ),
+        )
 
-    private val datalog = DatalogEntity(
-        sessionId = null,
-        epochMilliseconds = Instant.now().toEpochMilli(),
-        data = DataEntity(
-            longitude = -86.14162,
-            latitude = 42.406800000000004,
-            altitude = 188.4f,
-            intakeAirTemperature = 138,
-            boostPressure = 16.5f,
-            coolantTemperature = 155,
-            engineRpm = 3500,
-            speed = 79,
-            throttlePosition = 83.2f,
-            airFuelRatio = 17.5f,
-        ),
-        trackInfo = TrackInfoEntity(
-            name = "Test Track",
-            latitude = 42.4086,
-            longitude = -86.1374,
-        ),
-        user = UserEntity(
-            email = "test@test.com",
-            firstName = "test",
-            lastName = "tester",
-        ),
-    )
+    private val datalog =
+        DatalogEntity(
+            sessionId = null,
+            epochMilliseconds = Instant.now().toEpochMilli(),
+            data =
+                DataEntity(
+                    longitude = -86.14162,
+                    latitude = 42.406800000000004,
+                    altitude = 188.4f,
+                    intakeAirTemperature = 138,
+                    boostPressure = 16.5f,
+                    coolantTemperature = 155,
+                    engineRpm = 3500,
+                    speed = 79,
+                    throttlePosition = 83.2f,
+                    airFuelRatio = 17.5f,
+                ),
+            trackInfo =
+                TrackInfoEntity(
+                    name = "Test Track",
+                    latitude = 42.4086,
+                    longitude = -86.1374,
+                ),
+            user =
+                UserEntity(
+                    email = "test@test.com",
+                    firstName = "test",
+                    lastName = "tester",
+                ),
+        )
 
     companion object SessionServiceTestConstants {
-        const val trackName = "Test Track"
-        const val trackLatitude = 42.4086
-        const val trackLongitude = -86.1374
+        const val TRACK_NAME = "Test Track"
+        const val TRACK_LATITUDE = 42.4086
+        const val TRACK_LONGITUDE = -86.1374
 
-        const val userEmail = "test@test.com"
-        const val userFirstName = "test"
-        const val userLastName = "tester"
+        const val USER_EMAIL = "test@test.com"
+        const val USER_FIRST_NAME = "test"
+        const val USER_LAST_NAME = "tester"
     }
 }

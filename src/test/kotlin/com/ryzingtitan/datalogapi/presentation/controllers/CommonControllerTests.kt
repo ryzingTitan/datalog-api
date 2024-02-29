@@ -10,12 +10,14 @@ import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.aot.DisabledInAotMode
 import org.springframework.test.web.reactive.server.WebTestClient
 
 @WebFluxTest
 @Import(value = [SecurityConfiguration::class])
 @ActiveProfiles("test")
 @Suppress("UnnecessaryAbstractClass")
+@DisabledInAotMode
 abstract class CommonControllerTests {
     @Autowired
     protected lateinit var webTestClient: WebTestClient

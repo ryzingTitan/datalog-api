@@ -63,6 +63,29 @@ Feature: Create a new session from an uploaded file
       | INFO  | File parsing completed for file: testFile.txt        |
       | INFO  | Session c61cc339-f93d-45a4-aa2b-923f0482b97f created |
 
+  Scenario: Create a new session with datalogs with unparseable data rows
+    Given a file with the following rows:
+      | Device Time              | Longitude          | Latitude            | Altitude | Engine Coolant Temperature(°F) | Engine RPM(rpm) | Intake Air Temperature(°F) | Speed (OBD)(mph) | Throttle Position(Manifold)(%) | Turbo Boost & Vacuum Gauge(psi) | Air Fuel Ratio(Measured)(:1) |
+      | 18-Sep-2022 14:15:47.968 | -86.14170333333335 | 42.406800000000004  | 188.4    | 166.2                          | -               | 123.8                      | 74.56            | 5.6                            | -                               | -                            |
+      | 18-Sep-2022 14:15:48.962 | 86.14162999999999  | -42.406816666666664 | 188.0    | 95.9                           | 3500.35         | -                          | -                | 7                              | 16.5                            | 17.5                         |
+      | Device Time              | abc                | def                 | ghi      | jkl                            | mno             | qpr                        | st               | uv                             | wx                              | yz                           |
+    And the user has a valid authorization token
+    When the file is uploaded for a session with the following data:
+      | trackName  | longitude | latitude | firstName | lastName | email         |
+      | Test Track | -86.1374  | 42.4086  | test      | tester   | test@test.com |
+    Then the request response status is 'CREATED'
+    And the location header will end with '/api/sessions/c61cc339-f93d-45a4-aa2b-923f0482b97f'
+    And the following datalogs will exist:
+      | sessionId                            | epochMilliseconds | longitude          | latitude            | altitude | intakeAirTemperature | boostPressure | coolantTemperature | engineRpm | speed | throttlePosition | airFuelRatio | trackName  | trackLatitude | trackLongitude | firstName | lastName | email         |
+      | c61cc339-f93d-45a4-aa2b-923f0482b97f | 1663524947968     | -86.14170333333335 | 42.406800000000004  | 188.4    | 123                  |               | 166                |           | 74    | 5.6              |              | Test Track | 42.4086       | -86.1374       | test      | tester   | test@test.com |
+      | c61cc339-f93d-45a4-aa2b-923f0482b97f | 1663524948962     | 86.14162999999999  | -42.406816666666664 | 188.0    |                      | 16.5          | 95                 | 3500      |       | 7.0              | 17.5         | Test Track | 42.4086       | -86.1374       | test      | tester   | test@test.com |
+    And the application will log the following messages:
+      | level | message                                                              |
+      | INFO  | Beginning to parse file: testFile.txt                                |
+      | ERROR | Unable to parse row: Device Time,abc,def,ghi,jkl,mno,qpr,st,uv,wx,yz |
+      | INFO  | File parsing completed for file: testFile.txt                        |
+      | INFO  | Session c61cc339-f93d-45a4-aa2b-923f0482b97f created                 |
+
   Scenario: Do not overwrite data for other users when creating a new session
     Given a file with the following rows:
       | Device Time              | Longitude          | Latitude            | Altitude | Engine Coolant Temperature(°F) | Engine RPM(rpm) | Intake Air Temperature(°F) | Speed (OBD)(mph) | Throttle Position(Manifold)(%) | Turbo Boost & Vacuum Gauge(psi) | Air Fuel Ratio(Measured)(:1) |

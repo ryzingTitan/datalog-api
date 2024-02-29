@@ -20,10 +20,9 @@ import org.springframework.http.MediaType
 import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockJwt
 import org.springframework.test.web.reactive.server.expectBodyList
 import java.time.Instant
-import java.util.*
+import java.util.UUID
 
 class SessionMetadataControllerTests : CommonControllerTests() {
-
     @Nested
     inner class GetSessionMetadataByUser {
         @Test
@@ -64,15 +63,17 @@ class SessionMetadataControllerTests : CommonControllerTests() {
     private lateinit var logger: Logger
     private lateinit var appender: ListAppender<ILoggingEvent>
 
-    private val firstSessionMetadata = SessionMetadata(
-        sessionId = UUID.randomUUID(),
-        startTime = Instant.now(),
-        endTime = Instant.now(),
-    )
+    private val firstSessionMetadata =
+        SessionMetadata(
+            sessionId = UUID.randomUUID(),
+            startTime = Instant.now(),
+            endTime = Instant.now(),
+        )
 
-    private val secondSessionMetadata = SessionMetadata(
-        sessionId = UUID.randomUUID(),
-        startTime = Instant.now(),
-        endTime = Instant.now(),
-    )
+    private val secondSessionMetadata =
+        SessionMetadata(
+            sessionId = UUID.randomUUID(),
+            startTime = Instant.now(),
+            endTime = Instant.now(),
+        )
 }
