@@ -1,7 +1,7 @@
 openapi: 3.0.0
-info: 
+info:
   description: Swagger spec for the Datalog API project
-  version: 2.2.0
+  version: 3.0.0
   title: datalog-api
 servers:
   - url: http://localhost:8080/api
@@ -19,52 +19,202 @@ paths:
             format: uuid
             example: 515ef9d0-2059-4a11-b5c3-7c8dae93b57d
       tags:
-        - Sessions
-      description: Retrieve all sessions with the given session id sorted by timestamp ascending
+        - Datalogs
+      description: Retrieve all datalogs with the given session id sorted by timestamp ascending
       responses:
         200:
-          description: The list of datalog records with the given session id sorted by timestamp ascending
+          description: The list of datalogs with the given session id sorted by timestamp ascending
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/DatalogRecord'
+                  $ref: '#/components/schemas/Datalog'
         400:
           description: Bad Request - Ensure the query parameter has been included in the request
+        401:
+          description: Unauthorized - Ensure the authorization token is valid
+        500:
+          description: Internal Server Error
+
+  /sessions:
+    post:
+      tags:
+        - Session Administration
+      description: Create a new session from a file
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                trackInfo:
+                  $ref: '#/components/schemas/TrackInfo'
+                user:
+                  $ref: '#/components/schemas/User'
+                uploadFile:
+                  type: string
+                  format: binary
+      responses:
+        201:
+          description: Session created successfully
+        400:
+          description: Bad Request - Ensure the request contains all required data
+        401:
+          description: Unauthorized - Ensure the authorization token is valid
+        409:
+          description: Conflict - Session already exists
+        500:
+          description: Internal Server Error
+
+  /sessions/{sessionId}:
+    put:
+      parameters:
+        - name: sessionId
+          in: path
+          description: The session id to be updated
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 515ef9d0-2059-4a11-b5c3-7c8dae93b57d
+      tags:
+        - Session Administration
+      description: Update an existing session from a file
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                trackInfo:
+                  $ref: '#/components/schemas/TrackInfo'
+                user:
+                  $ref: '#/components/schemas/User'
+                uploadFile:
+                  type: string
+                  format: binary
+      responses:
+        200:
+          description: Session updated successfully
+        400:
+          description: Bad Request - Ensure the request contains all required data
+        401:
+          description: Unauthorized - Ensure the authorization token is valid
+        410:
+          description: Gone - Session does not exist
         500:
           description: Internal Server Error
 
   /sessions/metadata:
     get:
+      parameters:
+        - name: username
+          in: query
+          description: The email address (username) of the current user
+          required: true
+          schema:
+            type: string
+            format: email
+            example: test@test.com
       tags:
         - Sessions
-      description: Retrieve metadata for all sessions
+      description: Retrieve metadata for all sessions by user
       responses:
         200:
-          description: The metadata for every session
+          description: The metadata for every session associated with the provided user
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/SessionMetadata'
+        400:
+          description: Bad Request - Ensure the query parameter has been included in the request
+        401:
+          description: Unauthorized - Ensure the authorization token is valid
+        500:
+          description: Internal Server Error
+
+  /tracks:
+    get:
+      tags:
+        - Tracks
+      description: Retrieve all tracks
+      responses:
+        200:
+          description: The list of tracks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Track'
+        401:
+          description: Unauthorized - Ensure the authorization token is valid
+        500:
+          description: Internal Server Error
+
+    post:
+      tags:
+        - Track Administration
+      description: Create a new track
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Track'
+      responses:
+        201:
+          description: Track created successfully
+        400:
+          description: Bad Request - Ensure the request contains all required data
+        401:
+          description: Unauthorized - Ensure the authorization token is valid
+        409:
+          description: Conflict - Track already exists
+        500:
+          description: Internal Server Error
+
+  /tracks/{trackId}:
+    put:
+      parameters:
+        - name: trackId
+          in: path
+          description: The track id to be updated
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: 515ef9d0-2059-4a11-b5c3-7c8dae93b57d
+      tags:
+        - Track Administration
+      description: Update an existing track
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Track'
+      responses:
+        200:
+          description: Track updated successfully
+        400:
+          description: Bad Request - Ensure the request contains all required data
+        401:
+          description: Unauthorized - Ensure the authorization token is valid
+        410:
+          description: Gone - Track does not exist
         500:
           description: Internal Server Error
 
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
-    DatalogRecord:
+    Data:
       type: object
       properties:
-        sessionId:
-          type: string
-          format: uuid
-          description: The session id of the datalog record
-          example: 515ef9d0-2059-4a11-b5c3-7c8dae93b57d
-        timestamp:
-          type: string
-          format: date-time
-          description: The timestamp of the datalog record
-          example: 2022-09-18T18:15:47.968Z
         longitude:
           type: number
           format: double
@@ -115,6 +265,25 @@ components:
           format: float
           description: The current air fuel ratio
           example: 14.6
+    Datalog:
+      type: object
+      properties:
+        sessionId:
+          type: string
+          format: uuid
+          description: The session id of the datalog
+          example: 515ef9d0-2059-4a11-b5c3-7c8dae93b57d
+        timestamp:
+          type: string
+          format: date-time
+          description: The timestamp of the datalog
+          example: 2022-09-18T18:15:47.968Z
+        data:
+          $ref: '#/components/schemas/Data'
+        trackInfo:
+          $ref: '#/components/schemas/TrackInfo'
+        user:
+          $ref: '#/components/schemas/User'
     SessionMetadata:
       type: object
       properties:
@@ -133,3 +302,61 @@ components:
           format: date-time
           description: The end time of the session
           example: 2022-09-18T18:18:47.968Z
+    Track:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The track id
+          example: 515ef9d0-2059-4a11-b5c3-7c8dae93b57d
+        name:
+          type: string
+          description: The name of the track associated with the datalog
+          example: Test Track
+        latitude:
+          type: number
+          format: double
+          description: The latitude location of the track
+          example: 42.406800000000004
+        longitude:
+          type: number
+          format: double
+          description: The longitude location of the track
+          example: -86.14170333333335
+    TrackInfo:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the track associated with the datalog
+          example: Test Track
+        latitude:
+          type: number
+          format: double
+          description: The latitude location of the track
+          example: 42.406800000000004
+        longitude:
+          type: number
+          format: double
+          description: The longitude location of the track
+          example: -86.14170333333335
+    User:
+      type: object
+      properties:
+        firstName:
+          type: string
+          description: The first name of the user associated with the datalog
+          example: Test
+        lastName:
+          type: string
+          description: The last name of the user associated with the datalog
+          example: Tester
+        email:
+          type: string
+          format: email
+          description: The email address of the user associated with the datalog
+          example: test@test.com
+
+security:
+  - bearerAuth: []

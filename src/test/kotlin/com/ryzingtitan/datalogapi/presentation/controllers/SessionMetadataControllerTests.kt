@@ -12,33 +12,40 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.reset
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
+import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockJwt
+import org.springframework.test.web.reactive.server.expectBodyList
 import java.time.Instant
-import java.util.*
+import java.util.UUID
 
 class SessionMetadataControllerTests : CommonControllerTests() {
-
     @Nested
-    inner class GetSessionMetadata {
+    inner class GetSessionMetadataByUser {
         @Test
-        fun `returns 'OK' status with session metadata for all session`() {
-            whenever(mockSessionMetadataService.getAllSessionMetadata())
+        fun `returns 'OK' status with session metadata for all user sessions`() {
+            whenever(mockSessionMetadataService.getAllSessionMetadataByUser("test@test.com"))
                 .thenReturn(flowOf(firstSessionMetadata, secondSessionMetadata))
 
-            webTestClient.get()
-                .uri("/api/sessions/metadata")
+            webTestClient
+                .mutateWith(mockJwt())
+                .get()
+                .uri("/api/sessions/metadata?username=test@test.com")
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()
                 .expectStatus()
                 .isOk
-                .expectBodyList(SessionMetadata::class.java)
+                .expectBodyList<SessionMetadata>()
                 .contains(firstSessionMetadata, secondSessionMetadata)
 
             assertEquals(1, appender.list.size)
             assertEquals(Level.INFO, appender.list[0].level)
-            assertEquals("Retrieving metadata for all sessions", appender.list[0].message)
+            assertEquals("Retrieving metadata for all sessions for user: test@test.com", appender.list[0].message)
+
+            verify(mockSessionMetadataService, times(1)).getAllSessionMetadataByUser("test@test.com")
         }
     }
 
@@ -56,15 +63,17 @@ class SessionMetadataControllerTests : CommonControllerTests() {
     private lateinit var logger: Logger
     private lateinit var appender: ListAppender<ILoggingEvent>
 
-    private val firstSessionMetadata = SessionMetadata(
-        sessionId = UUID.randomUUID(),
-        startTime = Instant.now(),
-        endTime = Instant.now(),
-    )
+    private val firstSessionMetadata =
+        SessionMetadata(
+            sessionId = UUID.randomUUID(),
+            startTime = Instant.now(),
+            endTime = Instant.now(),
+        )
 
-    private val secondSessionMetadata = SessionMetadata(
-        sessionId = UUID.randomUUID(),
-        startTime = Instant.now(),
-        endTime = Instant.now(),
-    )
+    private val secondSessionMetadata =
+        SessionMetadata(
+            sessionId = UUID.randomUUID(),
+            startTime = Instant.now(),
+            endTime = Instant.now(),
+        )
 }
