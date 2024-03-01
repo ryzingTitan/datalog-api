@@ -20,7 +20,7 @@ plugins {
 }
 
 group = "com.ryzingtitan"
-version = "3.0.0"
+version = "4.0.0"
 java.sourceCompatibility = JavaVersion.VERSION_21
 
 configurations {
@@ -39,7 +39,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-cache")
-    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+    implementation("com.okta.spring:okta-spring-boot-starter:3.0.5")
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.16.1")
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions:1.2.2")
