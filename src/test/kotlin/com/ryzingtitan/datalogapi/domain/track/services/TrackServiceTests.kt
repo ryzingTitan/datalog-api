@@ -13,10 +13,12 @@ import com.ryzingtitan.datalogapi.domain.track.exceptions.TrackDoesNotExistExcep
 import com.ryzingtitan.datalogapi.domain.uuid.UuidGenerator
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -35,7 +37,7 @@ class TrackServiceTests {
     @Nested
     inner class Create {
         @Test
-        fun `creates a new track`() =
+        fun `creates a new track when no id is provided`() =
             runTest {
                 val expectedTrackId = UUID.randomUUID()
                 whenever(mockUuidGenerator.generate()).thenReturn(expectedTrackId)
@@ -50,6 +52,24 @@ class TrackServiceTests {
 
                 verify(mockTrackRepository, times(1)).findByName(FIRST_TRACK_NAME)
                 verify(mockUuidGenerator, times(1)).generate()
+                verify(mockTrackRepository, times(1)).save(firstTrackEntity.copy(trackId = expectedTrackId))
+            }
+
+        @Test
+        fun `creates a new track when an id is provided`() =
+            runTest {
+                val expectedTrackId = UUID.randomUUID()
+                whenever(mockTrackRepository.findByName(FIRST_TRACK_NAME)).thenReturn(emptyFlow())
+
+                val trackId = trackService.create(firstTrack.copy(id = expectedTrackId))
+
+                assertEquals(expectedTrackId, trackId)
+                assertEquals(1, appender.list.size)
+                assertEquals(Level.INFO, appender.list[0].level)
+                assertEquals("Created track named $FIRST_TRACK_NAME", appender.list[0].message)
+
+                verify(mockTrackRepository, times(1)).findByName(FIRST_TRACK_NAME)
+                verify(mockUuidGenerator, never()).generate()
                 verify(mockTrackRepository, times(1)).save(firstTrackEntity.copy(trackId = expectedTrackId))
             }
 
@@ -129,6 +149,35 @@ class TrackServiceTests {
                 assertEquals(1, appender.list.size)
                 assertEquals(Level.INFO, appender.list[0].level)
                 assertEquals("Retrieving all tracks", appender.list[0].message)
+            }
+    }
+
+    @Nested
+    inner class Delete {
+        @Test
+        fun `deletes track when track exists`() =
+            runTest {
+                whenever(mockTrackRepository.deleteByTrackId(firstTrackId)).thenReturn(flowOf(firstTrackEntity))
+
+                val deletedTrack = trackService.delete(firstTrackId)
+
+                assertEquals(firstTrack, deletedTrack.firstOrNull())
+                assertEquals(1, appender.list.size)
+                assertEquals(Level.INFO, appender.list[0].level)
+                assertEquals("Deleted track with id $firstTrackId", appender.list[0].message)
+            }
+
+        @Test
+        fun `deletes track when track does not exist`() =
+            runTest {
+                whenever(mockTrackRepository.deleteByTrackId(firstTrackId)).thenReturn(emptyFlow())
+
+                val deletedTrack = trackService.delete(firstTrackId)
+
+                assertNull(deletedTrack.firstOrNull())
+                assertEquals(1, appender.list.size)
+                assertEquals(Level.INFO, appender.list[0].level)
+                assertEquals("Deleted track with id $firstTrackId", appender.list[0].message)
             }
     }
 
