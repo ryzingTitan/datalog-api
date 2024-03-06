@@ -30,6 +30,8 @@ class SecurityConfiguration {
                     .authenticated()
                     .pathMatchers(HttpMethod.PUT, "/api/tracks/*")
                     .authenticated()
+                    .pathMatchers(HttpMethod.DELETE, "/api/tracks/*")
+                    .authenticated()
                     .pathMatchers(HttpMethod.GET, "/actuator/health")
                     .permitAll()
                     .pathMatchers("/**")

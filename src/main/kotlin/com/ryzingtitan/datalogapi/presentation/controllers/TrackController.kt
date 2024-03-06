@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.server.reactive.ServerHttpResponse
 import org.springframework.web.bind.annotation.CrossOrigin
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -47,5 +48,12 @@ class TrackController(private val trackService: TrackService) {
         @RequestBody track: Track,
     ) {
         trackService.update(track.copy(id = trackId))
+    }
+
+    @DeleteMapping("/{trackId}")
+    fun deleteTrack(
+        @PathVariable(name = "trackId") trackId: UUID,
+    ): Flow<Track> {
+        return trackService.delete(trackId)
     }
 }

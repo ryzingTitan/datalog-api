@@ -31,7 +31,7 @@ class TrackService(
             throw TrackAlreadyExistsException(message)
         }
 
-        val trackId = uuidGenerator.generate()
+        val trackId = track.id ?: uuidGenerator.generate()
 
         trackRepository.save(
             TrackEntity(
@@ -81,5 +81,21 @@ class TrackService(
                 latitude = trackEntity.latitude,
             )
         }
+    }
+
+    fun delete(trackId: UUID): Flow<Track> {
+        val deletedTrack =
+            trackRepository.deleteByTrackId(trackId).map { trackEntity ->
+                Track(
+                    id = trackEntity.trackId,
+                    name = trackEntity.name,
+                    longitude = trackEntity.longitude,
+                    latitude = trackEntity.latitude,
+                )
+            }
+
+        logger.info("Deleted track with id $trackId")
+
+        return deletedTrack
     }
 }
