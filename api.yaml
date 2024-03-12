@@ -48,10 +48,31 @@ paths:
             schema:
               type: object
               properties:
-                trackInfo:
-                  $ref: '#/components/schemas/TrackInfo'
-                user:
-                  $ref: '#/components/schemas/User'
+                userEmail:
+                  type: string
+                  format: email
+                  description: The email address of the user associated with the datalog
+                  example: test@test.com
+                userFirstName:
+                  type: string
+                  description: The first name of the user associated with the datalog
+                  example: Test
+                userLastName:
+                  type: string
+                  description: The last name of the user associated with the datalog
+                  example: Tester
+                trackName:
+                  type: string
+                  description: The name of the track associated with the datalog
+                  example: Test Track
+                trackLatitude:
+                  type: string
+                  description: The latitude location of the track
+                  example: 42.406800000000004
+                trackLongitude:
+                  type: string
+                  description: The longitude location of the track
+                  example: -86.14170333333335
                 uploadFile:
                   type: string
                   format: binary
@@ -87,10 +108,31 @@ paths:
             schema:
               type: object
               properties:
-                trackInfo:
-                  $ref: '#/components/schemas/TrackInfo'
-                user:
-                  $ref: '#/components/schemas/User'
+                userEmail:
+                  type: string
+                  format: email
+                  description: The email address of the user associated with the datalog
+                  example: test@test.com
+                userFirstName:
+                  type: string
+                  description: The first name of the user associated with the datalog
+                  example: Test
+                userLastName:
+                  type: string
+                  description: The last name of the user associated with the datalog
+                  example: Tester
+                trackName:
+                  type: string
+                  description: The name of the track associated with the datalog
+                  example: Test Track
+                trackLatitude:
+                  type: string
+                  description: The latitude location of the track
+                  example: 42.406800000000004
+                trackLongitude:
+                  type: string
+                  description: The longitude location of the track
+                  example: -86.14170333333335
                 uploadFile:
                   type: string
                   format: binary

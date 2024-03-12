@@ -27,9 +27,14 @@ class SessionController(
     private val sessionService: SessionService,
 ) {
     @PostMapping
+    @Suppress("LongParameterList")
     suspend fun createSession(
-        @RequestPart(name = "user") user: User,
-        @RequestPart(name = "trackInfo") trackInfo: TrackInfo,
+        @RequestPart(name = "userEmail") userEmail: String,
+        @RequestPart(name = "userFirstName") userFirstName: String,
+        @RequestPart(name = "userLastName") userLastName: String,
+        @RequestPart(name = "trackName") trackName: String,
+        @RequestPart(name = "trackLongitude") trackLongitude: String,
+        @RequestPart(name = "trackLatitude") trackLatitude: String,
         @RequestPart(name = "uploadFile") uploadFile: FilePart,
         response: ServerHttpResponse,
         exchange: ServerWebExchange,
@@ -41,8 +46,8 @@ class SessionController(
                     FileUploadMetadata(
                         fileName = uploadFile.filename(),
                         sessionId = null,
-                        trackInfo = trackInfo,
-                        user = user,
+                        trackInfo = TrackInfo(trackName, trackLatitude.toDouble(), trackLongitude.toDouble()),
+                        user = User(userFirstName, userLastName, userEmail),
                     ),
             )
         val sessionId = sessionService.create(fileUpload)
@@ -54,9 +59,14 @@ class SessionController(
     }
 
     @PutMapping("/{sessionId}")
+    @Suppress("LongParameterList")
     suspend fun updateSession(
-        @RequestPart(name = "user") user: User,
-        @RequestPart(name = "trackInfo") trackInfo: TrackInfo,
+        @RequestPart(name = "userEmail") userEmail: String,
+        @RequestPart(name = "userFirstName") userFirstName: String,
+        @RequestPart(name = "userLastName") userLastName: String,
+        @RequestPart(name = "trackName") trackName: String,
+        @RequestPart(name = "trackLongitude") trackLongitude: String,
+        @RequestPart(name = "trackLatitude") trackLatitude: String,
         @RequestPart(name = "uploadFile") uploadFile: FilePart,
         @PathVariable(name = "sessionId") sessionId: UUID,
     ) {
@@ -67,8 +77,8 @@ class SessionController(
                     FileUploadMetadata(
                         fileName = uploadFile.filename(),
                         sessionId = sessionId,
-                        trackInfo = trackInfo,
-                        user = user,
+                        trackInfo = TrackInfo(trackName, trackLatitude.toDouble(), trackLongitude.toDouble()),
+                        user = User(userFirstName, userLastName, userEmail),
                     ),
             )
         sessionService.update(fileUpload)
