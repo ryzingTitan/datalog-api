@@ -73,6 +73,22 @@ class TrackControllerStepDefs {
         }
     }
 
+    @When("the track with id {string} is deleted")
+    fun whenTheTrackWithIdIsDeleted(trackId: String) {
+        runBlocking {
+            CommonControllerStepDefs.webClient
+                .delete()
+                .uri("/tracks/$trackId")
+                .header(
+                    "Authorization",
+                    "Bearer ${CommonControllerStepDefs.authorizationToken?.serialize()}",
+                )
+                .awaitExchange { clientResponse ->
+                    handleTrackResponse(clientResponse)
+                }
+        }
+    }
+
     @Then("the following tracks are returned:")
     fun thenTheFollowingTracksAreReturned(table: DataTable) {
         val expectedTracks = table.tableConverter.toList<Track>(table, Track::class.java)

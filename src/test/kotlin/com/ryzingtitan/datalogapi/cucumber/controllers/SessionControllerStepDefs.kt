@@ -23,8 +23,12 @@ class SessionControllerStepDefs {
         val requestData = table.tableConverter.toList<RequestData>(table, RequestData::class.java)
 
         val multipartBodyBuilder = MultipartBodyBuilder()
-        multipartBodyBuilder.part("user", requestData.first().user)
-        multipartBodyBuilder.part("trackInfo", requestData.first().trackInfo)
+        multipartBodyBuilder.part("userEmail", requestData.first().user.email)
+        multipartBodyBuilder.part("userLastName", requestData.first().user.lastName)
+        multipartBodyBuilder.part("userFirstName", requestData.first().user.firstName)
+        multipartBodyBuilder.part("trackName", requestData.first().trackInfo.name)
+        multipartBodyBuilder.part("trackLatitude", requestData.first().trackInfo.latitude)
+        multipartBodyBuilder.part("trackLongitude", requestData.first().trackInfo.longitude)
         multipartBodyBuilder.part("uploadFile", FileSystemResource("testFiles/testFile.txt"))
         val multiPartData = multipartBodyBuilder.build()
 
@@ -52,8 +56,12 @@ class SessionControllerStepDefs {
         val sessionId = UUID.fromString(sessionIdString)
 
         val multipartBodyBuilder = MultipartBodyBuilder()
-        multipartBodyBuilder.part("user", requestData.first().user)
-        multipartBodyBuilder.part("trackInfo", requestData.first().trackInfo)
+        multipartBodyBuilder.part("userEmail", requestData.first().user.email)
+        multipartBodyBuilder.part("userLastName", requestData.first().user.lastName)
+        multipartBodyBuilder.part("userFirstName", requestData.first().user.firstName)
+        multipartBodyBuilder.part("trackName", requestData.first().trackInfo.name)
+        multipartBodyBuilder.part("trackLatitude", requestData.first().trackInfo.latitude)
+        multipartBodyBuilder.part("trackLongitude", requestData.first().trackInfo.longitude)
         multipartBodyBuilder.part("uploadFile", FileSystemResource("testFiles/testFile.txt"))
         val multiPartData = multipartBodyBuilder.build()
 

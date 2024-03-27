@@ -80,6 +80,28 @@ class TrackControllerTests : CommonControllerTests() {
             }
     }
 
+    @Nested
+    inner class DeleteTrack {
+        @Test
+        fun `returns 'OK' status and deletes track`() =
+            runTest {
+                whenever(mockTrackService.delete(firstTrackId)).thenReturn(flowOf(firstTrack))
+
+                webTestClient
+                    .mutateWith(mockJwt())
+                    .delete()
+                    .uri("/api/tracks/$firstTrackId")
+                    .accept(MediaType.APPLICATION_JSON)
+                    .exchange()
+                    .expectStatus()
+                    .isOk
+                    .expectBodyList<Track>()
+                    .contains(firstTrack)
+
+                verify(mockTrackService, times(1)).delete(firstTrackId)
+            }
+    }
+
     private val firstTrackId = UUID.randomUUID()
     private val secondTrackId = UUID.randomUUID()
 

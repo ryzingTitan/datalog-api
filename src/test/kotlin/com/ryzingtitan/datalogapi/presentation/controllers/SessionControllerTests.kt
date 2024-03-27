@@ -34,8 +34,12 @@ class SessionControllerTests : CommonControllerTests() {
                 Files.write(Path.of("testFiles", "testFile.txt"), listOf(""))
 
                 val multipartBodyBuilder = MultipartBodyBuilder()
-                multipartBodyBuilder.part("user", user)
-                multipartBodyBuilder.part("trackInfo", trackInfo)
+                multipartBodyBuilder.part("userEmail", user.email)
+                multipartBodyBuilder.part("userLastName", user.lastName)
+                multipartBodyBuilder.part("userFirstName", user.firstName)
+                multipartBodyBuilder.part("trackName", trackInfo.name)
+                multipartBodyBuilder.part("trackLatitude", trackInfo.latitude)
+                multipartBodyBuilder.part("trackLongitude", trackInfo.longitude)
                 multipartBodyBuilder.part("uploadFile", FileSystemResource("testFiles/testFile.txt"))
                 val multiPartData = multipartBodyBuilder.build()
 
@@ -63,8 +67,12 @@ class SessionControllerTests : CommonControllerTests() {
                 Files.write(Path.of("testFiles", "testFile.txt"), listOf(""))
 
                 val multipartBodyBuilder = MultipartBodyBuilder()
-                multipartBodyBuilder.part("user", user)
-                multipartBodyBuilder.part("trackInfo", trackInfo)
+                multipartBodyBuilder.part("userEmail", user.email)
+                multipartBodyBuilder.part("userLastName", user.lastName)
+                multipartBodyBuilder.part("userFirstName", user.firstName)
+                multipartBodyBuilder.part("trackName", trackInfo.name)
+                multipartBodyBuilder.part("trackLatitude", trackInfo.latitude)
+                multipartBodyBuilder.part("trackLongitude", trackInfo.longitude)
                 multipartBodyBuilder.part("uploadFile", FileSystemResource("testFiles/testFile.txt"))
                 val multiPartData = multipartBodyBuilder.build()
 
