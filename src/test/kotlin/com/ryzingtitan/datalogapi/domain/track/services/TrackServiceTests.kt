@@ -11,7 +11,6 @@ import com.ryzingtitan.datalogapi.domain.track.dtos.Track
 import com.ryzingtitan.datalogapi.domain.track.exceptions.TrackAlreadyExistsException
 import com.ryzingtitan.datalogapi.domain.track.exceptions.TrackDoesNotExistException
 import com.ryzingtitan.datalogapi.domain.uuid.UuidGenerator
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOf
@@ -32,7 +31,6 @@ import org.mockito.kotlin.whenever
 import org.slf4j.LoggerFactory
 import java.util.UUID
 
-@ExperimentalCoroutinesApi
 class TrackServiceTests {
     @Nested
     inner class Create {

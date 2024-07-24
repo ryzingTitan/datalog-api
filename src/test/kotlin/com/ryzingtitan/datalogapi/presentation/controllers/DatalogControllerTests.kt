@@ -9,23 +9,24 @@ import com.ryzingtitan.datalogapi.domain.datalog.dtos.Data
 import com.ryzingtitan.datalogapi.domain.datalog.dtos.Datalog
 import com.ryzingtitan.datalogapi.domain.datalog.dtos.TrackInfo
 import com.ryzingtitan.datalogapi.domain.datalog.dtos.User
+import com.ryzingtitan.datalogapi.domain.datalog.services.DatalogService
 import kotlinx.coroutines.flow.flowOf
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.reset
+import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
-import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockJwt
+import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBodyList
 import java.time.Instant
 import java.util.UUID
 
-class DatalogControllerTests : CommonControllerTests() {
+class DatalogControllerTests {
     @Nested
     inner class GetDatalogsBySessionId {
         @Test
@@ -34,7 +35,6 @@ class DatalogControllerTests : CommonControllerTests() {
                 .thenReturn(flowOf(firstDatalog, secondDatalog))
 
             webTestClient
-                .mutateWith(mockJwt())
                 .get()
                 .uri("/api/sessions/$sessionId/datalogs")
                 .accept(MediaType.APPLICATION_JSON)
@@ -54,7 +54,8 @@ class DatalogControllerTests : CommonControllerTests() {
 
     @BeforeEach
     fun setup() {
-        reset(mockDatalogService)
+        val datalogController = DatalogController(mockDatalogService)
+        webTestClient = WebTestClient.bindToController(datalogController).build()
 
         logger = LoggerFactory.getLogger(DatalogController::class.java) as Logger
         appender = ListAppender()
@@ -63,9 +64,11 @@ class DatalogControllerTests : CommonControllerTests() {
         appender.start()
     }
 
+    private lateinit var webTestClient: WebTestClient
     private lateinit var logger: Logger
     private lateinit var appender: ListAppender<ILoggingEvent>
 
+    private val mockDatalogService = mock<DatalogService>()
     private val sessionId = UUID.randomUUID()
 
     private val firstDatalog =

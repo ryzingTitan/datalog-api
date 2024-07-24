@@ -9,7 +9,6 @@ import com.ryzingtitan.datalogapi.domain.datalog.dtos.Data
 import com.ryzingtitan.datalogapi.domain.datalog.dtos.Datalog
 import com.ryzingtitan.datalogapi.domain.datalog.dtos.TrackInfo
 import com.ryzingtitan.datalogapi.domain.datalog.dtos.User
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
@@ -24,7 +23,6 @@ import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.UUID
 
-@ExperimentalCoroutinesApi
 class DatalogServiceTests {
     @Nested
     inner class GetAllBySessionId {

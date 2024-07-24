@@ -1,8 +1,5 @@
 package com.ryzingtitan.datalogapi.domain.datalog.dtos
 
-import lombok.Generated
-
-@Generated
 data class Data(
     val longitude: Double,
     val latitude: Double,

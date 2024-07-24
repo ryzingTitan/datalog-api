@@ -37,8 +37,6 @@ class SecurityConfiguration {
                     .pathMatchers("/**")
                     .denyAll()
             }
-            .cors { it.disable() }
-            .csrf { it.disable() }
             .headers { it.cache { }.disable() }
             .httpBasic { it.disable() }
             .formLogin { it.disable() }

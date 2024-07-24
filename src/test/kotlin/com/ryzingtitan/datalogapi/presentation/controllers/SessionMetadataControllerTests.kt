@@ -6,23 +6,24 @@ import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
 import com.ryzingtitan.datalogapi.domain.sessionmetadata.dtos.SessionMetadata
+import com.ryzingtitan.datalogapi.domain.sessionmetadata.services.SessionMetadataService
 import kotlinx.coroutines.flow.flowOf
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.reset
+import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
-import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockJwt
+import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBodyList
 import java.time.Instant
 import java.util.UUID
 
-class SessionMetadataControllerTests : CommonControllerTests() {
+class SessionMetadataControllerTests {
     @Nested
     inner class GetSessionMetadataByUser {
         @Test
@@ -31,7 +32,6 @@ class SessionMetadataControllerTests : CommonControllerTests() {
                 .thenReturn(flowOf(firstSessionMetadata, secondSessionMetadata))
 
             webTestClient
-                .mutateWith(mockJwt())
                 .get()
                 .uri("/api/sessions/metadata?username=test@test.com")
                 .accept(MediaType.APPLICATION_JSON)
@@ -51,7 +51,8 @@ class SessionMetadataControllerTests : CommonControllerTests() {
 
     @BeforeEach
     fun setup() {
-        reset(mockSessionMetadataService)
+        val sessionMetadataController = SessionMetadataController(mockSessionMetadataService)
+        webTestClient = WebTestClient.bindToController(sessionMetadataController).build()
 
         logger = LoggerFactory.getLogger(SessionMetadataController::class.java) as Logger
         appender = ListAppender()
@@ -60,8 +61,11 @@ class SessionMetadataControllerTests : CommonControllerTests() {
         appender.start()
     }
 
+    private lateinit var webTestClient: WebTestClient
     private lateinit var logger: Logger
     private lateinit var appender: ListAppender<ILoggingEvent>
+
+    private val mockSessionMetadataService = mock<SessionMetadataService>()
 
     private val firstSessionMetadata =
         SessionMetadata(
