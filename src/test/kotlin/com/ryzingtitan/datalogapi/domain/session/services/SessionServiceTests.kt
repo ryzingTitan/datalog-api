@@ -18,7 +18,6 @@ import com.ryzingtitan.datalogapi.domain.session.exceptions.SessionAlreadyExists
 import com.ryzingtitan.datalogapi.domain.session.exceptions.SessionDoesNotExistException
 import com.ryzingtitan.datalogapi.domain.sessionmetadata.services.SessionMetadataService
 import com.ryzingtitan.datalogapi.domain.uuid.UuidGenerator
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
@@ -38,7 +37,6 @@ import org.springframework.core.io.buffer.DefaultDataBufferFactory
 import java.time.Instant
 import java.util.UUID
 
-@ExperimentalCoroutinesApi
 class SessionServiceTests {
     @Nested
     inner class Create {

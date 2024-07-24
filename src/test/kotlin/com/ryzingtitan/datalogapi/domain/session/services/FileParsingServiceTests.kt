@@ -14,7 +14,6 @@ import com.ryzingtitan.datalogapi.domain.datalog.dtos.User
 import com.ryzingtitan.datalogapi.domain.session.configuration.ColumnConfiguration
 import com.ryzingtitan.datalogapi.domain.session.dtos.FileUpload
 import com.ryzingtitan.datalogapi.domain.session.dtos.FileUploadMetadata
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -30,7 +29,6 @@ import org.springframework.core.io.buffer.DefaultDataBufferFactory
 import java.time.Instant
 import java.util.UUID
 
-@ExperimentalCoroutinesApi
 class FileParsingServiceTests {
     @Nested
     inner class Parse {

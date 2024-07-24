@@ -1,8 +1,5 @@
 package com.ryzingtitan.datalogapi.data.datalog.entities
 
-import lombok.Generated
-
-@Generated
 data class DataEntity(
     val longitude: Double,
     val latitude: Double,

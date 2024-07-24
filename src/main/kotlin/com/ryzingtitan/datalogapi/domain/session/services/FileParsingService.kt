@@ -2,9 +2,6 @@ package com.ryzingtitan.datalogapi.domain.session.services
 
 import com.ryzingtitan.datalogapi.data.datalog.entities.DatalogEntity
 import com.ryzingtitan.datalogapi.domain.session.dtos.FileUpload
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -22,25 +19,23 @@ class FileParsingService(
     suspend fun parse(fileUpload: FileUpload): List<DatalogEntity> {
         logger.info("Beginning to parse file: ${fileUpload.metadata.fileName}")
 
-        val fileData = StringBuilder()
+        val datalogs = mutableListOf<DatalogEntity>()
 
         fileUpload.file.map { dataBuffer ->
-            fileData.append(dataBuffer.asInputStream().readAllBytes().decodeToString())
-        }
-            .flowOn(Dispatchers.IO).collect()
+            dataBuffer.asInputStream().bufferedReader()
+        }.collect { reader ->
+            val fileLines = reader.lines().toList()
 
-        val fileLines = fileData.toString().replace("\r", "").split("\n").dropLast(1)
+            val columnConfiguration = columnConfigurationService.create(fileLines.first())
 
-        val columnConfiguration = columnConfigurationService.create(fileLines.first())
+            val fileLinesWithoutHeader = removeHeaderRow(fileLines)
 
-        val fileLinesWithoutHeader = removeHeaderRow(fileLines)
+            fileLinesWithoutHeader.forEach { fileLine ->
+                val datalog = rowParsingService.parse(fileLine, fileUpload.metadata, columnConfiguration)
 
-        val datalogs = mutableListOf<DatalogEntity>()
-        fileLinesWithoutHeader.map { fileLine ->
-            val datalog = rowParsingService.parse(fileLine, fileUpload.metadata, columnConfiguration)
-
-            if (datalog != null) {
-                datalogs.add(datalog)
+                if (datalog != null) {
+                    datalogs.add(datalog)
+                }
             }
         }
 

@@ -1,27 +1,28 @@
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import io.gitlab.arturbosch.detekt.Detekt
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
-import java.util.Locale
 
 plugins {
-    id("org.springframework.boot") version "3.2.3"
-    id("io.spring.dependency-management") version "1.1.4"
-    kotlin("jvm") version "1.9.22"
-    kotlin("plugin.spring") version "1.9.22"
-    id("org.jlleitschuh.gradle.ktlint") version "12.1.0"
-    id("io.gitlab.arturbosch.detekt") version "1.23.5"
+    id("org.springframework.boot") version "3.3.2"
+    id("io.spring.dependency-management") version "1.1.6"
+    kotlin("jvm") version "1.9.23"
+    kotlin("plugin.spring") version "1.9.23"
+    id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
+    id("io.gitlab.arturbosch.detekt") version "1.23.6"
     id("com.github.ben-manes.versions") version "0.51.0"
-    id("org.sonarqube") version "4.4.1.3373"
-    id("org.owasp.dependencycheck") version "9.0.9"
-    id("org.cyclonedx.bom") version "1.8.2"
-    id("org.graalvm.buildtools.native") version "0.10.1"
+    id("org.sonarqube") version "5.1.0.4882"
+    id("org.owasp.dependencycheck") version "10.0.3"
+    id("org.graalvm.buildtools.native") version "0.10.2"
     jacoco
 }
 
 group = "com.ryzingtitan"
-version = "4.0.0"
-java.sourceCompatibility = JavaVersion.VERSION_21
+version = "5.0.0"
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
 
 configurations {
     compileOnly {
@@ -39,31 +40,28 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-cache")
-    implementation("com.okta.spring:okta-spring-boot-starter:3.0.5")
+    implementation("com.okta.spring:okta-spring-boot-starter:3.0.7")
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.16.1")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.2")
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions:1.2.2")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.8.0")
-    compileOnly("org.projectlombok:lombok")
-    annotationProcessor("org.projectlombok:lombok")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.8.1")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
-    testImplementation("org.junit.platform:junit-platform-suite-api:1.10.2")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
-    testImplementation("io.cucumber:cucumber-java:7.15.0")
-    testImplementation("io.cucumber:cucumber-junit-platform-engine:7.15.0")
-    testImplementation("io.cucumber:cucumber-spring:7.15.0")
-    testImplementation("io.projectreactor:reactor-test:3.6.2")
-    testImplementation("no.nav.security:mock-oauth2-server:2.1.2")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
+    testImplementation("org.junit.platform:junit-platform-suite-api:1.10.3")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
+    testImplementation("io.cucumber:cucumber-java:7.18.1")
+    testImplementation("io.cucumber:cucumber-junit-platform-engine:7.18.1")
+    testImplementation("io.cucumber:cucumber-spring:7.18.1")
+    testImplementation("io.projectreactor:reactor-test:3.6.8")
+    testImplementation("no.nav.security:mock-oauth2-server:2.1.8")
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs = listOf("-Xjsr305=strict")
-        jvmTarget = "21"
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.add("-Xjsr305=strict")
     }
 }
 
@@ -72,49 +70,16 @@ tasks.withType<Test> {
     finalizedBy(tasks.jacocoTestReport)
 }
 
-tasks.getByName("addKtlintFormatGitPreCommitHook") {
-    dependsOn("processResources")
-    dependsOn("processTestResources")
-    dependsOn("ktlintMainSourceSetCheck")
-    dependsOn("ktlintTestSourceSetCheck")
-    dependsOn("ktlintKotlinScriptCheck")
-    dependsOn("runKtlintFormatOverMainSourceSet")
-    dependsOn("runKtlintFormatOverTestSourceSet")
-    dependsOn("ktlintKotlinScriptFormat")
-    dependsOn("ktlintMainSourceSetFormat")
-    dependsOn("ktlintTestSourceSetFormat")
-    dependsOn("collectReachabilityMetadata")
-    dependsOn("detekt")
-}
-
-tasks.getByName("compileKotlin") {
-    dependsOn("addKtlintFormatGitPreCommitHook")
-}
-
-ktlint {
-    version.set("1.1.1")
-    verbose.set(true)
-    outputToConsole.set(true)
-    coloredOutput.set(true)
-    reporters {
-        reporter(ReporterType.JSON)
-    }
-}
-
 tasks.withType<Detekt>().configureEach {
-    jvmTarget = "21"
-
     reports {
         html.required.set(true)
         html.outputLocation.set(file("${rootProject.rootDir}/${rootProject.name}/detektHtmlReport/detekt.html"))
     }
 }
 
-jacoco {
-    toolVersion = "0.8.11"
-}
-
 tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+
     reports {
         xml.required.set(true)
         csv.required.set(false)
@@ -134,31 +99,18 @@ tasks.jacocoTestCoverageVerification {
     }
 }
 
-tasks.check {
-    dependsOn("jacocoTestCoverageVerification")
-}
-
 tasks.withType<DependencyUpdatesTask> {
-    checkForGradleUpdate = true
-    outputFormatter = "json"
-    outputDir = "build/dependencyUpdates"
-    reportfileName = "report"
+    gradleReleaseChannel = "current"
 
-    resolutionStrategy {
-        componentSelection {
-            all {
-                if (candidate.version.isNonStable() && !currentVersion.isNonStable()) {
-                    reject("Release candidate")
-                }
-            }
-        }
+    rejectVersionIf {
+        isNonStable(candidate.version)
     }
 }
 
-fun String.isNonStable(): Boolean {
-    val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { uppercase(Locale.getDefault()).contains(it) }
+fun isNonStable(version: String): Boolean {
+    val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.uppercase().contains(it) }
     val regex = "^[0-9,.v-]+(-r)?$".toRegex()
-    val isStable = stableKeyword || regex.matches(this)
+    val isStable = stableKeyword || regex.matches(version)
     return isStable.not()
 }
 

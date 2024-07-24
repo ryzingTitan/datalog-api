@@ -3,25 +3,25 @@ package com.ryzingtitan.datalogapi.presentation.controllers
 import com.ryzingtitan.datalogapi.domain.datalog.dtos.TrackInfo
 import com.ryzingtitan.datalogapi.domain.datalog.dtos.User
 import com.ryzingtitan.datalogapi.domain.session.dtos.FileUpload
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import com.ryzingtitan.datalogapi.domain.session.services.SessionService
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.client.MultipartBodyBuilder
-import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockJwt
+import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.web.reactive.function.BodyInserters
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.UUID
 
-@ExperimentalCoroutinesApi
-class SessionControllerTests : CommonControllerTests() {
+class SessionControllerTests {
     @Nested
     inner class CreateSession {
         @Test
@@ -44,7 +44,6 @@ class SessionControllerTests : CommonControllerTests() {
                 val multiPartData = multipartBodyBuilder.build()
 
                 webTestClient
-                    .mutateWith(mockJwt())
                     .post()
                     .uri("/api/sessions")
                     .body(BodyInserters.fromMultipartData(multiPartData))
@@ -79,7 +78,6 @@ class SessionControllerTests : CommonControllerTests() {
                 val sessionId = UUID.randomUUID()
 
                 webTestClient
-                    .mutateWith(mockJwt())
                     .put()
                     .uri("/api/sessions/$sessionId")
                     .body(BodyInserters.fromMultipartData(multiPartData))
@@ -93,9 +91,16 @@ class SessionControllerTests : CommonControllerTests() {
 
     @BeforeEach
     fun setup() {
+        val sessionController = SessionController(mockSessionService)
+        webTestClient = WebTestClient.bindToController(sessionController).build()
+
         Files.deleteIfExists(Path.of("testFiles", "testFile.txt"))
         Files.deleteIfExists(Path.of("testFiles"))
     }
+
+    private lateinit var webTestClient: WebTestClient
+
+    private val mockSessionService = mock<SessionService>()
 
     private val user =
         User(

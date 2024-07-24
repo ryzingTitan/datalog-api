@@ -15,14 +15,6 @@ management:
   server:
     port: 8081
 
-logging:
-  file:
-    name: logs/datalog-api/datalog-api.log
-  logback:
-    rollingpolicy:
-      max-history: 7
-      file-name-pattern: ${LOG_FILE}.%d{yyyy-MM-dd}.%i.gz
-
 ---
 spring:
   config:

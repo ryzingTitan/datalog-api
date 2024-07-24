@@ -10,7 +10,6 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.codec.multipart.FilePart
 import org.springframework.http.server.reactive.ServerHttpResponse
-import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
@@ -21,7 +20,6 @@ import org.springframework.web.server.ServerWebExchange
 import java.util.UUID
 
 @RestController
-@CrossOrigin(origins = ["http://localhost:3000", "https://datalog-viewer-uonahdb5jq-uc.a.run.app"])
 @RequestMapping(path = ["/api/sessions"])
 class SessionController(
     private val sessionService: SessionService,

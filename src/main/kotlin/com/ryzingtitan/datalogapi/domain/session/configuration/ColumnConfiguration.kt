@@ -1,8 +1,5 @@
 package com.ryzingtitan.datalogapi.domain.session.configuration
 
-import lombok.Generated
-
-@Generated
 @Suppress("LongParameterList")
 data class ColumnConfiguration(
     val deviceTime: Int,

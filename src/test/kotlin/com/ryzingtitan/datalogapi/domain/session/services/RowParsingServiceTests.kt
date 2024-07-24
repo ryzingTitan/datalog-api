@@ -9,7 +9,6 @@ import com.ryzingtitan.datalogapi.domain.datalog.dtos.TrackInfo
 import com.ryzingtitan.datalogapi.domain.datalog.dtos.User
 import com.ryzingtitan.datalogapi.domain.session.configuration.ColumnConfiguration
 import com.ryzingtitan.datalogapi.domain.session.dtos.FileUploadMetadata
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
@@ -20,7 +19,6 @@ import org.slf4j.LoggerFactory
 import java.time.Instant
 import java.util.UUID
 
-@ExperimentalCoroutinesApi
 class RowParsingServiceTests {
     @Nested
     inner class Parse {
