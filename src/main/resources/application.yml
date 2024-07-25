@@ -24,10 +24,11 @@ spring:
     mongodb:
       uri: ${MONGO_DB_URL}
       database: dataLogging
-okta:
-  oauth2:
-    issuer: https://dev-7pr07becg7e5y37g.us.auth0.com/
-    audience: https://datalog-api-uonahdb5jq-uc.a.run.app
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://accounts.google.com
 
 ---
 spring:
@@ -53,7 +54,8 @@ spring:
     mongodb:
       uri: mongodb://localhost:27017
       database: dataLogging
-okta:
-  oauth2:
-    issuer: https://dev-7pr07becg7e5y37g.us.auth0.com/
-    audience: http://localhost:8080
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://accounts.google.com

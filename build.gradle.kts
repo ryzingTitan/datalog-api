@@ -40,7 +40,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-cache")
-    implementation("com.okta.spring:okta-spring-boot-starter:3.0.7")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.2")
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions:1.2.2")
