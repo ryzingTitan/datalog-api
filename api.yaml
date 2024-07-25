@@ -147,13 +147,11 @@ paths:
           description: Gone - Session does not exist
         500:
           description: Internal Server Error
-
-  /sessions/metadata:
     get:
       parameters:
-        - name: username
+        - name: userEmail
           in: query
-          description: The email address (username) of the current user
+          description: The email address of the current user
           required: true
           schema:
             type: string
@@ -224,9 +222,8 @@ paths:
           description: The track id to be updated
           required: true
           schema:
-            type: string
-            format: uuid
-            example: 515ef9d0-2059-4a11-b5c3-7c8dae93b57d
+            type: integer
+            example: 1
       tags:
         - Track Administration
       description: Update an existing track
@@ -322,11 +319,7 @@ components:
           example: 2022-09-18T18:15:47.968Z
         data:
           $ref: '#/components/schemas/Data'
-        trackInfo:
-          $ref: '#/components/schemas/TrackInfo'
-        user:
-          $ref: '#/components/schemas/User'
-    SessionMetadata:
+    Session:
       type: object
       properties:
         sessionId:
@@ -352,23 +345,6 @@ components:
           format: uuid
           description: The track id
           example: 515ef9d0-2059-4a11-b5c3-7c8dae93b57d
-        name:
-          type: string
-          description: The name of the track associated with the datalog
-          example: Test Track
-        latitude:
-          type: number
-          format: double
-          description: The latitude location of the track
-          example: 42.406800000000004
-        longitude:
-          type: number
-          format: double
-          description: The longitude location of the track
-          example: -86.14170333333335
-    TrackInfo:
-      type: object
-      properties:
         name:
           type: string
           description: The name of the track associated with the datalog

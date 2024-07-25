@@ -1,7 +1,7 @@
 package com.ryzingtitan.datalogapi.presentation.controllers
 
-import com.ryzingtitan.datalogapi.domain.track.dtos.Track
-import com.ryzingtitan.datalogapi.domain.track.services.TrackService
+import com.ryzingtitan.datalogapi.domain.tracks.dtos.Track
+import com.ryzingtitan.datalogapi.domain.tracks.services.TrackService
 import kotlinx.coroutines.flow.Flow
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ServerWebExchange
-import java.util.UUID
 
 @RestController
 @CrossOrigin(origins = ["http://localhost:3000", "https://datalog-viewer-uonahdb5jq-uc.a.run.app"])
@@ -44,16 +43,16 @@ class TrackController(private val trackService: TrackService) {
 
     @PutMapping("/{trackId}")
     suspend fun updateTrack(
-        @PathVariable(name = "trackId") trackId: UUID,
+        @PathVariable(name = "trackId") trackId: Int,
         @RequestBody track: Track,
     ) {
         trackService.update(track.copy(id = trackId))
     }
 
     @DeleteMapping("/{trackId}")
-    fun deleteTrack(
-        @PathVariable(name = "trackId") trackId: UUID,
-    ): Flow<Track> {
+    suspend fun deleteTrack(
+        @PathVariable(name = "trackId") trackId: Int,
+    ) {
         return trackService.delete(trackId)
     }
 }

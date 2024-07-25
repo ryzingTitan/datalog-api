@@ -5,12 +5,12 @@ import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
 import com.ryzingtitan.datalogapi.cucumber.dtos.LogMessage
-import com.ryzingtitan.datalogapi.domain.session.services.FileParsingService
-import com.ryzingtitan.datalogapi.domain.session.services.RowParsingService
-import com.ryzingtitan.datalogapi.domain.session.services.SessionService
-import com.ryzingtitan.datalogapi.domain.track.services.TrackService
+import com.ryzingtitan.datalogapi.domain.sessions.services.FileParsingService
+import com.ryzingtitan.datalogapi.domain.sessions.services.RowParsingService
+import com.ryzingtitan.datalogapi.domain.sessions.services.SessionService
+import com.ryzingtitan.datalogapi.domain.tracks.services.TrackService
 import com.ryzingtitan.datalogapi.presentation.controllers.DatalogController
-import com.ryzingtitan.datalogapi.presentation.controllers.SessionMetadataController
+import com.ryzingtitan.datalogapi.presentation.controllers.SessionController
 import io.cucumber.datatable.DataTable
 import io.cucumber.java.After
 import io.cucumber.java.Before
@@ -30,8 +30,8 @@ class LoggingStepDefs {
 
     @Before
     fun setup() {
-        sessionMetadataControllerLogger = LoggerFactory.getLogger(SessionMetadataController::class.java) as Logger
-        sessionMetadataControllerLogger.addAppender(appender)
+        sessionControllerLogger = LoggerFactory.getLogger(SessionController::class.java) as Logger
+        sessionControllerLogger.addAppender(appender)
 
         datalogControllerLogger = LoggerFactory.getLogger(DatalogController::class.java) as Logger
         datalogControllerLogger.addAppender(appender)
@@ -62,7 +62,7 @@ class LoggingStepDefs {
             actualLogMessages.add(LogMessage(it.level.levelStr, it.message))
         }
 
-        assertEquals(expectedLogMessages.sortedBy { it.message }, actualLogMessages.sortedBy { it.message })
+        assertEquals(expectedLogMessages, actualLogMessages)
     }
 
     @After
@@ -71,7 +71,7 @@ class LoggingStepDefs {
     }
 
     private lateinit var datalogControllerLogger: Logger
-    private lateinit var sessionMetadataControllerLogger: Logger
+    private lateinit var sessionControllerLogger: Logger
     private lateinit var fileParsingServiceLogger: Logger
     private lateinit var sessionServiceLogger: Logger
     private lateinit var trackServiceLogger: Logger

@@ -1,34 +1,52 @@
 package com.ryzingtitan.datalogapi.cucumber.controllers
 
 import com.ryzingtitan.datalogapi.cucumber.common.CommonControllerStepDefs
+import com.ryzingtitan.datalogapi.cucumber.common.CommonControllerStepDefs.CommonControllerStepDefsSharedState.responseStatus
 import com.ryzingtitan.datalogapi.cucumber.dtos.RequestData
-import com.ryzingtitan.datalogapi.domain.datalog.dtos.TrackInfo
-import com.ryzingtitan.datalogapi.domain.datalog.dtos.User
+import com.ryzingtitan.datalogapi.domain.sessions.dtos.Session
 import io.cucumber.datatable.DataTable
 import io.cucumber.java.DataTableType
+import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 import kotlinx.coroutines.runBlocking
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.ClientResponse
+import org.springframework.web.reactive.function.client.awaitEntityList
 import org.springframework.web.reactive.function.client.awaitExchange
-import java.util.UUID
+import java.time.Instant
 
 class SessionControllerStepDefs {
+    @When("the sessions are retrieved for user {string}")
+    fun whenTheSessionsAreRetrievedForUser(userEmail: String) {
+        runBlocking {
+            CommonControllerStepDefs.webClient.get()
+                .uri("/sessions?userEmail=$userEmail")
+                .accept(MediaType.APPLICATION_JSON)
+                .header(
+                    "Authorization",
+                    "Bearer ${CommonControllerStepDefs.authorizationToken?.serialize()}",
+                )
+                .awaitExchange { clientResponse ->
+                    handleMultipleSessionResponse(clientResponse)
+                }
+        }
+    }
+
     @When("the file is uploaded for a session with the following data:")
     fun theFileIsUploadedForSessionWithTheFollowingData(table: DataTable) {
         val requestData = table.tableConverter.toList<RequestData>(table, RequestData::class.java)
 
         val multipartBodyBuilder = MultipartBodyBuilder()
-        multipartBodyBuilder.part("userEmail", requestData.first().user.email)
-        multipartBodyBuilder.part("userLastName", requestData.first().user.lastName)
-        multipartBodyBuilder.part("userFirstName", requestData.first().user.firstName)
-        multipartBodyBuilder.part("trackName", requestData.first().trackInfo.name)
-        multipartBodyBuilder.part("trackLatitude", requestData.first().trackInfo.latitude)
-        multipartBodyBuilder.part("trackLongitude", requestData.first().trackInfo.longitude)
+        multipartBodyBuilder.part("userEmail", requestData.first().userEmail)
+        multipartBodyBuilder.part("userLastName", requestData.first().userLastName)
+        multipartBodyBuilder.part("userFirstName", requestData.first().userFirstName)
+        multipartBodyBuilder.part("trackId", requestData.first().trackId)
         multipartBodyBuilder.part("uploadFile", FileSystemResource("testFiles/testFile.txt"))
         val multiPartData = multipartBodyBuilder.build()
 
@@ -47,21 +65,18 @@ class SessionControllerStepDefs {
         }
     }
 
-    @When("the file is uploaded for a session with the following data and session id {string}:")
+    @When("the file is uploaded for a session with the following data and session id {int}:")
     fun theFileIsUploadedForSessionWithTheFollowingDataAndSessionId(
-        sessionIdString: String,
+        sessionId: Int,
         table: DataTable,
     ) {
         val requestData = table.tableConverter.toList<RequestData>(table, RequestData::class.java)
-        val sessionId = UUID.fromString(sessionIdString)
 
         val multipartBodyBuilder = MultipartBodyBuilder()
-        multipartBodyBuilder.part("userEmail", requestData.first().user.email)
-        multipartBodyBuilder.part("userLastName", requestData.first().user.lastName)
-        multipartBodyBuilder.part("userFirstName", requestData.first().user.firstName)
-        multipartBodyBuilder.part("trackName", requestData.first().trackInfo.name)
-        multipartBodyBuilder.part("trackLatitude", requestData.first().trackInfo.latitude)
-        multipartBodyBuilder.part("trackLongitude", requestData.first().trackInfo.longitude)
+        multipartBodyBuilder.part("userEmail", requestData.first().userEmail)
+        multipartBodyBuilder.part("userLastName", requestData.first().userLastName)
+        multipartBodyBuilder.part("userFirstName", requestData.first().userFirstName)
+        multipartBodyBuilder.part("trackId", requestData.first().trackId)
         multipartBodyBuilder.part("uploadFile", FileSystemResource("testFiles/testFile.txt"))
         val multiPartData = multipartBodyBuilder.build()
 
@@ -80,27 +95,52 @@ class SessionControllerStepDefs {
         }
     }
 
+    @Then("the following sessions are returned:")
+    fun thenTheFollowingSessionsAreReturned(table: DataTable) {
+        val expectedSessions = table.tableConverter.toList<Session>(table, Session::class.java)
+
+        assertEquals(expectedSessions, returnedSessions)
+    }
+
     private fun handleSessionResponse(clientResponse: ClientResponse) {
-        CommonControllerStepDefs.responseStatus = clientResponse.statusCode() as HttpStatus
+        responseStatus = clientResponse.statusCode() as HttpStatus
         CommonControllerStepDefs.locationHeader =
             clientResponse.headers().header(HttpHeaders.LOCATION).firstOrNull() ?: ""
     }
 
+    private suspend fun handleMultipleSessionResponse(clientResponse: ClientResponse) {
+        responseStatus = clientResponse.statusCode() as HttpStatus
+
+        if (clientResponse.statusCode() == HttpStatus.OK) {
+            val sessionList = clientResponse.awaitEntityList<Session>().body
+
+            if (sessionList != null) {
+                returnedSessions.addAll(sessionList)
+            }
+        }
+    }
+
+    private val returnedSessions = mutableListOf<Session>()
+
     @DataTableType
     fun mapRequestData(tableRow: Map<String, String>): RequestData {
         return RequestData(
-            trackInfo =
-                TrackInfo(
-                    name = tableRow["trackName"].toString(),
-                    latitude = tableRow["latitude"].toString().toDouble(),
-                    longitude = tableRow["longitude"].toString().toDouble(),
-                ),
-            user =
-                User(
-                    firstName = tableRow["firstName"].toString(),
-                    lastName = tableRow["lastName"].toString(),
-                    email = tableRow["email"].toString(),
-                ),
+            trackId = tableRow["trackId"]?.toInt()!!,
+            userFirstName = tableRow["userFirstName"].orEmpty(),
+            userLastName = tableRow["userLastName"].orEmpty(),
+            userEmail = tableRow["userEmail"].toString(),
+        )
+    }
+
+    @DataTableType
+    fun mapSession(tableRow: Map<String, String>): Session {
+        return Session(
+            id = tableRow["id"]?.toInt()!!,
+            startTime = Instant.parse(tableRow["startTime"].orEmpty()),
+            endTime = Instant.parse(tableRow["endTime"].orEmpty()),
+            trackName = tableRow["trackName"].orEmpty(),
+            trackLatitude = tableRow["trackLatitude"]?.toDouble()!!,
+            trackLongitude = tableRow["trackLongitude"]?.toDouble()!!,
         )
     }
 }

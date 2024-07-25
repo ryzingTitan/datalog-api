@@ -1,0 +1,139 @@
+databaseChangeLog:
+  - changeSet:
+      id: Create tracks table
+      author: kstoltzfus
+      changes:
+        - createTable:
+            tableName: tracks
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: latitude
+                  type: double
+                  constraints:
+                    nullable: false
+              - column:
+                  name: longitude
+                  type: double
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: Create sessions table
+      author: kstoltzfus
+      changes:
+        - createTable:
+            tableName: sessions
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: user_email
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_first_name
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_last_name
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: start_time
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: end_time
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: track_id
+                  type: int
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_session_track_id
+                    referencedTableName: tracks
+                    referencedColumnNames: id
+
+  - changeSet:
+      id: Create datalogs table
+      author: kstoltzfus
+      changes:
+        - createTable:
+            tableName: datalogs
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: session_id
+                  type: int
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_datalog_session_id
+                    referencedTableName: sessions
+                    referencedColumnNames: id
+              - column:
+                  name: timestamp
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: longitude
+                  type: double
+                  constraints:
+                    nullable: false
+              - column:
+                  name: latitude
+                  type: double
+                  constraints:
+                    nullable: false
+              - column:
+                  name: altitude
+                  type: float
+                  constraints:
+                    nullable: false
+              - column:
+                  name: intake_air_temperature
+                  type: int
+              - column:
+                  name: boost_pressure
+                  type: float
+              - column:
+                  name: coolant_temperature
+                  type: int
+              - column:
+                  name: engine_rpm
+                  type: int
+              - column:
+                  name: speed
+                  type: int
+              - column:
+                  name: throttle_position
+                  type: float
+              - column:
+                  name: air_fuel_ratio
+                  type: float

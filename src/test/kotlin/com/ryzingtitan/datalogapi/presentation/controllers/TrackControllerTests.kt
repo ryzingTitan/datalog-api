@@ -1,7 +1,7 @@
 package com.ryzingtitan.datalogapi.presentation.controllers
 
-import com.ryzingtitan.datalogapi.domain.track.dtos.Track
-import com.ryzingtitan.datalogapi.domain.track.services.TrackService
+import com.ryzingtitan.datalogapi.domain.tracks.dtos.Track
+import com.ryzingtitan.datalogapi.domain.tracks.services.TrackService
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
@@ -15,7 +15,6 @@ import org.springframework.http.MediaType
 import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockJwt
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBodyList
-import java.util.UUID
 
 class TrackControllerTests {
     @Nested
@@ -86,8 +85,6 @@ class TrackControllerTests {
         @Test
         fun `returns 'OK' status and deletes track`() =
             runTest {
-                whenever(mockTrackService.delete(firstTrackId)).thenReturn(flowOf(firstTrack))
-
                 webTestClient
                     .mutateWith(mockJwt())
                     .delete()
@@ -96,8 +93,6 @@ class TrackControllerTests {
                     .exchange()
                     .expectStatus()
                     .isOk
-                    .expectBodyList<Track>()
-                    .contains(firstTrack)
 
                 verify(mockTrackService, times(1)).delete(firstTrackId)
             }
@@ -112,8 +107,8 @@ class TrackControllerTests {
     private lateinit var webTestClient: WebTestClient
 
     private val mockTrackService = mock<TrackService>()
-    private val firstTrackId = UUID.randomUUID()
-    private val secondTrackId = UUID.randomUUID()
+    private val firstTrackId = 1
+    private val secondTrackId = 2
 
     private val firstTrack =
         Track(

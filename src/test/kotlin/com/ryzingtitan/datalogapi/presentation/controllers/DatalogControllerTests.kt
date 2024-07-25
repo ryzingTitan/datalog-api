@@ -5,11 +5,8 @@ import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
-import com.ryzingtitan.datalogapi.domain.datalog.dtos.Data
-import com.ryzingtitan.datalogapi.domain.datalog.dtos.Datalog
-import com.ryzingtitan.datalogapi.domain.datalog.dtos.TrackInfo
-import com.ryzingtitan.datalogapi.domain.datalog.dtos.User
-import com.ryzingtitan.datalogapi.domain.datalog.services.DatalogService
+import com.ryzingtitan.datalogapi.domain.datalogs.dtos.Datalog
+import com.ryzingtitan.datalogapi.domain.datalogs.services.DatalogService
 import kotlinx.coroutines.flow.flowOf
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -24,7 +21,6 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBodyList
 import java.time.Instant
-import java.util.UUID
 
 class DatalogControllerTests {
     @Nested
@@ -69,47 +65,37 @@ class DatalogControllerTests {
     private lateinit var appender: ListAppender<ILoggingEvent>
 
     private val mockDatalogService = mock<DatalogService>()
-    private val sessionId = UUID.randomUUID()
+    private val sessionId = 5
 
     private val firstDatalog =
         Datalog(
             sessionId = sessionId,
             timestamp = Instant.now(),
-            data =
-                Data(
-                    longitude = -86.14162,
-                    latitude = 42.406800000000004,
-                    altitude = 188.4f,
-                    intakeAirTemperature = 130,
-                    boostPressure = 15.6f,
-                    coolantTemperature = 150,
-                    engineRpm = 5000,
-                    speed = 85,
-                    throttlePosition = 75.6f,
-                    airFuelRatio = 14.7f,
-                ),
-            trackInfo = TrackInfo("", 0.0, 0.0),
-            user = User("", "", ""),
+            longitude = -86.14162,
+            latitude = 42.406800000000004,
+            altitude = 188.4f,
+            intakeAirTemperature = 130,
+            boostPressure = 15.6f,
+            coolantTemperature = 150,
+            engineRpm = 5000,
+            speed = 85,
+            throttlePosition = 75.6f,
+            airFuelRatio = 14.7f,
         )
 
     private val secondDatalog =
         Datalog(
             sessionId = sessionId,
             timestamp = Instant.now(),
-            data =
-                Data(
-                    longitude = 86.14162,
-                    latitude = -42.406800000000004,
-                    altitude = 188.0f,
-                    intakeAirTemperature = 135,
-                    boostPressure = 15.0f,
-                    coolantTemperature = 165,
-                    engineRpm = 5500,
-                    speed = 80,
-                    throttlePosition = 75.0f,
-                    airFuelRatio = 15.9f,
-                ),
-            trackInfo = TrackInfo("", 0.0, 0.0),
-            user = User("", "", ""),
+            longitude = 86.14162,
+            latitude = -42.406800000000004,
+            altitude = 188.0f,
+            intakeAirTemperature = 135,
+            boostPressure = 15.0f,
+            coolantTemperature = 165,
+            engineRpm = 5500,
+            speed = 80,
+            throttlePosition = 75.0f,
+            airFuelRatio = 15.9f,
         )
 }
