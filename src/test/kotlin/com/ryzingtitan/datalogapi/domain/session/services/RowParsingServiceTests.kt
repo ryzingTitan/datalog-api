@@ -109,6 +109,50 @@ class RowParsingServiceTests {
             }
 
         @Test
+        fun `parses the row correctly when air fuel ratio column is missing`() =
+            runTest {
+                val row =
+                    "$FIRST_LINE_DEVICE_TIME," +
+                        "$FIRST_LINE_LONGITUDE," +
+                        "$FIRST_LINE_LATITUDE," +
+                        "$FIRST_LINE_ALTITUDE," +
+                        "${FIRST_LINE_COOLANT_TEMPERATURE.toFloat()}," +
+                        "${FIRST_LINE_ENGINE_RPM.toFloat()}," +
+                        "${FIRST_LINE_INTAKE_AIR_TEMPERATURE.toFloat()}," +
+                        "${FIRST_LINE_SPEED.toFloat()}," +
+                        "$FIRST_LINE_THROTTLE_POSITION," +
+                        "$FIRST_LINE_BOOST_PRESSURE,"
+
+                val missingAirFuelRationColumnConfiguration = columnConfiguration.copy(airFuelRatio = -1)
+
+                val datalog =
+                    rowParsingService.parse(
+                        row,
+                        fileUploadMetadata,
+                        missingAirFuelRationColumnConfiguration,
+                    )
+
+                assertEquals(sessionId, datalog?.sessionId)
+                assertEquals(firstLineEpochMilliseconds, datalog?.epochMilliseconds)
+                assertEquals(FIRST_LINE_LONGITUDE, datalog?.data?.longitude)
+                assertEquals(FIRST_LINE_LATITUDE, datalog?.data?.latitude)
+                assertEquals(FIRST_LINE_ALTITUDE, datalog?.data?.altitude)
+                assertEquals(FIRST_LINE_INTAKE_AIR_TEMPERATURE, datalog?.data?.intakeAirTemperature)
+                assertEquals(FIRST_LINE_BOOST_PRESSURE, datalog?.data?.boostPressure)
+                assertEquals(FIRST_LINE_COOLANT_TEMPERATURE, datalog?.data?.coolantTemperature)
+                assertEquals(FIRST_LINE_ENGINE_RPM, datalog?.data?.engineRpm)
+                assertEquals(FIRST_LINE_SPEED, datalog?.data?.speed)
+                assertEquals(FIRST_LINE_THROTTLE_POSITION, datalog?.data?.throttlePosition)
+                assertNull(datalog?.data?.airFuelRatio)
+                assertEquals("Test Track", datalog?.trackInfo?.name)
+                assertEquals(42.4086, datalog?.trackInfo?.latitude)
+                assertEquals(-86.1374, datalog?.trackInfo?.longitude)
+                assertEquals("test@test.com", datalog?.user?.email)
+                assertEquals("test", datalog?.user?.firstName)
+                assertEquals("tester", datalog?.user?.lastName)
+            }
+
+        @Test
         fun `parses the row correctly when it contains invalid session data`() =
             runTest {
                 val row =

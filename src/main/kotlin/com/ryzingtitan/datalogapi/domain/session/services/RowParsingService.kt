@@ -70,7 +70,11 @@ class RowParsingService {
         val engineRpm = lineColumns[columnConfiguration.engineRpm].toFloatOrNull()?.toInt()
         val speed = lineColumns[columnConfiguration.speed].toFloatOrNull()?.toInt()
         val throttlePosition = lineColumns[columnConfiguration.throttlePosition].toFloatOrNull()
-        val airFuelRatio = lineColumns[columnConfiguration.airFuelRatio].toFloatOrNull()
+
+        var airFuelRatio: Float? = null
+        if (columnConfiguration.airFuelRatio != -1) {
+            airFuelRatio = lineColumns[columnConfiguration.airFuelRatio].toFloatOrNull()
+        }
 
         return DataEntity(
             longitude = longitude,
