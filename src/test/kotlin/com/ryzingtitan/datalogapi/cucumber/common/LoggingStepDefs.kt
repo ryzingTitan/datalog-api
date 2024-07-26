@@ -20,6 +20,19 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.slf4j.LoggerFactory
 
 class LoggingStepDefs {
+    @Then("the application will log the following messages:")
+    fun theApplicationWilLogTheFollowingMessages(table: DataTable) {
+        val expectedLogMessages: List<LogMessage> = table.tableConverter.toList(table, LogMessage::class.java)
+
+        val actualLogMessages = ArrayList<LogMessage>()
+
+        appender.list.forEach {
+            actualLogMessages.add(LogMessage(it.level.levelStr, it.message))
+        }
+
+        assertEquals(expectedLogMessages, actualLogMessages)
+    }
+
     @DataTableType
     fun mapLogMessage(tableRow: Map<String, String>): LogMessage {
         return LogMessage(
@@ -50,19 +63,6 @@ class LoggingStepDefs {
 
         appender.context = LoggerContext()
         appender.start()
-    }
-
-    @Then("the application will log the following messages:")
-    fun theApplicationWilLogTheFollowingMessages(table: DataTable) {
-        val expectedLogMessages: List<LogMessage> = table.tableConverter.toList(table, LogMessage::class.java)
-
-        val actualLogMessages = ArrayList<LogMessage>()
-
-        appender.list.forEach {
-            actualLogMessages.add(LogMessage(it.level.levelStr, it.message))
-        }
-
-        assertEquals(expectedLogMessages, actualLogMessages)
     }
 
     @After

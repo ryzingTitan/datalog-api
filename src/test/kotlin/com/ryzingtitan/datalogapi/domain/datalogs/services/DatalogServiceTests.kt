@@ -22,10 +22,10 @@ class DatalogServiceTests {
         @Test
         fun `returns all datalogs with the session id that is provided`() =
             runTest {
-                whenever(mockDatalogRepository.findAllBySessionIdOrderByTimestampAsc(sessionId))
+                whenever(mockDatalogRepository.findAllBySessionIdOrderByTimestampAsc(SESSION_ID))
                     .thenReturn(flowOf(firstDatalogEntity, secondDatalogEntity))
 
-                val datalogs = datalogService.getAllBySessionId(sessionId)
+                val datalogs = datalogService.getAllBySessionId(SESSION_ID)
 
                 assertEquals(listOf(firstExpectedDatalog, secondExpectedDatalog), datalogs.toList())
             }
@@ -40,12 +40,11 @@ class DatalogServiceTests {
     private lateinit var datalogService: DatalogService
 
     private val mockDatalogRepository = mock<DatalogRepository>()
-    private val sessionId = 1
     private val timestamp = Instant.now()
 
     private val firstDatalogEntity =
         DatalogEntity(
-            sessionId = sessionId,
+            sessionId = SESSION_ID,
             timestamp = timestamp,
             longitude = -86.14162,
             latitude = 42.406800000000004,
@@ -61,7 +60,7 @@ class DatalogServiceTests {
 
     private val secondDatalogEntity =
         DatalogEntity(
-            sessionId = sessionId,
+            sessionId = SESSION_ID,
             timestamp = timestamp,
             longitude = 86.14162,
             latitude = -42.406800000000004,
@@ -77,7 +76,7 @@ class DatalogServiceTests {
 
     private val firstExpectedDatalog =
         Datalog(
-            sessionId = sessionId,
+            sessionId = SESSION_ID,
             timestamp = timestamp.truncatedTo(ChronoUnit.MILLIS),
             longitude = -86.14162,
             latitude = 42.406800000000004,
@@ -93,7 +92,7 @@ class DatalogServiceTests {
 
     private val secondExpectedDatalog =
         Datalog(
-            sessionId = sessionId,
+            sessionId = SESSION_ID,
             timestamp = timestamp.truncatedTo(ChronoUnit.MILLIS),
             longitude = 86.14162,
             latitude = -42.406800000000004,
@@ -106,4 +105,8 @@ class DatalogServiceTests {
             throttlePosition = null,
             airFuelRatio = null,
         )
+
+    companion object DatalogServiceTestConstants {
+        const val SESSION_ID = 1
+    }
 }

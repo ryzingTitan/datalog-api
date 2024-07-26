@@ -141,18 +141,14 @@ class SessionControllerTests {
 
     private val mockSessionService = mock<SessionService>()
 
-    private val trackName = "Test Track"
-    private val trackLatitude = 12.0
-    private val trackLongitude = 14.0
-
     private val firstSession =
         Session(
             id = 1,
             startTime = Instant.now(),
             endTime = Instant.now().plusSeconds(60),
-            trackName = trackName,
-            trackLatitude = trackLatitude,
-            trackLongitude = trackLongitude,
+            trackName = TRACK_NAME,
+            trackLatitude = TRACK_LATITUDE,
+            trackLongitude = TRACK_LONGITUDE,
         )
 
     private val secondSession =
@@ -160,14 +156,17 @@ class SessionControllerTests {
             id = 2,
             startTime = Instant.now().plusSeconds(120),
             endTime = Instant.now().plusSeconds(180),
-            trackName = trackName,
-            trackLatitude = trackLatitude,
-            trackLongitude = trackLongitude,
+            trackName = TRACK_NAME,
+            trackLatitude = TRACK_LATITUDE,
+            trackLongitude = TRACK_LONGITUDE,
         )
 
     companion object FileUploadControllerTestConstants {
         const val USER_EMAIL = "test@test.com"
         const val USER_FIRST_NAME = "test"
         const val USER_LAST_NAME = "tester"
+        const val TRACK_NAME = "Test Track"
+        const val TRACK_LATITUDE = 12.0
+        const val TRACK_LONGITUDE = 14.0
     }
 }

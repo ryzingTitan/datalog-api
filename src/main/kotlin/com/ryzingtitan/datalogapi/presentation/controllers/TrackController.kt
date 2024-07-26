@@ -53,6 +53,6 @@ class TrackController(private val trackService: TrackService) {
     suspend fun deleteTrack(
         @PathVariable(name = "trackId") trackId: Int,
     ) {
-        return trackService.delete(trackId)
+        trackService.delete(trackId)
     }
 }

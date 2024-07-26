@@ -27,12 +27,12 @@ class DatalogControllerTests {
     inner class GetDatalogsBySessionId {
         @Test
         fun `returns 'OK' status with session data that matches the request parameter`() {
-            whenever(mockDatalogService.getAllBySessionId(sessionId))
+            whenever(mockDatalogService.getAllBySessionId(SESSION_ID))
                 .thenReturn(flowOf(firstDatalog, secondDatalog))
 
             webTestClient
                 .get()
-                .uri("/api/sessions/$sessionId/datalogs")
+                .uri("/api/sessions/$SESSION_ID/datalogs")
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()
                 .expectStatus()
@@ -42,9 +42,9 @@ class DatalogControllerTests {
 
             assertEquals(1, appender.list.size)
             assertEquals(Level.INFO, appender.list[0].level)
-            assertEquals("Retrieving datalogs for session id: $sessionId", appender.list[0].message)
+            assertEquals("Retrieving datalogs for session id: $SESSION_ID", appender.list[0].message)
 
-            verify(mockDatalogService, times(1)).getAllBySessionId(sessionId)
+            verify(mockDatalogService, times(1)).getAllBySessionId(SESSION_ID)
         }
     }
 
@@ -65,11 +65,10 @@ class DatalogControllerTests {
     private lateinit var appender: ListAppender<ILoggingEvent>
 
     private val mockDatalogService = mock<DatalogService>()
-    private val sessionId = 5
 
     private val firstDatalog =
         Datalog(
-            sessionId = sessionId,
+            sessionId = SESSION_ID,
             timestamp = Instant.now(),
             longitude = -86.14162,
             latitude = 42.406800000000004,
@@ -85,7 +84,7 @@ class DatalogControllerTests {
 
     private val secondDatalog =
         Datalog(
-            sessionId = sessionId,
+            sessionId = SESSION_ID,
             timestamp = Instant.now(),
             longitude = 86.14162,
             latitude = -42.406800000000004,
@@ -98,4 +97,8 @@ class DatalogControllerTests {
             throttlePosition = 75.0f,
             airFuelRatio = 15.9f,
         )
+
+    companion object DatalogControllerTestConstants {
+        private const val SESSION_ID = 5
+    }
 }

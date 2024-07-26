@@ -102,26 +102,6 @@ class SessionControllerStepDefs {
         assertEquals(expectedSessions, returnedSessions)
     }
 
-    private fun handleSessionResponse(clientResponse: ClientResponse) {
-        responseStatus = clientResponse.statusCode() as HttpStatus
-        CommonControllerStepDefs.locationHeader =
-            clientResponse.headers().header(HttpHeaders.LOCATION).firstOrNull() ?: ""
-    }
-
-    private suspend fun handleMultipleSessionResponse(clientResponse: ClientResponse) {
-        responseStatus = clientResponse.statusCode() as HttpStatus
-
-        if (clientResponse.statusCode() == HttpStatus.OK) {
-            val sessionList = clientResponse.awaitEntityList<Session>().body
-
-            if (sessionList != null) {
-                returnedSessions.addAll(sessionList)
-            }
-        }
-    }
-
-    private val returnedSessions = mutableListOf<Session>()
-
     @DataTableType
     fun mapRequestData(tableRow: Map<String, String>): RequestData {
         return RequestData(
@@ -143,4 +123,24 @@ class SessionControllerStepDefs {
             trackLongitude = tableRow["trackLongitude"]?.toDouble()!!,
         )
     }
+
+    private fun handleSessionResponse(clientResponse: ClientResponse) {
+        responseStatus = clientResponse.statusCode() as HttpStatus
+        CommonControllerStepDefs.locationHeader =
+            clientResponse.headers().header(HttpHeaders.LOCATION).firstOrNull() ?: ""
+    }
+
+    private suspend fun handleMultipleSessionResponse(clientResponse: ClientResponse) {
+        responseStatus = clientResponse.statusCode() as HttpStatus
+
+        if (clientResponse.statusCode() == HttpStatus.OK) {
+            val sessionList = clientResponse.awaitEntityList<Session>().body
+
+            if (sessionList != null) {
+                returnedSessions.addAll(sessionList)
+            }
+        }
+    }
+
+    private val returnedSessions = mutableListOf<Session>()
 }

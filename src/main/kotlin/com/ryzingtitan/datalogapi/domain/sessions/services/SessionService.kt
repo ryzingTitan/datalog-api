@@ -76,9 +76,8 @@ class SessionService(
 
     suspend fun update(fileUpload: FileUpload) {
         val existingDatalogs = datalogRepository.findAllBySessionId(fileUpload.metadata.sessionId!!)
-        val datalogCount = existingDatalogs.count()
 
-        if (datalogCount == 0) {
+        if (existingDatalogs.count() == 0) {
             val message = "Session id ${fileUpload.metadata.sessionId} does not exist"
             logger.error(message)
             throw SessionDoesNotExistException(message)

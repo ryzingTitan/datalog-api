@@ -41,11 +41,11 @@ class SessionServiceTests {
         @Test
         fun `returns all sessions for user`() =
             runTest {
-                whenever(mockSessionRepository.findAllByUserEmail(userEmail))
+                whenever(mockSessionRepository.findAllByUserEmail(USER_EMAIL))
                     .thenReturn(flowOf(firstSessionEntity, secondSessionEntity))
-                whenever(mockTrackRepository.findById(trackId)).thenReturn(trackEntity)
+                whenever(mockTrackRepository.findById(TRACK_ID)).thenReturn(trackEntity)
 
-                val sessions = sessionService.getAllByUser(userEmail)
+                val sessions = sessionService.getAllByUser(USER_EMAIL)
 
                 assertEquals(listOf(firstSession, secondSession), sessions.toList())
             }
@@ -59,7 +59,7 @@ class SessionServiceTests {
                 whenever(mockFileParsingService.parse(any<FileUpload>())).thenReturn(listOf(datalog))
                 whenever(
                     mockSessionRepository.findByUserEmailAndStartTimeAndEndTime(
-                        userEmail,
+                        USER_EMAIL,
                         datalog.timestamp,
                         datalog.timestamp,
                     ),
@@ -78,7 +78,7 @@ class SessionServiceTests {
 
                 verify(mockFileParsingService, times(1)).parse(any<FileUpload>())
                 verify(mockSessionRepository, times(1)).findByUserEmailAndStartTimeAndEndTime(
-                    userEmail,
+                    USER_EMAIL,
                     datalog.timestamp,
                     datalog.timestamp,
                 )
@@ -92,7 +92,7 @@ class SessionServiceTests {
                 whenever(mockFileParsingService.parse(any<FileUpload>())).thenReturn(listOf(datalog))
                 whenever(
                     mockSessionRepository.findByUserEmailAndStartTimeAndEndTime(
-                        userEmail,
+                        USER_EMAIL,
                         datalog.timestamp,
                         datalog.timestamp,
                     ),
@@ -110,7 +110,7 @@ class SessionServiceTests {
 
                 verify(mockFileParsingService, times(1)).parse(any<FileUpload>())
                 verify(mockSessionRepository, times(1)).findByUserEmailAndStartTimeAndEndTime(
-                    userEmail,
+                    USER_EMAIL,
                     datalog.timestamp,
                     datalog.timestamp,
                 )
@@ -209,43 +209,38 @@ class SessionServiceTests {
     private val mockFileParsingService = mock<FileParsingService>()
     private val mockDatalogRepository = mock<DatalogRepository>()
 
-    private val userEmail = "test@test.com"
-    private val trackId = 5
     private val timestamp = Instant.now()
-    private val trackName = "Test Track"
-    private val trackLatitude = 12.0
-    private val trackLongitude = 14.0
     private val dataBufferFactory = DefaultDataBufferFactory()
     private val dataBuffer = dataBufferFactory.wrap("header row 1\ndata row 1\n".toByteArray())
 
     private val firstSessionEntity =
         SessionEntity(
             id = 1,
-            userEmail = userEmail,
+            userEmail = USER_EMAIL,
             userFirstName = USER_FIRST_NAME,
             userLastName = USER_LAST_NAME,
             startTime = timestamp,
             endTime = timestamp,
-            trackId = trackId,
+            trackId = TRACK_ID,
         )
 
     private val secondSessionEntity =
         SessionEntity(
             id = 2,
-            userEmail = userEmail,
+            userEmail = USER_EMAIL,
             userFirstName = USER_FIRST_NAME,
             userLastName = USER_LAST_NAME,
             startTime = timestamp,
             endTime = timestamp,
-            trackId = trackId,
+            trackId = TRACK_ID,
         )
 
     private val trackEntity =
         TrackEntity(
             id = 5,
-            name = trackName,
-            latitude = trackLatitude,
-            longitude = trackLongitude,
+            name = TRACK_NAME,
+            latitude = TRACK_LATITUDE,
+            longitude = TRACK_LONGITUDE,
         )
 
     private val firstSession =
@@ -253,9 +248,9 @@ class SessionServiceTests {
             id = firstSessionEntity.id!!,
             startTime = firstSessionEntity.startTime,
             endTime = firstSessionEntity.endTime,
-            trackName = trackName,
-            trackLatitude = trackLatitude,
-            trackLongitude = trackLongitude,
+            trackName = TRACK_NAME,
+            trackLatitude = TRACK_LATITUDE,
+            trackLongitude = TRACK_LONGITUDE,
         )
 
     private val secondSession =
@@ -263,16 +258,16 @@ class SessionServiceTests {
             id = secondSessionEntity.id!!,
             startTime = secondSessionEntity.startTime,
             endTime = secondSessionEntity.endTime,
-            trackName = trackName,
-            trackLatitude = trackLatitude,
-            trackLongitude = trackLongitude,
+            trackName = TRACK_NAME,
+            trackLatitude = TRACK_LATITUDE,
+            trackLongitude = TRACK_LONGITUDE,
         )
 
     private val fileUploadMetadata =
         FileUploadMetadata(
             fileName = "testFile.txt",
             sessionId = null,
-            trackId = trackId,
+            trackId = TRACK_ID,
             userEmail = USER_EMAIL,
             userFirstName = USER_FIRST_NAME,
             userLastName = USER_LAST_NAME,
@@ -298,5 +293,9 @@ class SessionServiceTests {
         const val USER_EMAIL = "test@test.com"
         const val USER_FIRST_NAME = "test"
         const val USER_LAST_NAME = "tester"
+        const val TRACK_ID = 5
+        const val TRACK_NAME = "Test Track"
+        const val TRACK_LATITUDE = 12.0
+        const val TRACK_LONGITUDE = 14.0
     }
 }

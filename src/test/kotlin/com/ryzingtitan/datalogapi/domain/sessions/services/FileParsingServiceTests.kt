@@ -83,14 +83,11 @@ class FileParsingServiceTests {
     private val mockRowParsingService = mock<RowParsingService>()
     private val mockColumnConfigurationService = mock<ColumnConfigurationService>()
 
-    private val sessionId = 1
-    private val trackId = 3
-
     private val fileUploadMetadata =
         FileUploadMetadata(
             fileName = "testFile.txt",
-            sessionId = sessionId,
-            trackId = trackId,
+            sessionId = SESSION_ID,
+            trackId = TRACK_ID,
             userEmail = USER_EMAIL,
             userFirstName = USER_FIRST_NAME,
             userLastName = USER_LAST_NAME,
@@ -113,7 +110,7 @@ class FileParsingServiceTests {
 
     private val datalog =
         DatalogEntity(
-            sessionId = sessionId,
+            sessionId = SESSION_ID,
             timestamp = Instant.now(),
             longitude = -86.14162,
             latitude = 42.406800000000004,
@@ -131,5 +128,7 @@ class FileParsingServiceTests {
         const val USER_EMAIL = "test@test.com"
         const val USER_FIRST_NAME = "test"
         const val USER_LAST_NAME = "tester"
+        const val SESSION_ID = 1
+        const val TRACK_ID = 3
     }
 }

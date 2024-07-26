@@ -43,7 +43,7 @@ class TrackControllerTests {
         @Test
         fun `returns 'CREATED' status and creates new track`() =
             runTest {
-                whenever(mockTrackService.create(firstTrack.copy(id = null))).thenReturn(firstTrackId)
+                whenever(mockTrackService.create(firstTrack.copy(id = null))).thenReturn(FIRST_TRACK_ID)
 
                 webTestClient
                     .mutateWith(mockJwt())
@@ -55,7 +55,7 @@ class TrackControllerTests {
                     .expectStatus()
                     .isCreated
                     .expectHeader()
-                    .location("/api/tracks/$firstTrackId")
+                    .location("/api/tracks/$FIRST_TRACK_ID")
 
                 verify(mockTrackService, times(1)).create(firstTrack.copy(id = null))
             }
@@ -69,7 +69,7 @@ class TrackControllerTests {
                 webTestClient
                     .mutateWith(mockJwt())
                     .put()
-                    .uri("/api/tracks/$firstTrackId")
+                    .uri("/api/tracks/$FIRST_TRACK_ID")
                     .bodyValue(firstTrack)
                     .accept(MediaType.APPLICATION_JSON)
                     .exchange()
@@ -88,13 +88,13 @@ class TrackControllerTests {
                 webTestClient
                     .mutateWith(mockJwt())
                     .delete()
-                    .uri("/api/tracks/$firstTrackId")
+                    .uri("/api/tracks/$FIRST_TRACK_ID")
                     .accept(MediaType.APPLICATION_JSON)
                     .exchange()
                     .expectStatus()
                     .isOk
 
-                verify(mockTrackService, times(1)).delete(firstTrackId)
+                verify(mockTrackService, times(1)).delete(FIRST_TRACK_ID)
             }
     }
 
@@ -107,12 +107,10 @@ class TrackControllerTests {
     private lateinit var webTestClient: WebTestClient
 
     private val mockTrackService = mock<TrackService>()
-    private val firstTrackId = 1
-    private val secondTrackId = 2
 
     private val firstTrack =
         Track(
-            id = firstTrackId,
+            id = FIRST_TRACK_ID,
             name = FIRST_TRACK_NAME,
             latitude = FIRST_TRACK_LATITUDE,
             longitude = FIRST_TRACK_LONGITUDE,
@@ -120,17 +118,19 @@ class TrackControllerTests {
 
     private val secondTrack =
         Track(
-            id = secondTrackId,
+            id = SECOND_TRACK_ID,
             name = SECOND_TRACK_NAME,
             latitude = SECOND_TRACK_LATITUDE,
             longitude = SECOND_TRACK_LONGITUDE,
         )
 
     companion object TrackControllerTestConstants {
+        const val FIRST_TRACK_ID = 1
         const val FIRST_TRACK_NAME = "Test Track 1"
         const val FIRST_TRACK_LATITUDE = 12.0
         const val FIRST_TRACK_LONGITUDE = 14.0
 
+        const val SECOND_TRACK_ID = 2
         const val SECOND_TRACK_NAME = "Test Track 2"
         const val SECOND_TRACK_LATITUDE = 30.0
         const val SECOND_TRACK_LONGITUDE = 33.0

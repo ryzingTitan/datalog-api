@@ -38,7 +38,7 @@ class TrackServiceTests {
 
                 val trackId = trackService.create(firstTrack.copy(id = null))
 
-                assertEquals(firstTrackId, trackId)
+                assertEquals(FIRST_TRACK_ID, trackId)
                 assertEquals(1, appender.list.size)
                 assertEquals(Level.INFO, appender.list[0].level)
                 assertEquals("Created track named $FIRST_TRACK_NAME", appender.list[0].message)
@@ -125,13 +125,13 @@ class TrackServiceTests {
         @Test
         fun `deletes track when track exists`() =
             runTest {
-                trackService.delete(firstTrackId)
+                trackService.delete(FIRST_TRACK_ID)
 
-                verify(mockTrackRepository, times(1)).deleteById(firstTrackId)
+                verify(mockTrackRepository, times(1)).deleteById(FIRST_TRACK_ID)
 
                 assertEquals(1, appender.list.size)
                 assertEquals(Level.INFO, appender.list[0].level)
-                assertEquals("Deleted track with id $firstTrackId", appender.list[0].message)
+                assertEquals("Deleted track with id $FIRST_TRACK_ID", appender.list[0].message)
             }
     }
 
@@ -152,12 +152,9 @@ class TrackServiceTests {
 
     private val mockTrackRepository = mock<TrackRepository>()
 
-    private val firstTrackId = 1
-    private val secondTrackId = 2
-
     private val firstTrackEntity =
         TrackEntity(
-            id = firstTrackId,
+            id = FIRST_TRACK_ID,
             name = FIRST_TRACK_NAME,
             latitude = FIRST_TRACK_LATITUDE,
             longitude = FIRST_TRACK_LONGITUDE,
@@ -165,7 +162,7 @@ class TrackServiceTests {
 
     private val firstTrack =
         Track(
-            id = firstTrackId,
+            id = FIRST_TRACK_ID,
             name = FIRST_TRACK_NAME,
             latitude = FIRST_TRACK_LATITUDE,
             longitude = FIRST_TRACK_LONGITUDE,
@@ -173,7 +170,7 @@ class TrackServiceTests {
 
     private val secondTrackEntity =
         TrackEntity(
-            id = secondTrackId,
+            id = SECOND_TRACK_ID,
             name = SECOND_TRACK_NAME,
             latitude = SECOND_TRACK_LATITUDE,
             longitude = SECOND_TRACK_LONGITUDE,
@@ -181,17 +178,19 @@ class TrackServiceTests {
 
     private val secondTrack =
         Track(
-            id = secondTrackId,
+            id = SECOND_TRACK_ID,
             name = SECOND_TRACK_NAME,
             latitude = SECOND_TRACK_LATITUDE,
             longitude = SECOND_TRACK_LONGITUDE,
         )
 
     companion object TrackServiceTestConstants {
+        const val FIRST_TRACK_ID = 1
         const val FIRST_TRACK_NAME = "Test Track 1"
         const val FIRST_TRACK_LATITUDE = 12.0
         const val FIRST_TRACK_LONGITUDE = 14.0
 
+        const val SECOND_TRACK_ID = 2
         const val SECOND_TRACK_NAME = "Test Track 2"
         const val SECOND_TRACK_LATITUDE = 30.0
         const val SECOND_TRACK_LONGITUDE = 33.0

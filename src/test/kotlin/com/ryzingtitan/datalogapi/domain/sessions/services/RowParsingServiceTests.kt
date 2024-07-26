@@ -42,7 +42,7 @@ class RowParsingServiceTests {
                         columnConfiguration,
                     )
 
-                assertEquals(sessionId, datalog?.sessionId)
+                assertEquals(SESSION_ID, datalog?.sessionId)
                 assertEquals(firstLineTimestamp, datalog?.timestamp)
                 assertEquals(FIRST_LINE_LONGITUDE, datalog?.longitude)
                 assertEquals(FIRST_LINE_LATITUDE, datalog?.latitude)
@@ -117,7 +117,7 @@ class RowParsingServiceTests {
                         missingAirFuelRationColumnConfiguration,
                     )
 
-                assertEquals(sessionId, datalog?.sessionId)
+                assertEquals(SESSION_ID, datalog?.sessionId)
                 assertEquals(firstLineTimestamp, datalog?.timestamp)
                 assertEquals(FIRST_LINE_LONGITUDE, datalog?.longitude)
                 assertEquals(FIRST_LINE_LATITUDE, datalog?.latitude)
@@ -154,7 +154,7 @@ class RowParsingServiceTests {
                         columnConfiguration,
                     )
 
-                assertEquals(sessionId, datalog?.sessionId)
+                assertEquals(SESSION_ID, datalog?.sessionId)
                 assertEquals(secondLineTimestamp, datalog?.timestamp)
                 assertEquals(SECOND_LINE_LONGITUDE, datalog?.longitude)
                 assertEquals(SECOND_LINE_LATITUDE, datalog?.latitude)
@@ -215,16 +215,14 @@ class RowParsingServiceTests {
     private lateinit var logger: Logger
     private lateinit var appender: ListAppender<ILoggingEvent>
 
-    private val sessionId = 1
-    private val trackId = 3
     private val firstLineTimestamp = Instant.parse("2022-09-18T18:15:47.963Z")
     private val secondLineTimestamp = Instant.parse("2022-09-18T18:18:47.968Z")
 
     private val fileUploadMetadata =
         FileUploadMetadata(
             fileName = "testFile.txt",
-            sessionId = sessionId,
-            trackId = trackId,
+            sessionId = SESSION_ID,
+            trackId = TRACK_ID,
             userEmail = USER_EMAIL,
             userFirstName = USER_FIRST_NAME,
             userLastName = USER_LAST_NAME,
@@ -273,5 +271,7 @@ class RowParsingServiceTests {
         const val USER_EMAIL = "test@test.com"
         const val USER_FIRST_NAME = "test"
         const val USER_LAST_NAME = "tester"
+        const val SESSION_ID = 1
+        const val TRACK_ID = 3
     }
 }
