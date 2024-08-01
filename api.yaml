@@ -15,9 +15,8 @@ paths:
           description: The session id to be used in the search query
           required: true
           schema:
-            type: string
-            format: uuid
-            example: 515ef9d0-2059-4a11-b5c3-7c8dae93b57d
+            type: integer
+            example: 5
       tags:
         - Datalogs
       description: Retrieve all datalogs with the given session id sorted by timestamp ascending
@@ -38,6 +37,32 @@ paths:
           description: Internal Server Error
 
   /sessions:
+    get:
+      parameters:
+        - name: userEmail
+          in: query
+          description: The email address of the current user
+          required: true
+          schema:
+            type: string
+            format: email
+            example: test@test.com
+      tags:
+        - Sessions
+      description: Retrieve sessions by user
+      responses:
+        200:
+          description: All sessions associated with the provided user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        400:
+          description: Bad Request - Ensure the query parameter has been included in the request
+        401:
+          description: Unauthorized - Ensure the authorization token is valid
+        500:
+          description: Internal Server Error
     post:
       tags:
         - Session Administration
@@ -51,28 +76,20 @@ paths:
                 userEmail:
                   type: string
                   format: email
-                  description: The email address of the user associated with the datalog
+                  description: The email address of the user associated with the file
                   example: test@test.com
                 userFirstName:
                   type: string
-                  description: The first name of the user associated with the datalog
+                  description: The first name of the user associated with the file
                   example: Test
                 userLastName:
                   type: string
-                  description: The last name of the user associated with the datalog
+                  description: The last name of the user associated with the file
                   example: Tester
-                trackName:
-                  type: string
-                  description: The name of the track associated with the datalog
-                  example: Test Track
-                trackLatitude:
-                  type: string
-                  description: The latitude location of the track
-                  example: 42.406800000000004
-                trackLongitude:
-                  type: string
-                  description: The longitude location of the track
-                  example: -86.14170333333335
+                trackId:
+                  type: integer
+                  description: The id of the track associated with the file
+                  example: 1
                 uploadFile:
                   type: string
                   format: binary
@@ -96,9 +113,8 @@ paths:
           description: The session id to be updated
           required: true
           schema:
-            type: string
-            format: uuid
-            example: 515ef9d0-2059-4a11-b5c3-7c8dae93b57d
+            type: integer
+            example: 5
       tags:
         - Session Administration
       description: Update an existing session from a file
@@ -111,28 +127,20 @@ paths:
                 userEmail:
                   type: string
                   format: email
-                  description: The email address of the user associated with the datalog
+                  description: The email address of the user associated with the file
                   example: test@test.com
                 userFirstName:
                   type: string
-                  description: The first name of the user associated with the datalog
+                  description: The first name of the user associated with the file
                   example: Test
                 userLastName:
                   type: string
-                  description: The last name of the user associated with the datalog
+                  description: The last name of the user associated with the file
                   example: Tester
-                trackName:
-                  type: string
-                  description: The name of the track associated with the datalog
+                trackId:
+                  type: integer
+                  description: The id of the track associated with the file
                   example: Test Track
-                trackLatitude:
-                  type: string
-                  description: The latitude location of the track
-                  example: 42.406800000000004
-                trackLongitude:
-                  type: string
-                  description: The longitude location of the track
-                  example: -86.14170333333335
                 uploadFile:
                   type: string
                   format: binary
@@ -145,32 +153,6 @@ paths:
           description: Unauthorized - Ensure the authorization token is valid
         410:
           description: Gone - Session does not exist
-        500:
-          description: Internal Server Error
-    get:
-      parameters:
-        - name: userEmail
-          in: query
-          description: The email address of the current user
-          required: true
-          schema:
-            type: string
-            format: email
-            example: test@test.com
-      tags:
-        - Sessions
-      description: Retrieve metadata for all sessions by user
-      responses:
-        200:
-          description: The metadata for every session associated with the provided user
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SessionMetadata'
-        400:
-          description: Bad Request - Ensure the query parameter has been included in the request
-        401:
-          description: Unauthorized - Ensure the authorization token is valid
         500:
           description: Internal Server Error
 
@@ -243,6 +225,27 @@ paths:
           description: Gone - Track does not exist
         500:
           description: Internal Server Error
+    delete:
+      parameters:
+        - name: trackId
+          in: path
+          description: The track id to be deleted
+          required: true
+          schema:
+            type: integer
+            example: 1
+      tags:
+        - Track Administration
+      description: Delete an existing track
+      responses:
+        200:
+          description: Track deleted successfully
+        400:
+          description: Bad Request - Ensure the request contains all required data
+        401:
+          description: Unauthorized - Ensure the authorization token is valid
+        500:
+          description: Internal Server Error
 
 components:
   securitySchemes:
@@ -251,9 +254,19 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
-    Data:
+    Datalog:
       type: object
       properties:
+        sessionId:
+          type: string
+          format: uuid
+          description: The session id of the datalog
+          example: 515ef9d0-2059-4a11-b5c3-7c8dae93b57d
+        timestamp:
+          type: string
+          format: date-time
+          description: The timestamp of the datalog
+          example: 2022-09-18T18:15:47.968Z
         longitude:
           type: number
           format: double
@@ -304,29 +317,13 @@ components:
           format: float
           description: The current air fuel ratio
           example: 14.6
-    Datalog:
-      type: object
-      properties:
-        sessionId:
-          type: string
-          format: uuid
-          description: The session id of the datalog
-          example: 515ef9d0-2059-4a11-b5c3-7c8dae93b57d
-        timestamp:
-          type: string
-          format: date-time
-          description: The timestamp of the datalog
-          example: 2022-09-18T18:15:47.968Z
-        data:
-          $ref: '#/components/schemas/Data'
     Session:
       type: object
       properties:
-        sessionId:
-          type: string
-          format: uuid
+        id:
+          type: integer
           description: The session id
-          example: 515ef9d0-2059-4a11-b5c3-7c8dae93b57d
+          example: 5
         startTime:
           type: string
           format: date-time
@@ -337,6 +334,20 @@ components:
           format: date-time
           description: The end time of the session
           example: 2022-09-18T18:18:47.968Z
+        trackName:
+          type: string
+          description: The name of the track associated with the session
+          example: Test Track
+        trackLatitude:
+          type: number
+          format: double
+          description: The latitude location of the track
+          example: 42.406800000000004
+        trackLongitude:
+          type: number
+          format: double
+          description: The longitude location of the track
+          example: -86.14170333333335
     Track:
       type: object
       properties:
@@ -359,22 +370,6 @@ components:
           format: double
           description: The longitude location of the track
           example: -86.14170333333335
-    User:
-      type: object
-      properties:
-        firstName:
-          type: string
-          description: The first name of the user associated with the datalog
-          example: Test
-        lastName:
-          type: string
-          description: The last name of the user associated with the datalog
-          example: Tester
-        email:
-          type: string
-          format: email
-          description: The email address of the user associated with the datalog
-          example: test@test.com
 
 security:
   - bearerAuth: []
