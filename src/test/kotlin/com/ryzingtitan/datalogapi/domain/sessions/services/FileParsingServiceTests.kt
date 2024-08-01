@@ -138,6 +138,7 @@ class FileParsingServiceTests {
             fileName = "testFile.txt",
             sessionId = SESSION_ID,
             trackId = TRACK_ID,
+            carId = CAR_ID,
             userEmail = USER_EMAIL,
             userFirstName = USER_FIRST_NAME,
             userLastName = USER_LAST_NAME,
@@ -205,6 +206,7 @@ class FileParsingServiceTests {
         const val USER_LAST_NAME = "tester"
         const val SESSION_ID = 1
         const val TRACK_ID = 3
+        const val CAR_ID = 5
 
         const val FIRST_LINE_DEVICE_TIME = "18-Sep-2022 14:15:47.963"
         const val FIRST_LINE_LONGITUDE = -86.14162999999999

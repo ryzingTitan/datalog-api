@@ -47,6 +47,7 @@ class SessionControllerStepDefs {
         multipartBodyBuilder.part("userLastName", requestData.first().userLastName)
         multipartBodyBuilder.part("userFirstName", requestData.first().userFirstName)
         multipartBodyBuilder.part("trackId", requestData.first().trackId)
+        multipartBodyBuilder.part("carId", requestData.first().carId)
         multipartBodyBuilder.part("uploadFile", FileSystemResource("testFiles/testFile.txt"))
         val multiPartData = multipartBodyBuilder.build()
 
@@ -77,6 +78,7 @@ class SessionControllerStepDefs {
         multipartBodyBuilder.part("userLastName", requestData.first().userLastName)
         multipartBodyBuilder.part("userFirstName", requestData.first().userFirstName)
         multipartBodyBuilder.part("trackId", requestData.first().trackId)
+        multipartBodyBuilder.part("carId", requestData.first().carId)
         multipartBodyBuilder.part("uploadFile", FileSystemResource("testFiles/testFile.txt"))
         val multiPartData = multipartBodyBuilder.build()
 
@@ -105,22 +107,26 @@ class SessionControllerStepDefs {
     @DataTableType
     fun mapRequestData(tableRow: Map<String, String>): RequestData {
         return RequestData(
-            trackId = tableRow["trackId"]?.toInt()!!,
+            trackId = tableRow["trackId"]!!.toInt(),
+            carId = tableRow["carId"]!!.toInt(),
             userFirstName = tableRow["userFirstName"].orEmpty(),
             userLastName = tableRow["userLastName"].orEmpty(),
-            userEmail = tableRow["userEmail"].toString(),
+            userEmail = tableRow["userEmail"].orEmpty(),
         )
     }
 
     @DataTableType
     fun mapSession(tableRow: Map<String, String>): Session {
         return Session(
-            id = tableRow["id"]?.toInt()!!,
+            id = tableRow["id"]!!.toInt(),
             startTime = Instant.parse(tableRow["startTime"].orEmpty()),
             endTime = Instant.parse(tableRow["endTime"].orEmpty()),
             trackName = tableRow["trackName"].orEmpty(),
-            trackLatitude = tableRow["trackLatitude"]?.toDouble()!!,
-            trackLongitude = tableRow["trackLongitude"]?.toDouble()!!,
+            trackLatitude = tableRow["trackLatitude"]!!.toDouble(),
+            trackLongitude = tableRow["trackLongitude"]!!.toDouble(),
+            carYear = tableRow["carYear"]!!.toInt(),
+            carMake = tableRow["carMake"].orEmpty(),
+            carModel = tableRow["carModel"].orEmpty(),
         )
     }
 

@@ -7,6 +7,97 @@ servers:
   - url: http://localhost:8080/api
     description: Local deployment
 paths:
+  /cars:
+    get:
+      tags:
+        - Cars
+      description: Retrieve all cars
+      responses:
+        200:
+          description: The list of cars
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Car'
+        401:
+          description: Unauthorized - Ensure the authorization token is valid
+        500:
+          description: Internal Server Error
+
+    post:
+      tags:
+        - Car Administration
+      description: Create a new car
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Car'
+      responses:
+        201:
+          description: Car created successfully
+        400:
+          description: Bad Request - Ensure the request contains all required data
+        401:
+          description: Unauthorized - Ensure the authorization token is valid
+        409:
+          description: Conflict - Car already exists
+        500:
+          description: Internal Server Error
+
+  /cars/{carId}:
+    put:
+      parameters:
+        - name: carId
+          in: path
+          description: The car id to be updated
+          required: true
+          schema:
+            type: integer
+            example: 1
+      tags:
+        - Car Administration
+      description: Update an existing car
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Car'
+      responses:
+        200:
+          description: Car updated successfully
+        400:
+          description: Bad Request - Ensure the request contains all required data
+        401:
+          description: Unauthorized - Ensure the authorization token is valid
+        410:
+          description: Gone - Car does not exist
+        500:
+          description: Internal Server Error
+    delete:
+      parameters:
+        - name: carId
+          in: path
+          description: The car id to be deleted
+          required: true
+          schema:
+            type: integer
+            example: 1
+      tags:
+        - Car Administration
+      description: Delete an existing car
+      responses:
+        200:
+          description: Car deleted successfully
+        400:
+          description: Bad Request - Ensure the request contains all required data
+        401:
+          description: Unauthorized - Ensure the authorization token is valid
+        500:
+          description: Internal Server Error
+
   /sessions/{sessionId}/datalogs:
     get:
       parameters:
@@ -254,14 +345,32 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
+    Car:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The car id
+          example: 2
+        year:
+          type: integer
+          description: The year of the car
+          example: 2001
+        make:
+          type: string
+          description: The make of the car
+          example: Volkswagen
+        model:
+          type: string
+          description: The model of the car
+          example: Jetta
     Datalog:
       type: object
       properties:
         sessionId:
-          type: string
-          format: uuid
+          type: integer
           description: The session id of the datalog
-          example: 515ef9d0-2059-4a11-b5c3-7c8dae93b57d
+          example: 5
         timestamp:
           type: string
           format: date-time
@@ -341,24 +450,35 @@ components:
         trackLatitude:
           type: number
           format: double
-          description: The latitude location of the track
+          description: The latitude location of the track associated with the session
           example: 42.406800000000004
         trackLongitude:
           type: number
           format: double
-          description: The longitude location of the track
+          description: The longitude location of the track associated with the session
           example: -86.14170333333335
+        carYear:
+          type: integer
+          description: The year of the car associated with the session
+          example: 2001
+        carMake:
+          type: string
+          description: The make of the car associated with the session
+          example: Volkswagen
+        carModel:
+          type: string
+          description: The model of the car associated with the session
+          example: Jetta
     Track:
       type: object
       properties:
         id:
-          type: string
-          format: uuid
+          type: integer
           description: The track id
-          example: 515ef9d0-2059-4a11-b5c3-7c8dae93b57d
+          example: 5
         name:
           type: string
-          description: The name of the track associated with the datalog
+          description: The name of the track
           example: Test Track
         latitude:
           type: number

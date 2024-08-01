@@ -11,7 +11,7 @@ import java.time.temporal.ChronoUnit
 @Service
 class DatalogService(private val datalogRepository: DatalogRepository) {
     @Cacheable(cacheNames = ["datalogs"], key = "#sessionId")
-    fun getAllBySessionId(sessionId: Int): Flow<Datalog> {
+    suspend fun getAllBySessionId(sessionId: Int): Flow<Datalog> {
         return datalogRepository
             .findAllBySessionIdOrderByTimestampAsc(sessionId)
             .map { datalogEntity ->

@@ -10,7 +10,6 @@ import com.ryzingtitan.datalogapi.data.tracks.repositories.TrackRepository
 import com.ryzingtitan.datalogapi.domain.tracks.dtos.Track
 import com.ryzingtitan.datalogapi.domain.tracks.exceptions.TrackAlreadyExistsException
 import com.ryzingtitan.datalogapi.domain.tracks.exceptions.TrackDoesNotExistException
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
@@ -33,7 +32,7 @@ class TrackServiceTests {
         @Test
         fun `creates a new track`() =
             runTest {
-                whenever(mockTrackRepository.findByName(FIRST_TRACK_NAME)).thenReturn(emptyFlow())
+                whenever(mockTrackRepository.findByName(FIRST_TRACK_NAME)).thenReturn(null)
                 whenever(mockTrackRepository.save(firstTrackEntity.copy(id = null))).thenReturn(firstTrackEntity)
 
                 val trackId = trackService.create(firstTrack.copy(id = null))
@@ -50,7 +49,7 @@ class TrackServiceTests {
         @Test
         fun `does not create a duplicate track`() =
             runTest {
-                whenever(mockTrackRepository.findByName(FIRST_TRACK_NAME)).thenReturn(flowOf(firstTrackEntity))
+                whenever(mockTrackRepository.findByName(FIRST_TRACK_NAME)).thenReturn(firstTrackEntity)
 
                 val exception =
                     assertThrows<TrackAlreadyExistsException> {
@@ -72,7 +71,7 @@ class TrackServiceTests {
         @Test
         fun `updates an existing track`() =
             runTest {
-                whenever(mockTrackRepository.findByName(SECOND_TRACK_NAME)).thenReturn(flowOf(secondTrackEntity))
+                whenever(mockTrackRepository.findById(SECOND_TRACK_ID)).thenReturn(secondTrackEntity)
 
                 trackService.update(secondTrack)
 
@@ -80,14 +79,14 @@ class TrackServiceTests {
                 assertEquals(Level.INFO, appender.list[0].level)
                 assertEquals("Updated track named $SECOND_TRACK_NAME", appender.list[0].message)
 
-                verify(mockTrackRepository, times(1)).findByName(SECOND_TRACK_NAME)
+                verify(mockTrackRepository, times(1)).findById(SECOND_TRACK_ID)
                 verify(mockTrackRepository, times(1)).save(secondTrackEntity)
             }
 
         @Test
         fun `does not update a track that does not exist`() =
             runTest {
-                whenever(mockTrackRepository.findByName(SECOND_TRACK_NAME)).thenReturn(emptyFlow())
+                whenever(mockTrackRepository.findById(SECOND_TRACK_ID)).thenReturn(null)
 
                 val exception =
                     assertThrows<TrackDoesNotExistException> {
@@ -99,7 +98,7 @@ class TrackServiceTests {
                 assertEquals(Level.ERROR, appender.list[0].level)
                 assertEquals("A track named $SECOND_TRACK_NAME does not exist", appender.list[0].message)
 
-                verify(mockTrackRepository, times(1)).findByName(SECOND_TRACK_NAME)
+                verify(mockTrackRepository, times(1)).findById(SECOND_TRACK_ID)
                 verify(mockTrackRepository, never()).save(any())
             }
     }

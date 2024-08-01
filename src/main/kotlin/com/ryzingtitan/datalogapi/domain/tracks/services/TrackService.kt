@@ -6,7 +6,6 @@ import com.ryzingtitan.datalogapi.domain.tracks.dtos.Track
 import com.ryzingtitan.datalogapi.domain.tracks.exceptions.TrackAlreadyExistsException
 import com.ryzingtitan.datalogapi.domain.tracks.exceptions.TrackDoesNotExistException
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -19,7 +18,7 @@ class TrackService(
     private val logger: Logger = LoggerFactory.getLogger(TrackService::class.java)
 
     suspend fun create(track: Track): Int? {
-        val existingTrack = trackRepository.findByName(track.name).firstOrNull()
+        val existingTrack = trackRepository.findByName(track.name)
 
         if (existingTrack != null) {
             val message = "A track already exists named ${track.name}"
@@ -42,7 +41,7 @@ class TrackService(
     }
 
     suspend fun update(track: Track) {
-        val existingTrack = trackRepository.findByName(track.name).firstOrNull()
+        val existingTrack = trackRepository.findById(track.id!!)
 
         if (existingTrack == null) {
             val message = "A track named ${track.name} does not exist"

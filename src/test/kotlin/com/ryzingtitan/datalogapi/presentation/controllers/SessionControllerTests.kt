@@ -73,6 +73,7 @@ class SessionControllerTests {
                 multipartBodyBuilder.part("userLastName", USER_LAST_NAME)
                 multipartBodyBuilder.part("userFirstName", USER_FIRST_NAME)
                 multipartBodyBuilder.part("trackId", 2)
+                multipartBodyBuilder.part("carId", 3)
                 multipartBodyBuilder.part("uploadFile", FileSystemResource("testFiles/testFile.txt"))
                 val multiPartData = multipartBodyBuilder.build()
 
@@ -103,6 +104,7 @@ class SessionControllerTests {
                 multipartBodyBuilder.part("userLastName", USER_LAST_NAME)
                 multipartBodyBuilder.part("userFirstName", USER_FIRST_NAME)
                 multipartBodyBuilder.part("trackId", 2)
+                multipartBodyBuilder.part("carId", 1)
                 multipartBodyBuilder.part("uploadFile", FileSystemResource("testFiles/testFile.txt"))
                 val multiPartData = multipartBodyBuilder.build()
 
@@ -149,6 +151,9 @@ class SessionControllerTests {
             trackName = TRACK_NAME,
             trackLatitude = TRACK_LATITUDE,
             trackLongitude = TRACK_LONGITUDE,
+            carYear = CAR_YEAR,
+            carMake = CAR_MAKE,
+            carModel = CAR_MODEL,
         )
 
     private val secondSession =
@@ -159,6 +164,9 @@ class SessionControllerTests {
             trackName = TRACK_NAME,
             trackLatitude = TRACK_LATITUDE,
             trackLongitude = TRACK_LONGITUDE,
+            carYear = CAR_YEAR,
+            carMake = CAR_MAKE,
+            carModel = CAR_MODEL,
         )
 
     companion object FileUploadControllerTestConstants {
@@ -168,5 +176,8 @@ class SessionControllerTests {
         const val TRACK_NAME = "Test Track"
         const val TRACK_LATITUDE = 12.0
         const val TRACK_LONGITUDE = 14.0
+        const val CAR_YEAR = 2001
+        const val CAR_MAKE = "Volkswagen"
+        const val CAR_MODEL = "Jetta"
     }
 }

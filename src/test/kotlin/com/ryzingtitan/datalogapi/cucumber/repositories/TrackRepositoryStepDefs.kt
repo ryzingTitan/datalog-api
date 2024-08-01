@@ -38,9 +38,9 @@ class TrackRepositoryStepDefs(private val trackRepository: TrackRepository) {
     fun mapTrackEntity(tableRow: Map<String, String>): TrackEntity {
         return TrackEntity(
             id = tableRow["id"]?.toIntOrNull(),
-            name = tableRow["name"].toString(),
-            longitude = tableRow["longitude"].toString().toDouble(),
-            latitude = tableRow["latitude"].toString().toDouble(),
+            name = tableRow["name"].orEmpty(),
+            longitude = tableRow["longitude"]!!.toDouble(),
+            latitude = tableRow["latitude"]!!.toDouble(),
         )
     }
 }

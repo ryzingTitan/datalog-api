@@ -1,5 +1,6 @@
 package com.ryzingtitan.datalogapi.domain.sessions.services
 
+import com.ryzingtitan.datalogapi.data.cars.repositories.CarRepository
 import com.ryzingtitan.datalogapi.data.datalogs.repositories.DatalogRepository
 import com.ryzingtitan.datalogapi.data.sessions.entities.SessionEntity
 import com.ryzingtitan.datalogapi.data.sessions.repositories.SessionRepository
@@ -20,12 +21,14 @@ import org.springframework.stereotype.Service
 class SessionService(
     private val sessionRepository: SessionRepository,
     private val trackRepository: TrackRepository,
+    private val carRepository: CarRepository,
     private val fileParsingService: FileParsingService,
     private val datalogRepository: DatalogRepository,
 ) {
     suspend fun getAllByUser(userEmail: String): Flow<Session> {
         return sessionRepository.findAllByUserEmail(userEmail).map { sessionEntity ->
             val trackEntity = trackRepository.findById(sessionEntity.trackId)!!
+            val carEntity = carRepository.findById(sessionEntity.carId)!!
 
             Session(
                 id = sessionEntity.id!!,
@@ -34,6 +37,9 @@ class SessionService(
                 trackName = trackEntity.name,
                 trackLatitude = trackEntity.latitude,
                 trackLongitude = trackEntity.longitude,
+                carYear = carEntity.yearManufactured,
+                carMake = carEntity.make,
+                carModel = carEntity.model,
             )
         }
     }
@@ -65,6 +71,7 @@ class SessionService(
                     startTime = firstDatalogTimestamp,
                     endTime = lastDatalogTimestamp,
                     trackId = fileUpload.metadata.trackId,
+                    carId = fileUpload.metadata.carId,
                 ),
             ).id!!
 
@@ -83,7 +90,7 @@ class SessionService(
             throw SessionDoesNotExistException(message)
         }
 
-        datalogRepository.deleteBySessionId(fileUpload.metadata.sessionId).collect()
+        datalogRepository.deleteAllBySessionId(fileUpload.metadata.sessionId).collect()
 
         val newDatalogs = fileParsingService.parse(fileUpload)
 

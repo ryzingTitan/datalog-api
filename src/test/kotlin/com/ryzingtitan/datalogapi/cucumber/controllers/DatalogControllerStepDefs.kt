@@ -42,18 +42,18 @@ class DatalogControllerStepDefs {
     @DataTableType
     fun mapDatalog(tableRow: Map<String, String>): Datalog {
         return Datalog(
-            sessionId = tableRow["sessionId"]?.toInt()!!,
+            sessionId = tableRow["sessionId"]!!.toInt(),
             timestamp = Instant.parse(tableRow["timestamp"].orEmpty()),
-            longitude = tableRow["longitude"].toString().toDouble(),
-            latitude = tableRow["latitude"].toString().toDouble(),
-            altitude = tableRow["altitude"].toString().toFloat(),
-            intakeAirTemperature = tableRow["intakeAirTemperature"].toString().toIntOrNull(),
-            boostPressure = tableRow["boostPressure"].toString().toFloatOrNull(),
-            coolantTemperature = tableRow["coolantTemperature"].toString().toIntOrNull(),
-            engineRpm = tableRow["engineRpm"].toString().toIntOrNull(),
-            speed = tableRow["speed"].toString().toIntOrNull(),
-            throttlePosition = tableRow["throttlePosition"].toString().toFloatOrNull(),
-            airFuelRatio = tableRow["airFuelRatio"].toString().toFloatOrNull(),
+            longitude = tableRow["longitude"]!!.toDouble(),
+            latitude = tableRow["latitude"]!!.toDouble(),
+            altitude = tableRow["altitude"]!!.toFloat(),
+            intakeAirTemperature = tableRow["intakeAirTemperature"]?.toIntOrNull(),
+            boostPressure = tableRow["boostPressure"]?.toFloatOrNull(),
+            coolantTemperature = tableRow["coolantTemperature"]?.toIntOrNull(),
+            engineRpm = tableRow["engineRpm"]?.toIntOrNull(),
+            speed = tableRow["speed"]?.toIntOrNull(),
+            throttlePosition = tableRow["throttlePosition"]?.toFloatOrNull(),
+            airFuelRatio = tableRow["airFuelRatio"]?.toFloatOrNull(),
         )
     }
 

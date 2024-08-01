@@ -9,4 +9,7 @@ data class Session(
     val trackName: String,
     val trackLatitude: Double,
     val trackLongitude: Double,
+    val carYear: Int,
+    val carMake: String,
+    val carModel: String,
 )

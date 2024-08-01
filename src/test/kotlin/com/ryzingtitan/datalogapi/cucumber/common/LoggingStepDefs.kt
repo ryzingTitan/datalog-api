@@ -5,6 +5,7 @@ import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
 import com.ryzingtitan.datalogapi.cucumber.dtos.LogMessage
+import com.ryzingtitan.datalogapi.domain.cars.services.CarService
 import com.ryzingtitan.datalogapi.domain.sessions.services.FileParsingService
 import com.ryzingtitan.datalogapi.domain.sessions.services.SessionService
 import com.ryzingtitan.datalogapi.domain.tracks.services.TrackService
@@ -35,8 +36,8 @@ class LoggingStepDefs {
     @DataTableType
     fun mapLogMessage(tableRow: Map<String, String>): LogMessage {
         return LogMessage(
-            level = tableRow["level"].toString(),
-            message = tableRow["message"].toString(),
+            level = tableRow["level"].orEmpty(),
+            message = tableRow["message"].orEmpty(),
         )
     }
 
@@ -57,6 +58,9 @@ class LoggingStepDefs {
         trackServiceLogger = LoggerFactory.getLogger(TrackService::class.java) as Logger
         trackServiceLogger.addAppender(appender)
 
+        carServiceLogger = LoggerFactory.getLogger(CarService::class.java) as Logger
+        carServiceLogger.addAppender(appender)
+
         appender.context = LoggerContext()
         appender.start()
     }
@@ -71,6 +75,7 @@ class LoggingStepDefs {
     private lateinit var fileParsingServiceLogger: Logger
     private lateinit var sessionServiceLogger: Logger
     private lateinit var trackServiceLogger: Logger
+    private lateinit var carServiceLogger: Logger
 
     private val appender: ListAppender<ILoggingEvent> = ListAppender()
 }

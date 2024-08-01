@@ -41,6 +41,7 @@ class SessionController(
         @RequestPart(name = "userFirstName") userFirstName: String,
         @RequestPart(name = "userLastName") userLastName: String,
         @RequestPart(name = "trackId") trackId: Int,
+        @RequestPart(name = "carId") carId: Int,
         @RequestPart(name = "uploadFile") uploadFile: FilePart,
         response: ServerHttpResponse,
         exchange: ServerWebExchange,
@@ -52,6 +53,7 @@ class SessionController(
                     FileUploadMetadata(
                         fileName = uploadFile.filename(),
                         sessionId = null,
+                        carId = carId,
                         trackId = trackId,
                         userEmail = userEmail,
                         userFirstName = userFirstName,
@@ -73,6 +75,7 @@ class SessionController(
         @RequestPart(name = "userFirstName") userFirstName: String,
         @RequestPart(name = "userLastName") userLastName: String,
         @RequestPart(name = "trackId") trackId: Int,
+        @RequestPart(name = "carId") carId: Int,
         @RequestPart(name = "uploadFile") uploadFile: FilePart,
         @PathVariable(name = "sessionId") sessionId: Int,
     ) {
@@ -84,6 +87,7 @@ class SessionController(
                         fileName = uploadFile.filename(),
                         sessionId = sessionId,
                         trackId = trackId,
+                        carId = carId,
                         userEmail = userEmail,
                         userFirstName = userFirstName,
                         userLastName = userLastName,

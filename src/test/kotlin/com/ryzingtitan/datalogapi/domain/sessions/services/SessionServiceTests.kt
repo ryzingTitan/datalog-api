@@ -5,6 +5,8 @@ import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
+import com.ryzingtitan.datalogapi.data.cars.entities.CarEntity
+import com.ryzingtitan.datalogapi.data.cars.repositories.CarRepository
 import com.ryzingtitan.datalogapi.data.datalogs.entities.DatalogEntity
 import com.ryzingtitan.datalogapi.data.datalogs.repositories.DatalogRepository
 import com.ryzingtitan.datalogapi.data.sessions.entities.SessionEntity
@@ -44,6 +46,7 @@ class SessionServiceTests {
                 whenever(mockSessionRepository.findAllByUserEmail(USER_EMAIL))
                     .thenReturn(flowOf(firstSessionEntity, secondSessionEntity))
                 whenever(mockTrackRepository.findById(TRACK_ID)).thenReturn(trackEntity)
+                whenever(mockCarRepository.findById(CAR_ID)).thenReturn(carEntity)
 
                 val sessions = sessionService.getAllByUser(USER_EMAIL)
 
@@ -128,7 +131,7 @@ class SessionServiceTests {
 
                 whenever(mockDatalogRepository.findAllBySessionId(currentSessionId))
                     .thenReturn(flowOf(datalog.copy(sessionId = currentSessionId)))
-                whenever(mockDatalogRepository.deleteBySessionId(currentSessionId))
+                whenever(mockDatalogRepository.deleteAllBySessionId(currentSessionId))
                     .thenReturn(flowOf(datalog.copy(sessionId = currentSessionId)))
                 whenever(mockFileParsingService.parse(any<FileUpload>()))
                     .thenReturn(listOf(datalog.copy(sessionId = currentSessionId)))
@@ -147,7 +150,7 @@ class SessionServiceTests {
                 assertEquals("Session $currentSessionId updated", appender.list[0].message)
 
                 verify(mockDatalogRepository, times(1)).findAllBySessionId(currentSessionId)
-                verify(mockDatalogRepository, times(1)).deleteBySessionId(currentSessionId)
+                verify(mockDatalogRepository, times(1)).deleteAllBySessionId(currentSessionId)
                 verify(mockFileParsingService, times(1)).parse(any<FileUpload>())
                 verify(mockDatalogRepository, times(1))
                     .saveAll(listOf(datalog.copy(sessionId = currentSessionId)))
@@ -177,7 +180,7 @@ class SessionServiceTests {
                 assertEquals("Session id $currentSessionId does not exist", appender.list[0].message)
 
                 verify(mockDatalogRepository, times(1)).findAllBySessionId(currentSessionId)
-                verify(mockDatalogRepository, never()).deleteBySessionId(any())
+                verify(mockDatalogRepository, never()).deleteAllBySessionId(any())
                 verify(mockFileParsingService, never()).parse(any())
                 verify(mockDatalogRepository, never()).saveAll(any<List<DatalogEntity>>())
             }
@@ -189,6 +192,7 @@ class SessionServiceTests {
             SessionService(
                 mockSessionRepository,
                 mockTrackRepository,
+                mockCarRepository,
                 mockFileParsingService,
                 mockDatalogRepository,
             )
@@ -205,6 +209,7 @@ class SessionServiceTests {
     private lateinit var appender: ListAppender<ILoggingEvent>
 
     private val mockTrackRepository = mock<TrackRepository>()
+    private val mockCarRepository = mock<CarRepository>()
     private val mockSessionRepository = mock<SessionRepository>()
     private val mockFileParsingService = mock<FileParsingService>()
     private val mockDatalogRepository = mock<DatalogRepository>()
@@ -222,6 +227,7 @@ class SessionServiceTests {
             startTime = timestamp,
             endTime = timestamp,
             trackId = TRACK_ID,
+            carId = CAR_ID,
         )
 
     private val secondSessionEntity =
@@ -233,14 +239,23 @@ class SessionServiceTests {
             startTime = timestamp,
             endTime = timestamp,
             trackId = TRACK_ID,
+            carId = CAR_ID,
         )
 
     private val trackEntity =
         TrackEntity(
-            id = 5,
+            id = TRACK_ID,
             name = TRACK_NAME,
             latitude = TRACK_LATITUDE,
             longitude = TRACK_LONGITUDE,
+        )
+
+    private val carEntity =
+        CarEntity(
+            id = CAR_ID,
+            yearManufactured = CAR_YEAR,
+            make = CAR_MAKE,
+            model = CAR_MODEL,
         )
 
     private val firstSession =
@@ -251,6 +266,9 @@ class SessionServiceTests {
             trackName = TRACK_NAME,
             trackLatitude = TRACK_LATITUDE,
             trackLongitude = TRACK_LONGITUDE,
+            carYear = CAR_YEAR,
+            carMake = CAR_MAKE,
+            carModel = CAR_MODEL,
         )
 
     private val secondSession =
@@ -261,6 +279,9 @@ class SessionServiceTests {
             trackName = TRACK_NAME,
             trackLatitude = TRACK_LATITUDE,
             trackLongitude = TRACK_LONGITUDE,
+            carYear = CAR_YEAR,
+            carMake = CAR_MAKE,
+            carModel = CAR_MODEL,
         )
 
     private val fileUploadMetadata =
@@ -268,6 +289,7 @@ class SessionServiceTests {
             fileName = "testFile.txt",
             sessionId = null,
             trackId = TRACK_ID,
+            carId = CAR_ID,
             userEmail = USER_EMAIL,
             userFirstName = USER_FIRST_NAME,
             userLastName = USER_LAST_NAME,
@@ -294,8 +316,12 @@ class SessionServiceTests {
         const val USER_FIRST_NAME = "test"
         const val USER_LAST_NAME = "tester"
         const val TRACK_ID = 5
+        const val CAR_ID = 1
         const val TRACK_NAME = "Test Track"
         const val TRACK_LATITUDE = 12.0
         const val TRACK_LONGITUDE = 14.0
+        const val CAR_YEAR = 2001
+        const val CAR_MAKE = "Volkswagen"
+        const val CAR_MODEL = "Jetta"
     }
 }

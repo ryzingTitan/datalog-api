@@ -86,7 +86,7 @@ class TrackControllerTests {
         fun `returns 'OK' status and deletes track`() =
             runTest {
                 webTestClient
-                    .mutateWith(mockJwt())
+//                    .mutateWith(mockJwt())
                     .delete()
                     .uri("/api/tracks/$FIRST_TRACK_ID")
                     .accept(MediaType.APPLICATION_JSON)

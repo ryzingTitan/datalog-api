@@ -1,7 +1,7 @@
 package com.ryzingtitan.datalogapi.cucumber.controllers
 
 import com.ryzingtitan.datalogapi.cucumber.common.CommonControllerStepDefs
-import com.ryzingtitan.datalogapi.domain.tracks.dtos.Track
+import com.ryzingtitan.datalogapi.domain.cars.dtos.Car
 import io.cucumber.datatable.DataTable
 import io.cucumber.java.DataTableType
 import io.cucumber.java.en.Then
@@ -16,112 +16,112 @@ import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.awaitEntityList
 import org.springframework.web.reactive.function.client.awaitExchange
 
-class TrackControllerStepDefs {
-    @When("all tracks are retrieved")
-    fun whenAllTracksAreRetrieved() {
+class CarControllerStepDefs {
+    @When("all cars are retrieved")
+    fun whenAllCarsAreRetrieved() {
         runBlocking {
             CommonControllerStepDefs.webClient
                 .get()
-                .uri("/tracks")
+                .uri("/cars")
                 .accept(MediaType.APPLICATION_JSON)
                 .header(
                     "Authorization",
                     "Bearer ${CommonControllerStepDefs.authorizationToken?.serialize()}",
                 )
                 .awaitExchange { clientResponse ->
-                    handleMultipleTrackResponse(clientResponse)
+                    handleMultipleCarResponse(clientResponse)
                 }
         }
     }
 
-    @When("the following track is created:")
-    fun whenTheFollowingTrackIsCreated(table: DataTable) {
-        val track = table.tableConverter.toList<Track>(table, Track::class.java).first()
+    @When("the following car is created:")
+    fun whenTheFollowingCarIsCreated(table: DataTable) {
+        val car = table.tableConverter.toList<Car>(table, Car::class.java).first()
 
         runBlocking {
             CommonControllerStepDefs.webClient
                 .post()
-                .uri("/tracks")
-                .body(BodyInserters.fromValue(track))
+                .uri("/cars")
+                .body(BodyInserters.fromValue(car))
                 .header(
                     "Authorization",
                     "Bearer ${CommonControllerStepDefs.authorizationToken?.serialize()}",
                 )
                 .awaitExchange { clientResponse ->
-                    handleTrackResponse(clientResponse)
+                    handleCarResponse(clientResponse)
                 }
         }
     }
 
-    @When("the following track is updated:")
-    fun whenTheFollowingTrackIsUpdated(table: DataTable) {
-        val track = table.tableConverter.toList<Track>(table, Track::class.java).first()
+    @When("the following car is updated:")
+    fun whenTheFollowingCarIsUpdated(table: DataTable) {
+        val car = table.tableConverter.toList<Car>(table, Car::class.java).first()
 
         runBlocking {
             CommonControllerStepDefs.webClient
                 .put()
-                .uri("/tracks/${track.id}")
-                .body(BodyInserters.fromValue(track))
+                .uri("/cars/${car.id}")
+                .body(BodyInserters.fromValue(car))
                 .header(
                     "Authorization",
                     "Bearer ${CommonControllerStepDefs.authorizationToken?.serialize()}",
                 )
                 .awaitExchange { clientResponse ->
-                    handleTrackResponse(clientResponse)
+                    handleCarResponse(clientResponse)
                 }
         }
     }
 
-    @When("the track with id {int} is deleted")
-    fun whenTheTrackWithIdIsDeleted(trackId: Int) {
+    @When("the car with id {int} is deleted")
+    fun whenTheCarWithIdIsDeleted(carId: Int) {
         runBlocking {
             CommonControllerStepDefs.webClient
                 .delete()
-                .uri("/tracks/$trackId")
+                .uri("/cars/$carId")
                 .header(
                     "Authorization",
                     "Bearer ${CommonControllerStepDefs.authorizationToken?.serialize()}",
                 )
                 .awaitExchange { clientResponse ->
-                    handleTrackResponse(clientResponse)
+                    handleCarResponse(clientResponse)
                 }
         }
     }
 
-    @Then("the following tracks are returned:")
-    fun thenTheFollowingTracksAreReturned(table: DataTable) {
-        val expectedTracks = table.tableConverter.toList<Track>(table, Track::class.java)
+    @Then("the following cars are returned:")
+    fun thenTheFollowingCarsAreReturned(table: DataTable) {
+        val expectedCars = table.tableConverter.toList<Car>(table, Car::class.java)
 
-        assertEquals(expectedTracks, returnedTracks)
+        assertEquals(expectedCars, returnedCars)
     }
 
-    private fun handleTrackResponse(clientResponse: ClientResponse) {
+    private fun handleCarResponse(clientResponse: ClientResponse) {
         CommonControllerStepDefs.responseStatus = clientResponse.statusCode() as HttpStatus
         CommonControllerStepDefs.locationHeader =
             clientResponse.headers().header(HttpHeaders.LOCATION).firstOrNull() ?: ""
     }
 
     @DataTableType
-    fun mapTrack(tableRow: Map<String, String>): Track {
-        return Track(
+    fun mapCar(tableRow: Map<String, String>): Car {
+        return Car(
             id = tableRow["id"]?.toIntOrNull(),
-            name = tableRow["name"].orEmpty(),
-            longitude = tableRow["longitude"]!!.toDouble(),
-            latitude = tableRow["latitude"]!!.toDouble(),
+            year = tableRow["year"]!!.toInt(),
+            make = tableRow["make"].orEmpty(),
+            model = tableRow["model"].orEmpty(),
         )
     }
 
-    private suspend fun handleMultipleTrackResponse(clientResponse: ClientResponse) {
+    private suspend fun handleMultipleCarResponse(clientResponse: ClientResponse) {
         CommonControllerStepDefs.responseStatus = clientResponse.statusCode() as HttpStatus
 
         if (clientResponse.statusCode() == HttpStatus.OK) {
-            val tracks = clientResponse.awaitEntityList<Track>().body
+            val cars = clientResponse.awaitEntityList<Car>().body
 
-            if (tracks != null) {
-                returnedTracks.addAll(tracks)
+            if (cars != null) {
+                returnedCars.addAll(cars)
             }
         }
     }
 
-    private val returnedTracks = mutableListOf<Track>()
+    private val returnedCars = mutableListOf<Car>()
 }

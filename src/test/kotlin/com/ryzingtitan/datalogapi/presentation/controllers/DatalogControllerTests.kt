@@ -8,6 +8,7 @@ import ch.qos.logback.core.read.ListAppender
 import com.ryzingtitan.datalogapi.domain.datalogs.dtos.Datalog
 import com.ryzingtitan.datalogapi.domain.datalogs.services.DatalogService
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -26,26 +27,27 @@ class DatalogControllerTests {
     @Nested
     inner class GetDatalogsBySessionId {
         @Test
-        fun `returns 'OK' status with session data that matches the request parameter`() {
-            whenever(mockDatalogService.getAllBySessionId(SESSION_ID))
-                .thenReturn(flowOf(firstDatalog, secondDatalog))
+        fun `returns 'OK' status with session data that matches the request parameter`() =
+            runTest {
+                whenever(mockDatalogService.getAllBySessionId(SESSION_ID))
+                    .thenReturn(flowOf(firstDatalog, secondDatalog))
 
-            webTestClient
-                .get()
-                .uri("/api/sessions/$SESSION_ID/datalogs")
-                .accept(MediaType.APPLICATION_JSON)
-                .exchange()
-                .expectStatus()
-                .isOk
-                .expectBodyList<Datalog>()
-                .contains(firstDatalog, secondDatalog)
+                webTestClient
+                    .get()
+                    .uri("/api/sessions/$SESSION_ID/datalogs")
+                    .accept(MediaType.APPLICATION_JSON)
+                    .exchange()
+                    .expectStatus()
+                    .isOk
+                    .expectBodyList<Datalog>()
+                    .contains(firstDatalog, secondDatalog)
 
-            assertEquals(1, appender.list.size)
-            assertEquals(Level.INFO, appender.list[0].level)
-            assertEquals("Retrieving datalogs for session id: $SESSION_ID", appender.list[0].message)
+                assertEquals(1, appender.list.size)
+                assertEquals(Level.INFO, appender.list[0].level)
+                assertEquals("Retrieving datalogs for session id: $SESSION_ID", appender.list[0].message)
 
-            verify(mockDatalogService, times(1)).getAllBySessionId(SESSION_ID)
-        }
+                verify(mockDatalogService, times(1)).getAllBySessionId(SESSION_ID)
+            }
     }
 
     @BeforeEach

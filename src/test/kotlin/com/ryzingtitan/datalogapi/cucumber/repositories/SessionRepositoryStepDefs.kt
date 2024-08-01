@@ -44,7 +44,8 @@ class SessionRepositoryStepDefs(private val sessionRepository: SessionRepository
             userLastName = tableRow["userLastName"].orEmpty(),
             startTime = Instant.parse(tableRow["startTime"].orEmpty()),
             endTime = Instant.parse(tableRow["endTime"].orEmpty()),
-            trackId = tableRow["trackId"]?.toInt()!!,
+            trackId = tableRow["trackId"]!!.toInt(),
+            carId = tableRow["carId"]!!.toInt(),
         )
     }
 }

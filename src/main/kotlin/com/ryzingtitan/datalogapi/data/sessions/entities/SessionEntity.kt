@@ -14,4 +14,5 @@ data class SessionEntity(
     val startTime: Instant,
     val endTime: Instant,
     val trackId: Int,
+    val carId: Int,
 )

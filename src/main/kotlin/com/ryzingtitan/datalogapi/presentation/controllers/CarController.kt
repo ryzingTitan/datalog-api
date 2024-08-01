@@ -1,7 +1,7 @@
 package com.ryzingtitan.datalogapi.presentation.controllers
 
-import com.ryzingtitan.datalogapi.domain.tracks.dtos.Track
-import com.ryzingtitan.datalogapi.domain.tracks.services.TrackService
+import com.ryzingtitan.datalogapi.domain.cars.dtos.Car
+import com.ryzingtitan.datalogapi.domain.cars.services.CarService
 import kotlinx.coroutines.flow.Flow
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -17,40 +17,40 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ServerWebExchange
 
 @RestController
-@RequestMapping(path = ["/api/tracks"])
-class TrackController(private val trackService: TrackService) {
+@RequestMapping(path = ["/api/cars"])
+class CarController(private val careService: CarService) {
     @GetMapping
-    fun getTracks(): Flow<Track> {
-        return trackService.getAll()
+    fun getCars(): Flow<Car> {
+        return careService.getAll()
     }
 
     @PostMapping
-    suspend fun createTrack(
-        @RequestBody track: Track,
+    suspend fun createCar(
+        @RequestBody car: Car,
         response: ServerHttpResponse,
         exchange: ServerWebExchange,
     ) {
-        val trackId = trackService.create(track)
+        val carId = careService.create(car)
 
         response.headers.add(
             HttpHeaders.LOCATION,
-            "${exchange.request.uri}/$trackId",
+            "${exchange.request.uri}/$carId",
         )
         response.statusCode = HttpStatus.CREATED
     }
 
-    @PutMapping("/{trackId}")
-    suspend fun updateTrack(
-        @PathVariable(name = "trackId") trackId: Int,
-        @RequestBody track: Track,
+    @PutMapping("/{carId}")
+    suspend fun updateCar(
+        @PathVariable(name = "carId") carId: Int,
+        @RequestBody car: Car,
     ) {
-        trackService.update(track.copy(id = trackId))
+        careService.update(car.copy(id = carId))
     }
 
-    @DeleteMapping("/{trackId}")
-    suspend fun deleteTrack(
-        @PathVariable(name = "trackId") trackId: Int,
+    @DeleteMapping("/{carId}")
+    suspend fun deleteCar(
+        @PathVariable(name = "carId") carId: Int,
     ) {
-        trackService.delete(trackId)
+        careService.delete(carId)
     }
 }

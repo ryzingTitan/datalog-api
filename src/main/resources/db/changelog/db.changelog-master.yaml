@@ -14,7 +14,7 @@ databaseChangeLog:
                     primaryKey: true
               - column:
                   name: name
-                  type: varchar(255)
+                  type: varchar(50)
                   constraints:
                     nullable: false
               - column:
@@ -25,6 +25,35 @@ databaseChangeLog:
               - column:
                   name: longitude
                   type: double
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: Create cars table
+      author: kstoltzfus
+      changes:
+        - createTable:
+            tableName: cars
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: year_manufactured
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: make
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: model
+                  type: varchar(50)
                   constraints:
                     nullable: false
 
@@ -73,6 +102,14 @@ databaseChangeLog:
                     nullable: false
                     foreignKeyName: fk_session_track_id
                     referencedTableName: tracks
+                    referencedColumnNames: id
+              - column:
+                  name: car_id
+                  type: int
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_session_car_id
+                    referencedTableName: cars
                     referencedColumnNames: id
 
   - changeSet:

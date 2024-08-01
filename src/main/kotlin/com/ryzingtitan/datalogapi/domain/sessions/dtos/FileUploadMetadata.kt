@@ -4,6 +4,7 @@ data class FileUploadMetadata(
     val fileName: String,
     val sessionId: Int?,
     val trackId: Int,
+    val carId: Int,
     val userEmail: String,
     val userFirstName: String,
     val userLastName: String,
