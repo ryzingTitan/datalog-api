@@ -21,13 +21,13 @@ spring:
     activate:
       on-profile: production
   liquibase:
-    url: jdbc://postgresql://${DB_URL}/datalog_api?schema=datalog_api
+    url: jdbc:postgresql://${DB_URL}/datalog_api?schema=datalog_api
     user: ${DB_USER}
     password: ${DB_PASSWORD}
     default-schema: datalog_api
     liquibase-schema: datalog_api
   r2dbc:
-    url: r2dbc://postgresql://${DB_URL}/datalog_api?schema=datalog_api
+    url: r2dbc:postgresql://${DB_URL}/datalog_api?schema=datalog_api
     username: ${DB_USER}
     password: ${DB_PASSWORD}
   security:
@@ -63,13 +63,13 @@ spring:
     activate:
       on-profile: local
   liquibase:
-    url: jdbc://postgresql://localhost:5432/datalog_api?schema=datalog_api
+    url: jdbc:postgresql://localhost:5432/datalog_api?schema=datalog_api
     user: postgres
     password: password
     default-schema: datalog_api
     liquibase-schema: datalog_api
   r2dbc:
-    url: r2dbc://postgresql://localhost:5432/datalog_api?schema=datalog_api
+    url: r2dbc:postgresql://localhost:5432/datalog_api?schema=datalog_api
     username: postgres
     password: password
   security:
