@@ -11,7 +11,6 @@ import com.ryzingtitan.datalogapi.domain.sessions.exceptions.SessionAlreadyExist
 import com.ryzingtitan.datalogapi.domain.sessions.exceptions.SessionDoesNotExistException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.flow.map
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -82,9 +81,9 @@ class SessionService(
     }
 
     suspend fun update(fileUpload: FileUpload) {
-        val existingDatalogs = datalogRepository.findAllBySessionId(fileUpload.metadata.sessionId!!)
+        val existingSession = sessionRepository.findById(fileUpload.metadata.sessionId!!)
 
-        if (existingDatalogs.count() == 0) {
+        if (existingSession == null) {
             val message = "Session id ${fileUpload.metadata.sessionId} does not exist"
             logger.error(message)
             throw SessionDoesNotExistException(message)
@@ -95,6 +94,12 @@ class SessionService(
         val newDatalogs = fileParsingService.parse(fileUpload)
 
         datalogRepository.saveAll(newDatalogs).collect()
+        sessionRepository.save(
+            existingSession.copy(
+                carId = fileUpload.metadata.carId,
+                trackId = fileUpload.metadata.trackId,
+            ),
+        )
         logger.info("Session ${fileUpload.metadata.sessionId} updated")
     }
 

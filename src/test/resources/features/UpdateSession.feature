@@ -2,13 +2,15 @@ Feature: Update an existing session from an uploaded file
 
   Background:
     Given the following tracks exist:
-      | name       | longitude | latitude |
-      | Test Track | -90.1374  | 45.4086  |
+      | name         | longitude | latitude |
+      | Test Track   | -90.1374  | 45.4086  |
+      | Test Track 2 | -85.3850  | 43.0956  |
     And the following cars exist:
-      | yearManufactured | make       | model |
-      | 2001             | Volkswagen | Jetta |
+      | yearManufactured | make       | model    |
+      | 2001             | Volkswagen | Jetta    |
+      | 1999             | Chevrolet  | Corvette |
 
-  Scenario: Update datalogs for an existing session
+  Scenario: Update an existing session
     Given a file with the following rows:
       | Device Time              | Longitude          | Latitude            | Altitude | Engine Coolant Temperature(°F) | Engine RPM(rpm) | Intake Air Temperature(°F) | Speed (OBD)(mph) | Throttle Position(Manifold)(%) | Turbo Boost & Vacuum Gauge(psi) | Air Fuel Ratio(Measured)(:1) |
       | 18-Sep-2022 14:15:47.968 | -86.14170333333335 | 42.406800000000004  | 188.4    | 95.9                           | 3500.35         | 123.8                      | 74.56            | 5.6                            | 16.5                            | 17.5                         |
@@ -23,11 +25,11 @@ Feature: Update an existing session from an uploaded file
     And the user has a valid authorization token
     When the file is uploaded for a session with the following data and session id 1:
       | trackId | carId | userFirstName | userLastName | userEmail     |
-      | 1       | 1     | test          | tester       | test@test.com |
+      | 2       | 2     | test          | tester       | test@test.com |
     Then the request response status is 'OK'
     And the following sessions will exist:
       | id | userEmail     | userFirstName | userLastName | startTime                | endTime                  | trackId | carId |
-      | 1  | test@test.com | test          | tester       | 2022-09-18T18:15:47.968Z | 2022-09-18T18:15:49.965Z | 1       | 1     |
+      | 1  | test@test.com | test          | tester       | 2022-09-18T18:15:47.968Z | 2022-09-18T18:15:49.965Z | 2       | 2     |
     And the following datalogs will exist:
       | id | sessionId | timestamp                | longitude          | latitude            | altitude | intakeAirTemperature | boostPressure | coolantTemperature | engineRpm | speed | throttlePosition | airFuelRatio |
       | 3  | 1         | 2022-09-18T18:15:47.968Z | -86.14170333333335 | 42.406800000000004  | 188.4    | 123                  | 16.5          | 95                 | 3500      | 74    | 5.6              | 17.5         |
@@ -38,7 +40,7 @@ Feature: Update an existing session from an uploaded file
       | INFO  | File parsing completed for file: testFile.txt |
       | INFO  | Session 1 updated                             |
 
-  Scenario: Update datalogs for an existing session when file contains unparseable session data
+  Scenario: Update an existing session when file contains unparseable session data
     Given a file with the following rows:
       | Device Time              | Longitude          | Latitude            | Altitude | Engine Coolant Temperature(°F) | Engine RPM(rpm) | Intake Air Temperature(°F) | Speed (OBD)(mph) | Throttle Position(Manifold)(%) | Turbo Boost & Vacuum Gauge(psi) | Air Fuel Ratio(Measured)(:1) |
       | 18-Sep-2022 14:15:47.968 | -86.14170333333335 | 42.406800000000004  | 188.4    | 95.9                           | 3500.35         | 123.8                      | 74.56            | 5.6                            | 16.5                            | 17.5                         |

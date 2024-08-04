@@ -177,8 +177,12 @@ paths:
                   type: string
                   description: The last name of the user associated with the file
                   example: Tester
+                carId:
+                  type: string
+                  description: The id of the car associated with the file
+                  example: 1
                 trackId:
-                  type: integer
+                  type: string
                   description: The id of the track associated with the file
                   example: 1
                 uploadFile:
@@ -228,10 +232,14 @@ paths:
                   type: string
                   description: The last name of the user associated with the file
                   example: Tester
+                carId:
+                  type: string
+                  description: The id of the car associated with the file
+                  example: 1
                 trackId:
-                  type: integer
+                  type: string
                   description: The id of the track associated with the file
-                  example: Test Track
+                  example: 2
                 uploadFile:
                   type: string
                   format: binary

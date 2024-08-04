@@ -25,18 +25,20 @@ class FileParsingService {
         logger.info("Beginning to parse file: ${fileUpload.metadata.fileName}")
 
         val datalogs = mutableListOf<DatalogEntity>()
+        val fileData = StringBuilder()
 
         fileUpload.file.map { dataBuffer ->
             dataBuffer.asInputStream().bufferedReader()
         }.collect { reader ->
+            fileData.append(reader.readText())
+        }
 
-            CSVParser.parse(reader, csvFormat).records.forEach { record ->
-                try {
-                    val datalog = createDatalog(record, fileUpload.metadata)
-                    datalogs.add(datalog)
-                } catch (exception: Exception) {
-                    logger.error("Unable to parse row: ${record.values().joinToString(",")}")
-                }
+        CSVParser(fileData.toString().reader(), csvFormat).records.forEach { record ->
+            try {
+                val datalog = createDatalog(record, fileUpload.metadata)
+                datalogs.add(datalog)
+            } catch (exception: Exception) {
+                logger.error("Unable to parse row: ${record.values().joinToString(",")}")
             }
         }
 

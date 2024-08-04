@@ -46,8 +46,8 @@ class SessionControllerStepDefs {
         multipartBodyBuilder.part("userEmail", requestData.first().userEmail)
         multipartBodyBuilder.part("userLastName", requestData.first().userLastName)
         multipartBodyBuilder.part("userFirstName", requestData.first().userFirstName)
-        multipartBodyBuilder.part("trackId", requestData.first().trackId)
-        multipartBodyBuilder.part("carId", requestData.first().carId)
+        multipartBodyBuilder.part("trackId", requestData.first().trackId.toString())
+        multipartBodyBuilder.part("carId", requestData.first().carId.toString())
         multipartBodyBuilder.part("uploadFile", FileSystemResource("testFiles/testFile.txt"))
         val multiPartData = multipartBodyBuilder.build()
 
@@ -107,8 +107,8 @@ class SessionControllerStepDefs {
     @DataTableType
     fun mapRequestData(tableRow: Map<String, String>): RequestData {
         return RequestData(
-            trackId = tableRow["trackId"]!!.toInt(),
-            carId = tableRow["carId"]!!.toInt(),
+            trackId = tableRow["trackId"].orEmpty(),
+            carId = tableRow["carId"].orEmpty(),
             userFirstName = tableRow["userFirstName"].orEmpty(),
             userLastName = tableRow["userLastName"].orEmpty(),
             userEmail = tableRow["userEmail"].orEmpty(),

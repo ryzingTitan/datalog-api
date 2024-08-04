@@ -72,8 +72,8 @@ class SessionControllerTests {
                 multipartBodyBuilder.part("userEmail", USER_EMAIL)
                 multipartBodyBuilder.part("userLastName", USER_LAST_NAME)
                 multipartBodyBuilder.part("userFirstName", USER_FIRST_NAME)
-                multipartBodyBuilder.part("trackId", 2)
-                multipartBodyBuilder.part("carId", 3)
+                multipartBodyBuilder.part("trackId", "2")
+                multipartBodyBuilder.part("carId", "3")
                 multipartBodyBuilder.part("uploadFile", FileSystemResource("testFiles/testFile.txt"))
                 val multiPartData = multipartBodyBuilder.build()
 
@@ -103,8 +103,8 @@ class SessionControllerTests {
                 multipartBodyBuilder.part("userEmail", USER_EMAIL)
                 multipartBodyBuilder.part("userLastName", USER_LAST_NAME)
                 multipartBodyBuilder.part("userFirstName", USER_FIRST_NAME)
-                multipartBodyBuilder.part("trackId", 2)
-                multipartBodyBuilder.part("carId", 1)
+                multipartBodyBuilder.part("trackId", "2")
+                multipartBodyBuilder.part("carId", "1")
                 multipartBodyBuilder.part("uploadFile", FileSystemResource("testFiles/testFile.txt"))
                 val multiPartData = multipartBodyBuilder.build()
 

@@ -30,7 +30,7 @@ Feature: Create a new car
       | level | message                              |
       | ERROR | 2001 Volkswagen Jetta already exists |
 
-  Scenario: A new track cannot be created with an invalid token
+  Scenario: A new car cannot be created with an invalid token
     Given the user has an invalid authorization token
     When the following car is created:
       | year | make       | model |

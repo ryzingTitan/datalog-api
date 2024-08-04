@@ -18,7 +18,6 @@ import com.ryzingtitan.datalogapi.domain.sessions.dtos.FileUploadMetadata
 import com.ryzingtitan.datalogapi.domain.sessions.dtos.Session
 import com.ryzingtitan.datalogapi.domain.sessions.exceptions.SessionAlreadyExistsException
 import com.ryzingtitan.datalogapi.domain.sessions.exceptions.SessionDoesNotExistException
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
@@ -129,8 +128,8 @@ class SessionServiceTests {
             runTest {
                 val currentSessionId = 1
 
-                whenever(mockDatalogRepository.findAllBySessionId(currentSessionId))
-                    .thenReturn(flowOf(datalog.copy(sessionId = currentSessionId)))
+                whenever(mockSessionRepository.findById(currentSessionId))
+                    .thenReturn(firstSessionEntity)
                 whenever(mockDatalogRepository.deleteAllBySessionId(currentSessionId))
                     .thenReturn(flowOf(datalog.copy(sessionId = currentSessionId)))
                 whenever(mockFileParsingService.parse(any<FileUpload>()))
@@ -141,7 +140,7 @@ class SessionServiceTests {
                 sessionService.update(
                     FileUpload(
                         flowOf(dataBuffer),
-                        fileUploadMetadata.copy(sessionId = currentSessionId),
+                        fileUploadMetadata.copy(sessionId = currentSessionId, trackId = 1, carId = 2),
                     ),
                 )
 
@@ -149,11 +148,12 @@ class SessionServiceTests {
                 assertEquals(Level.INFO, appender.list[0].level)
                 assertEquals("Session $currentSessionId updated", appender.list[0].message)
 
-                verify(mockDatalogRepository, times(1)).findAllBySessionId(currentSessionId)
+                verify(mockSessionRepository, times(1)).findById(currentSessionId)
                 verify(mockDatalogRepository, times(1)).deleteAllBySessionId(currentSessionId)
                 verify(mockFileParsingService, times(1)).parse(any<FileUpload>())
                 verify(mockDatalogRepository, times(1))
                     .saveAll(listOf(datalog.copy(sessionId = currentSessionId)))
+                verify(mockSessionRepository, times(1)).save(firstSessionEntity.copy(trackId = 1, carId = 2))
             }
 
         @Test
@@ -161,7 +161,7 @@ class SessionServiceTests {
             runTest {
                 val currentSessionId = 1
 
-                whenever(mockDatalogRepository.findAllBySessionId(currentSessionId)).thenReturn(emptyFlow())
+                whenever(mockSessionRepository.findById(currentSessionId)).thenReturn(null)
 
                 val exception =
                     assertThrows<SessionDoesNotExistException> {
@@ -179,10 +179,11 @@ class SessionServiceTests {
                 assertEquals(Level.ERROR, appender.list[0].level)
                 assertEquals("Session id $currentSessionId does not exist", appender.list[0].message)
 
-                verify(mockDatalogRepository, times(1)).findAllBySessionId(currentSessionId)
+                verify(mockSessionRepository, times(1)).findById(currentSessionId)
                 verify(mockDatalogRepository, never()).deleteAllBySessionId(any())
                 verify(mockFileParsingService, never()).parse(any())
                 verify(mockDatalogRepository, never()).saveAll(any<List<DatalogEntity>>())
+                verify(mockSessionRepository, never()).save(any())
             }
     }
 

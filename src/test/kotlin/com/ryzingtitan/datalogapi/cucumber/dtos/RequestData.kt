@@ -4,6 +4,6 @@ data class RequestData(
     val userEmail: String,
     val userFirstName: String,
     val userLastName: String,
-    val trackId: Int,
-    val carId: Int,
+    val trackId: String,
+    val carId: String,
 )
