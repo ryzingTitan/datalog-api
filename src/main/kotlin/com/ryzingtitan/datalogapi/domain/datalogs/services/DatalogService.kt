@@ -4,13 +4,11 @@ import com.ryzingtitan.datalogapi.data.datalogs.repositories.DatalogRepository
 import com.ryzingtitan.datalogapi.domain.datalogs.dtos.Datalog
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import java.time.temporal.ChronoUnit
 
 @Service
 class DatalogService(private val datalogRepository: DatalogRepository) {
-    @Cacheable(cacheNames = ["datalogs"], key = "#sessionId")
     suspend fun getAllBySessionId(sessionId: Int): Flow<Datalog> {
         return datalogRepository
             .findAllBySessionIdOrderByTimestampAsc(sessionId)

@@ -9,7 +9,6 @@ import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVRecord
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.cache.annotation.CacheEvict
 import org.springframework.stereotype.Service
 import java.time.Instant
 import java.time.ZoneId
@@ -19,7 +18,6 @@ import java.time.format.DateTimeFormatter
 class FileParsingService {
     private val logger: Logger = LoggerFactory.getLogger(FileParsingService::class.java)
 
-    @CacheEvict(cacheNames = ["datalogs"], allEntries = true)
     @Suppress("TooGenericExceptionCaught", "SwallowedException")
     suspend fun parse(fileUpload: FileUpload): List<DatalogEntity> {
         logger.info("Beginning to parse file: ${fileUpload.metadata.fileName}")

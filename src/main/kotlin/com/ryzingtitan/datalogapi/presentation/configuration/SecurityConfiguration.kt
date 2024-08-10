@@ -45,7 +45,6 @@ class SecurityConfiguration {
                     .pathMatchers("/**")
                     .denyAll()
             }
-            .headers { it.cache { }.disable() }
             .httpBasic { it.disable() }
             .formLogin { it.disable() }
             .logout { it.disable() }

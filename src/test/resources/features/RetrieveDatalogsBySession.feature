@@ -1,8 +1,7 @@
 Feature: Retrieve datalogs by session id
 
   Background:
-    Given the cache is empty
-    And the following tracks exist:
+    Given the following tracks exist:
       | name       | longitude | latitude |
       | Test Track | -90.1374  | 45.4086  |
     And the following cars exist:
