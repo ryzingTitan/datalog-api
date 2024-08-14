@@ -51,7 +51,7 @@ class TrackService(
 
         trackRepository.save(
             TrackEntity(
-                id = track.id!!,
+                id = track.id,
                 name = track.name,
                 longitude = track.longitude,
                 latitude = track.latitude,

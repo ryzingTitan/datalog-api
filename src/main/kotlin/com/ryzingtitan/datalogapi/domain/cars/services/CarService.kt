@@ -47,7 +47,7 @@ class CarService(private val carRepository: CarRepository) {
 
         carRepository.save(
             CarEntity(
-                id = car.id!!,
+                id = car.id,
                 yearManufactured = car.year,
                 make = car.make,
                 model = car.model,
