@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: ${ENVIRONMENT}
+    active: cloud
   application:
     name: datalog-api
 
@@ -19,15 +19,15 @@ management:
 spring:
   config:
     activate:
-      on-profile: production
+      on-profile: cloud
   liquibase:
-    url: jdbc:postgresql://${DB_URL}/datalog_api?schema=datalog_api
+    url: jdbc:postgresql:///datalog_api?schema=datalog_api&cloudSqlInstance=ks-gcp-project-380005:us-central1:datalog-db&socketFactory=com.google.cloud.sql.postgres.SocketFactory
     user: ${DB_USER}
     password: ${DB_PASSWORD}
     default-schema: datalog_api
     liquibase-schema: datalog_api
   r2dbc:
-    url: r2dbc:postgresql://${DB_URL}/datalog_api?schema=datalog_api
+    url: r2dbc:gcp:postgres://${DB_USER}:${DB_PASSWORD}@ks-gcp-project-380005:us-central1:datalog-db/datalog_api?schema=datalog_api
     username: ${DB_USER}
     password: ${DB_PASSWORD}
   security:

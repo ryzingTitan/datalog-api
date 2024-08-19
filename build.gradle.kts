@@ -43,6 +43,9 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.8.1")
     implementation("org.liquibase:liquibase-core")
     implementation("org.apache.commons:commons-csv:1.11.0")
+    implementation("com.google.cloud.sql:cloud-sql-connector-r2dbc-postgres:1.20.0")
+    implementation("com.google.cloud.sql:cloud-sql-connector-jdbc-sqlserver:1.20.0")
+    implementation("com.google.cloud.sql:postgres-socket-factory:1.20.0")
     runtimeOnly("org.postgresql:postgresql")
     runtimeOnly("org.postgresql:r2dbc-postgresql")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -120,4 +123,12 @@ sonarqube {
         property("sonar.organization", "ryzingtitan")
         property("sonar.host.url", "https://sonarcloud.io")
     }
+}
+
+tasks.processAot {
+    onlyIf { gradle.taskGraph.hasTask(":bootBuildImage") }
+}
+
+tasks.processTestAot {
+    onlyIf { gradle.taskGraph.hasTask(":bootBuildImage") }
 }
