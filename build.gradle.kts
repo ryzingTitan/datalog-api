@@ -11,7 +11,6 @@ plugins {
     id("com.github.ben-manes.versions") version "0.51.0"
     id("org.sonarqube") version "5.1.0.4882"
     id("org.owasp.dependencycheck") version "10.0.3"
-    id("org.graalvm.buildtools.native") version "0.10.2"
     jacoco
 }
 
@@ -123,12 +122,4 @@ sonarqube {
         property("sonar.organization", "ryzingtitan")
         property("sonar.host.url", "https://sonarcloud.io")
     }
-}
-
-tasks.processAot {
-    onlyIf { gradle.taskGraph.hasTask(":bootBuildImage") }
-}
-
-tasks.processTestAot {
-    onlyIf { gradle.taskGraph.hasTask(":bootBuildImage") }
 }
