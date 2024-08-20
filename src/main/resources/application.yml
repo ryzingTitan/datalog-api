@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: cloud
+    active: ${ENVIRONMENT}
   application:
     name: datalog-api
 
