@@ -1,10 +1,16 @@
 package com.ryzingtitan.datalogapi.presentation.controllers
 
-import com.ryzingtitan.datalogapi.domain.datalog.dtos.TrackInfo
-import com.ryzingtitan.datalogapi.domain.datalog.dtos.User
-import com.ryzingtitan.datalogapi.domain.session.dtos.FileUpload
-import com.ryzingtitan.datalogapi.domain.session.services.SessionService
+import ch.qos.logback.classic.Level
+import ch.qos.logback.classic.Logger
+import ch.qos.logback.classic.LoggerContext
+import ch.qos.logback.classic.spi.ILoggingEvent
+import ch.qos.logback.core.read.ListAppender
+import com.ryzingtitan.datalogapi.domain.sessions.dtos.FileUpload
+import com.ryzingtitan.datalogapi.domain.sessions.dtos.Session
+import com.ryzingtitan.datalogapi.domain.sessions.services.SessionService
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -13,33 +19,61 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import org.slf4j.LoggerFactory
 import org.springframework.core.io.FileSystemResource
+import org.springframework.http.MediaType
 import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.test.web.reactive.server.WebTestClient
+import org.springframework.test.web.reactive.server.expectBodyList
 import org.springframework.web.reactive.function.BodyInserters
 import java.nio.file.Files
 import java.nio.file.Path
-import java.util.UUID
+import java.time.Instant
 
 class SessionControllerTests {
+    @Nested
+    inner class GetAllSessionsByUser {
+        @Test
+        fun `returns 'OK' status with all user sessions`() =
+            runTest {
+                whenever(mockSessionService.getAllByUser("test@test.com"))
+                    .thenReturn(flowOf(firstSession, secondSession))
+
+                webTestClient
+                    .get()
+                    .uri("/api/sessions?userEmail=test@test.com")
+                    .accept(MediaType.APPLICATION_JSON)
+                    .exchange()
+                    .expectStatus()
+                    .isOk
+                    .expectBodyList<Session>()
+                    .contains(firstSession, secondSession)
+
+                assertEquals(1, appender.list.size)
+                assertEquals(Level.INFO, appender.list[0].level)
+                assertEquals("Retrieving all sessions for user: test@test.com", appender.list[0].message)
+
+                verify(mockSessionService, times(1)).getAllByUser("test@test.com")
+            }
+    }
+
     @Nested
     inner class CreateSession {
         @Test
         fun `returns 'CREATED' status and creates new session`() =
             runTest {
-                val sessionId = UUID.randomUUID()
+                val sessionId = 1
                 whenever(mockSessionService.create(any<FileUpload>())).thenReturn(sessionId)
 
                 Files.createDirectory(Path.of("testFiles"))
                 Files.write(Path.of("testFiles", "testFile.txt"), listOf(""))
 
                 val multipartBodyBuilder = MultipartBodyBuilder()
-                multipartBodyBuilder.part("userEmail", user.email)
-                multipartBodyBuilder.part("userLastName", user.lastName)
-                multipartBodyBuilder.part("userFirstName", user.firstName)
-                multipartBodyBuilder.part("trackName", trackInfo.name)
-                multipartBodyBuilder.part("trackLatitude", trackInfo.latitude)
-                multipartBodyBuilder.part("trackLongitude", trackInfo.longitude)
+                multipartBodyBuilder.part("userEmail", USER_EMAIL)
+                multipartBodyBuilder.part("userLastName", USER_LAST_NAME)
+                multipartBodyBuilder.part("userFirstName", USER_FIRST_NAME)
+                multipartBodyBuilder.part("trackId", "2")
+                multipartBodyBuilder.part("carId", "3")
                 multipartBodyBuilder.part("uploadFile", FileSystemResource("testFiles/testFile.txt"))
                 val multiPartData = multipartBodyBuilder.build()
 
@@ -66,16 +100,15 @@ class SessionControllerTests {
                 Files.write(Path.of("testFiles", "testFile.txt"), listOf(""))
 
                 val multipartBodyBuilder = MultipartBodyBuilder()
-                multipartBodyBuilder.part("userEmail", user.email)
-                multipartBodyBuilder.part("userLastName", user.lastName)
-                multipartBodyBuilder.part("userFirstName", user.firstName)
-                multipartBodyBuilder.part("trackName", trackInfo.name)
-                multipartBodyBuilder.part("trackLatitude", trackInfo.latitude)
-                multipartBodyBuilder.part("trackLongitude", trackInfo.longitude)
+                multipartBodyBuilder.part("userEmail", USER_EMAIL)
+                multipartBodyBuilder.part("userLastName", USER_LAST_NAME)
+                multipartBodyBuilder.part("userFirstName", USER_FIRST_NAME)
+                multipartBodyBuilder.part("trackId", "2")
+                multipartBodyBuilder.part("carId", "1")
                 multipartBodyBuilder.part("uploadFile", FileSystemResource("testFiles/testFile.txt"))
                 val multiPartData = multipartBodyBuilder.build()
 
-                val sessionId = UUID.randomUUID()
+                val sessionId = 5
 
                 webTestClient
                     .put()
@@ -94,34 +127,57 @@ class SessionControllerTests {
         val sessionController = SessionController(mockSessionService)
         webTestClient = WebTestClient.bindToController(sessionController).build()
 
+        logger = LoggerFactory.getLogger(SessionController::class.java) as Logger
+        appender = ListAppender()
+        appender.context = LoggerContext()
+        logger.addAppender(appender)
+        appender.start()
+
         Files.deleteIfExists(Path.of("testFiles", "testFile.txt"))
         Files.deleteIfExists(Path.of("testFiles"))
     }
 
     private lateinit var webTestClient: WebTestClient
+    private lateinit var logger: Logger
+    private lateinit var appender: ListAppender<ILoggingEvent>
 
     private val mockSessionService = mock<SessionService>()
 
-    private val user =
-        User(
-            firstName = USER_FIRST_NAME,
-            lastName = USER_LAST_NAME,
-            email = USER_EMAIL,
+    private val firstSession =
+        Session(
+            id = 1,
+            startTime = Instant.now(),
+            endTime = Instant.now().plusSeconds(60),
+            trackName = TRACK_NAME,
+            trackLatitude = TRACK_LATITUDE,
+            trackLongitude = TRACK_LONGITUDE,
+            carYear = CAR_YEAR,
+            carMake = CAR_MAKE,
+            carModel = CAR_MODEL,
         )
-    private val trackInfo =
-        TrackInfo(
-            name = TRACK_NAME,
-            latitude = TRACK_LATITUDE,
-            longitude = TRACK_LONGITUDE,
+
+    private val secondSession =
+        Session(
+            id = 2,
+            startTime = Instant.now().plusSeconds(120),
+            endTime = Instant.now().plusSeconds(180),
+            trackName = TRACK_NAME,
+            trackLatitude = TRACK_LATITUDE,
+            trackLongitude = TRACK_LONGITUDE,
+            carYear = CAR_YEAR,
+            carMake = CAR_MAKE,
+            carModel = CAR_MODEL,
         )
 
     companion object FileUploadControllerTestConstants {
-        const val TRACK_NAME = "Test Track"
-        const val TRACK_LATITUDE = 42.4086
-        const val TRACK_LONGITUDE = -86.1374
-
         const val USER_EMAIL = "test@test.com"
         const val USER_FIRST_NAME = "test"
         const val USER_LAST_NAME = "tester"
+        const val TRACK_NAME = "Test Track"
+        const val TRACK_LATITUDE = 12.0
+        const val TRACK_LONGITUDE = 14.0
+        const val CAR_YEAR = 2001
+        const val CAR_MAKE = "Volkswagen"
+        const val CAR_MODEL = "Jetta"
     }
 }

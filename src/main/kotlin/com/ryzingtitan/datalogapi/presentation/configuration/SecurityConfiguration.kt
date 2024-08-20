@@ -32,12 +32,19 @@ class SecurityConfiguration {
                     .authenticated()
                     .pathMatchers(HttpMethod.DELETE, "/api/tracks/*")
                     .authenticated()
+                    .pathMatchers(HttpMethod.GET, "/api/cars")
+                    .authenticated()
+                    .pathMatchers(HttpMethod.POST, "/api/cars")
+                    .authenticated()
+                    .pathMatchers(HttpMethod.PUT, "/api/cars/*")
+                    .authenticated()
+                    .pathMatchers(HttpMethod.DELETE, "/api/cars/*")
+                    .authenticated()
                     .pathMatchers(HttpMethod.GET, "/actuator/health")
                     .permitAll()
                     .pathMatchers("/**")
                     .denyAll()
             }
-            .headers { it.cache { }.disable() }
             .httpBasic { it.disable() }
             .formLogin { it.disable() }
             .logout { it.disable() }

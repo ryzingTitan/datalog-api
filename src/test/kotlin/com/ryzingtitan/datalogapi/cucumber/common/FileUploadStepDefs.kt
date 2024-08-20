@@ -42,7 +42,7 @@ class FileUploadStepDefs {
             "${tableRow["Speed (OBD)(mph)"]}," +
             "${tableRow["Throttle Position(Manifold)(%)"]}," +
             "${tableRow["Turbo Boost & Vacuum Gauge(psi)"]}," +
-            "${tableRow["Air Fuel Ratio(Measured)(:1)"]}"
+            tableRow["Air Fuel Ratio(Measured)(:1)"].orEmpty()
     }
 
     @Before

@@ -24,12 +24,6 @@ java {
     }
 }
 
-configurations {
-    compileOnly {
-        extendsFrom(configurations.annotationProcessor.get())
-    }
-}
-
 repositories {
     mavenCentral()
 }
@@ -37,9 +31,9 @@ repositories {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
-    implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
+    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
+    implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.2")
@@ -47,6 +41,13 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.8.1")
+    implementation("org.liquibase:liquibase-core")
+    implementation("org.apache.commons:commons-csv:1.11.0")
+    implementation("com.google.cloud.sql:cloud-sql-connector-r2dbc-postgres:1.20.0")
+    implementation("com.google.cloud.sql:cloud-sql-connector-jdbc-sqlserver:1.20.0")
+    implementation("com.google.cloud.sql:postgres-socket-factory:1.20.0")
+    runtimeOnly("org.postgresql:postgresql")
+    runtimeOnly("org.postgresql:r2dbc-postgresql")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
@@ -57,6 +58,8 @@ dependencies {
     testImplementation("io.cucumber:cucumber-spring:7.18.1")
     testImplementation("io.projectreactor:reactor-test:3.6.8")
     testImplementation("no.nav.security:mock-oauth2-server:2.1.8")
+    testRuntimeOnly("com.h2database:h2")
+    testRuntimeOnly("io.r2dbc:r2dbc-h2")
 }
 
 kotlin {
@@ -120,4 +123,12 @@ sonarqube {
         property("sonar.organization", "ryzingtitan")
         property("sonar.host.url", "https://sonarcloud.io")
     }
+}
+
+tasks.processAot {
+    onlyIf { gradle.taskGraph.hasTask(":bootBuildImage") }
+}
+
+tasks.processTestAot {
+    onlyIf { gradle.taskGraph.hasTask(":bootBuildImage") }
 }

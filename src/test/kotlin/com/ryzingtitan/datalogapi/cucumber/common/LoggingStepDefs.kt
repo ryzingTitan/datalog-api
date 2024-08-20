@@ -5,12 +5,12 @@ import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
 import com.ryzingtitan.datalogapi.cucumber.dtos.LogMessage
-import com.ryzingtitan.datalogapi.domain.session.services.FileParsingService
-import com.ryzingtitan.datalogapi.domain.session.services.RowParsingService
-import com.ryzingtitan.datalogapi.domain.session.services.SessionService
-import com.ryzingtitan.datalogapi.domain.track.services.TrackService
+import com.ryzingtitan.datalogapi.domain.cars.services.CarService
+import com.ryzingtitan.datalogapi.domain.sessions.services.FileParsingService
+import com.ryzingtitan.datalogapi.domain.sessions.services.SessionService
+import com.ryzingtitan.datalogapi.domain.tracks.services.TrackService
 import com.ryzingtitan.datalogapi.presentation.controllers.DatalogController
-import com.ryzingtitan.datalogapi.presentation.controllers.SessionMetadataController
+import com.ryzingtitan.datalogapi.presentation.controllers.SessionController
 import io.cucumber.datatable.DataTable
 import io.cucumber.java.After
 import io.cucumber.java.Before
@@ -20,18 +20,31 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.slf4j.LoggerFactory
 
 class LoggingStepDefs {
+    @Then("the application will log the following messages:")
+    fun theApplicationWilLogTheFollowingMessages(table: DataTable) {
+        val expectedLogMessages: List<LogMessage> = table.tableConverter.toList(table, LogMessage::class.java)
+
+        val actualLogMessages = ArrayList<LogMessage>()
+
+        appender.list.forEach {
+            actualLogMessages.add(LogMessage(it.level.levelStr, it.message))
+        }
+
+        assertEquals(expectedLogMessages, actualLogMessages)
+    }
+
     @DataTableType
     fun mapLogMessage(tableRow: Map<String, String>): LogMessage {
         return LogMessage(
-            level = tableRow["level"].toString(),
-            message = tableRow["message"].toString(),
+            level = tableRow["level"].orEmpty(),
+            message = tableRow["message"].orEmpty(),
         )
     }
 
     @Before
     fun setup() {
-        sessionMetadataControllerLogger = LoggerFactory.getLogger(SessionMetadataController::class.java) as Logger
-        sessionMetadataControllerLogger.addAppender(appender)
+        sessionControllerLogger = LoggerFactory.getLogger(SessionController::class.java) as Logger
+        sessionControllerLogger.addAppender(appender)
 
         datalogControllerLogger = LoggerFactory.getLogger(DatalogController::class.java) as Logger
         datalogControllerLogger.addAppender(appender)
@@ -45,24 +58,11 @@ class LoggingStepDefs {
         trackServiceLogger = LoggerFactory.getLogger(TrackService::class.java) as Logger
         trackServiceLogger.addAppender(appender)
 
-        rowParsingServiceLogger = LoggerFactory.getLogger(RowParsingService::class.java) as Logger
-        rowParsingServiceLogger.addAppender(appender)
+        carServiceLogger = LoggerFactory.getLogger(CarService::class.java) as Logger
+        carServiceLogger.addAppender(appender)
 
         appender.context = LoggerContext()
         appender.start()
-    }
-
-    @Then("the application will log the following messages:")
-    fun theApplicationWilLogTheFollowingMessages(table: DataTable) {
-        val expectedLogMessages: List<LogMessage> = table.tableConverter.toList(table, LogMessage::class.java)
-
-        val actualLogMessages = ArrayList<LogMessage>()
-
-        appender.list.forEach {
-            actualLogMessages.add(LogMessage(it.level.levelStr, it.message))
-        }
-
-        assertEquals(expectedLogMessages.sortedBy { it.message }, actualLogMessages.sortedBy { it.message })
     }
 
     @After
@@ -71,11 +71,11 @@ class LoggingStepDefs {
     }
 
     private lateinit var datalogControllerLogger: Logger
-    private lateinit var sessionMetadataControllerLogger: Logger
+    private lateinit var sessionControllerLogger: Logger
     private lateinit var fileParsingServiceLogger: Logger
     private lateinit var sessionServiceLogger: Logger
     private lateinit var trackServiceLogger: Logger
-    private lateinit var rowParsingServiceLogger: Logger
+    private lateinit var carServiceLogger: Logger
 
     private val appender: ListAppender<ILoggingEvent> = ListAppender()
 }
