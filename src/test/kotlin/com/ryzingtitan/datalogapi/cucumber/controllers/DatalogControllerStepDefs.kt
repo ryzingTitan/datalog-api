@@ -1,10 +1,7 @@
 package com.ryzingtitan.datalogapi.cucumber.controllers
 
 import com.ryzingtitan.datalogapi.cucumber.common.CommonControllerStepDefs
-import com.ryzingtitan.datalogapi.domain.datalog.dtos.Data
-import com.ryzingtitan.datalogapi.domain.datalog.dtos.Datalog
-import com.ryzingtitan.datalogapi.domain.datalog.dtos.TrackInfo
-import com.ryzingtitan.datalogapi.domain.datalog.dtos.User
+import com.ryzingtitan.datalogapi.domain.datalogs.dtos.Datalog
 import io.cucumber.datatable.DataTable
 import io.cucumber.java.DataTableType
 import io.cucumber.java.en.Then
@@ -17,13 +14,10 @@ import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.awaitEntityList
 import org.springframework.web.reactive.function.client.awaitExchange
 import java.time.Instant
-import java.util.UUID
 
 class DatalogControllerStepDefs {
-    @When("the datalogs for session with id {string} are retrieved")
-    fun whenTheDatalogsForSessionWithIdAreRetrieved(sessionIdString: String) {
-        val sessionId = UUID.fromString(sessionIdString)
-
+    @When("the datalogs for session with id {int} are retrieved")
+    fun whenTheDatalogsForSessionWithIdAreRetrieved(sessionId: Int) {
         runBlocking {
             CommonControllerStepDefs.webClient.get()
                 .uri("/sessions/$sessionId/datalogs")
@@ -48,33 +42,18 @@ class DatalogControllerStepDefs {
     @DataTableType
     fun mapDatalog(tableRow: Map<String, String>): Datalog {
         return Datalog(
-            sessionId = UUID.fromString(tableRow["sessionId"]),
-            timestamp = Instant.parse(tableRow["timestamp"]),
-            data =
-                Data(
-                    longitude = tableRow["longitude"].toString().toDouble(),
-                    latitude = tableRow["latitude"].toString().toDouble(),
-                    altitude = tableRow["altitude"].toString().toFloat(),
-                    intakeAirTemperature = tableRow["intakeAirTemperature"].toString().toIntOrNull(),
-                    boostPressure = tableRow["boostPressure"].toString().toFloatOrNull(),
-                    coolantTemperature = tableRow["coolantTemperature"].toString().toIntOrNull(),
-                    engineRpm = tableRow["engineRpm"].toString().toIntOrNull(),
-                    speed = tableRow["speed"].toString().toIntOrNull(),
-                    throttlePosition = tableRow["throttlePosition"].toString().toFloatOrNull(),
-                    airFuelRatio = tableRow["airFuelRatio"].toString().toFloatOrNull(),
-                ),
-            trackInfo =
-                TrackInfo(
-                    name = tableRow["trackName"].toString(),
-                    latitude = tableRow["trackLatitude"].toString().toDouble(),
-                    longitude = tableRow["trackLongitude"].toString().toDouble(),
-                ),
-            user =
-                User(
-                    firstName = tableRow["firstName"].toString(),
-                    lastName = tableRow["lastName"].toString(),
-                    email = tableRow["email"].toString(),
-                ),
+            sessionId = tableRow["sessionId"]!!.toInt(),
+            timestamp = Instant.parse(tableRow["timestamp"].orEmpty()),
+            longitude = tableRow["longitude"]!!.toDouble(),
+            latitude = tableRow["latitude"]!!.toDouble(),
+            altitude = tableRow["altitude"]!!.toFloat(),
+            intakeAirTemperature = tableRow["intakeAirTemperature"]?.toIntOrNull(),
+            boostPressure = tableRow["boostPressure"]?.toFloatOrNull(),
+            coolantTemperature = tableRow["coolantTemperature"]?.toIntOrNull(),
+            engineRpm = tableRow["engineRpm"]?.toIntOrNull(),
+            speed = tableRow["speed"]?.toIntOrNull(),
+            throttlePosition = tableRow["throttlePosition"]?.toFloatOrNull(),
+            airFuelRatio = tableRow["airFuelRatio"]?.toFloatOrNull(),
         )
     }
 

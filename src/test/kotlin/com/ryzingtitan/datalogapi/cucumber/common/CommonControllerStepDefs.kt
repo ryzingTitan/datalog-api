@@ -9,13 +9,10 @@ import no.nav.security.mock.oauth2.MockOAuth2Server
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.springframework.boot.test.web.server.LocalServerPort
-import org.springframework.cache.CacheManager
 import org.springframework.http.HttpStatus
 import org.springframework.web.reactive.function.client.WebClient
 
-class CommonControllerStepDefs(
-    private val cacheManager: CacheManager,
-) {
+class CommonControllerStepDefs {
     @Given("the user has a valid authorization token")
     fun theUserHasAValidAuthorizationToken() {
         authorizationToken =
@@ -26,14 +23,6 @@ class CommonControllerStepDefs(
     @Given("the user has an invalid authorization token")
     fun theUserHasAnInvalidAuthorizationToken() {
         authorizationToken = null
-    }
-
-    @Given("the cache is empty")
-    fun theCacheIsEmpty() {
-        cacheManager.cacheNames.forEach {
-            val cache = cacheManager.getCache(it)
-            cache?.invalidate()
-        }
     }
 
     @Then("the request response status is {string}")

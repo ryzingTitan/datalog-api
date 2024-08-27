@@ -1,7 +1,7 @@
 package com.ryzingtitan.datalogapi.cucumber.controllers
 
 import com.ryzingtitan.datalogapi.cucumber.common.CommonControllerStepDefs
-import com.ryzingtitan.datalogapi.domain.track.dtos.Track
+import com.ryzingtitan.datalogapi.domain.tracks.dtos.Track
 import io.cucumber.datatable.DataTable
 import io.cucumber.java.DataTableType
 import io.cucumber.java.en.Then
@@ -15,7 +15,6 @@ import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.awaitEntityList
 import org.springframework.web.reactive.function.client.awaitExchange
-import java.util.UUID
 
 class TrackControllerStepDefs {
     @When("all tracks are retrieved")
@@ -73,8 +72,8 @@ class TrackControllerStepDefs {
         }
     }
 
-    @When("the track with id {string} is deleted")
-    fun whenTheTrackWithIdIsDeleted(trackId: String) {
+    @When("the track with id {int} is deleted")
+    fun whenTheTrackWithIdIsDeleted(trackId: Int) {
         runBlocking {
             CommonControllerStepDefs.webClient
                 .delete()
@@ -93,7 +92,7 @@ class TrackControllerStepDefs {
     fun thenTheFollowingTracksAreReturned(table: DataTable) {
         val expectedTracks = table.tableConverter.toList<Track>(table, Track::class.java)
 
-        assertEquals(expectedTracks.sortedBy { it.name }, returnedTracks.sortedBy { it.name })
+        assertEquals(expectedTracks, returnedTracks)
     }
 
     private fun handleTrackResponse(clientResponse: ClientResponse) {
@@ -105,10 +104,10 @@ class TrackControllerStepDefs {
     @DataTableType
     fun mapTrack(tableRow: Map<String, String>): Track {
         return Track(
-            id = if (tableRow["id"] != null) UUID.fromString(tableRow["id"]) else null,
-            name = tableRow["name"].toString(),
-            longitude = tableRow["longitude"].toString().toDouble(),
-            latitude = tableRow["latitude"].toString().toDouble(),
+            id = tableRow["id"]?.toIntOrNull(),
+            name = tableRow["name"].orEmpty(),
+            longitude = tableRow["longitude"]!!.toDouble(),
+            latitude = tableRow["latitude"]!!.toDouble(),
         )
     }
 
